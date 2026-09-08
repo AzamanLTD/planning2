@@ -3,7 +3,7 @@
 
   const MAX_POSITIVE_CHARS = 5;
   const MAX_NEGATIVE_CHARS = 6;
-  const VALIDITY_MESSAGE = 'Enter an integer, decimal, or fraction; omit symbols such as % or $.'.trim();
+  const VALIDITY_MESSAGE = 'Enter an integer, decimal, or fraction; omit symbols such as % or $.';
 
   function normalizeFraction(value) {
     const raw = String(value || '').trim().replace(/\s+/g, '');
@@ -19,7 +19,7 @@
   function normalizeDecimal(value) {
     const raw = String(value || '').trim().replace(/\s+/g, '');
     if (!raw) return '';
-    if (!/^-?\d+(?:\.\d+)?$/.test(raw)) return null;
+    if (!/^-?(?:\d+(?:\.\d*)?|\.\d+)$/.test(raw)) return null;
     const number = Number(raw);
     if (!Number.isFinite(number)) return null;
     return String(Number(number.toPrecision(12)));
