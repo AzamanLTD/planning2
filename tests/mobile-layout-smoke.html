@@ -15,8 +15,9 @@
         if (r.left < -1 || r.top < -1 || r.right > innerWidth + 1 || r.bottom > innerHeight + 1) throw new Error(`${label} escapes viewport`);
       }
       write({
-        v:3, screen:'test', student:'Mobile Smoke', accessCode:'', roomCode:'', startCode:'', mi:0, qi:0,
-        endAt:Date.now()+600000, breakEndAt:null, answers:{}, marked:{}, eliminated:{}, notes:{}, highlights:{}, completed:{}, submitted:false,
+        v:3, screen:'test', student:'Mobile Smoke', accessCode:'', roomCode:'', startCode:'', mi:2, qi:0,
+        endAt:Date.now()+600000, breakEndAt:null, answers:{}, marked:{}, eliminated:{}, notes:{}, highlights:{},
+        completed:{rw1:true,rw2:true,math1:false,math2:false}, submitted:false,
         adaptive:{rw:'easy',math:'easy'}, timerHidden:false, lineReader:false, rules:true, desk:true, warning:{}
       });
       frame.addEventListener('load', () => {
