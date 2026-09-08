@@ -19,6 +19,7 @@ This checklist is intentionally explicit about what automated CI proves and what
 - Session recovery edge cases pass, including non-contiguous completion repair, invalid break prerequisites, later-completion cleanup, stale timers, scalar numeric answers, and terminal-state canonicalization.
 - Accessibility contract checks pass, including Help and keyboard-shortcut semantics.
 - Chromium browser smoke passes the end-to-end simulator path, including sign-in/setup/room/start code, persistence, answer selection, review/lock transition, adaptive routing, tools, calculator/graph behavior, SPR normalization, results, break recovery, and start-code accessibility.
+- A dedicated Help browser smoke validates Ctrl+Alt+H and Command+Option+H, Help dialog semantics, shortcut-reference navigation, and Escape dismissal.
 
 ## Human / environment gates
 
