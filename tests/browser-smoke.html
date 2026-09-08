@@ -71,34 +71,40 @@
         }
         if (phase === 3) {
           check('Math module renders', doc.querySelector('.test-title')?.textContent.includes('Math'));
-          doc.querySelector('#toolsBtn')?.click();
+          const keyboardEvent = new KeyboardEvent('keydown', { key:'g', ctrlKey:true, altKey:true, bubbles:true, cancelable:true });
+          doc.dispatchEvent(keyboardEvent);
           setTimeout(() => {
-            doc.querySelector('#calcTool')?.click();
+            check('keyboard question menu opens', !!frame.contentDocument.getElementById('reviewModal'));
+            frame.contentDocument.dispatchEvent(new KeyboardEvent('keydown', { key:'Escape', bubbles:true, cancelable:true }));
+            doc.querySelector('#toolsBtn')?.click();
             setTimeout(() => {
-              const calc = frame.contentDocument.getElementById('calculatorPanel');
-              check('calculator opens', !!calc);
-              check('scientific controls render', !!calc?.querySelector('[data-insert="sin("]') && !!calc?.querySelector('[data-insert="sqrt("]'));
-              const display = calc?.querySelector('#calcDisplay');
-              check('calculator accepts expression input', !!display && !display.readOnly);
-              if (display) { display.value = '2+3'; display.dispatchEvent(new KeyboardEvent('keydown', { key:'Enter', bubbles:true })); }
-              check('calculator evaluates expression', display?.value === '5');
-              const graphTab = calc?.querySelector('[data-mode="graph"]');
-              const calculateTab = calc?.querySelector('[data-mode="calculate"]');
-              check('calculate view initially visible', !!calc?.querySelector('#azmCalcCalculate') && !calc?.querySelector('#azmCalcCalculate').hidden);
-              graphTab?.click();
-              check('graph tab activates', graphTab?.getAttribute('aria-selected') === 'true');
-              check('calculate view hides after graph switch', !!calc?.querySelector('#azmCalcCalculate')?.hidden);
-              check('graph view shows after graph switch', calc?.querySelector('#azmCalcGraph')?.hidden === false);
-              check('graph controls render', !!calc?.querySelector('#azmGraph') && !!calc?.querySelector('#azmPlot'));
-              calc?.querySelector('#azmPlot')?.click();
-              check('graph canvas is drawable', !!calc?.querySelector('#azmGraph')?.getContext('2d'));
-              calculateTab?.click();
-              check('calculate tab returns', calculateTab?.getAttribute('aria-selected') === 'true' && calc?.querySelector('#azmCalcCalculate')?.hidden === false);
-              const sprIndex = win.SAT_QUESTIONS.math1.findIndex(q => q.type === 'spr');
-              check('Math SPR exists', sprIndex >= 0);
-              const state = readState(); state.qi = sprIndex; writeState(state);
-              phase = 4; frame.contentWindow.location.reload();
-            }, 100);
+              doc.querySelector('#calcTool')?.click();
+              setTimeout(() => {
+                const calc = frame.contentDocument.getElementById('calculatorPanel');
+                check('calculator opens', !!calc);
+                check('scientific controls render', !!calc?.querySelector('[data-insert="sin("]') && !!calc?.querySelector('[data-insert="sqrt("]'));
+                const display = calc?.querySelector('#calcDisplay');
+                check('calculator accepts expression input', !!display && !display.readOnly);
+                if (display) { display.value = '2+3'; display.dispatchEvent(new KeyboardEvent('keydown', { key:'Enter', bubbles:true })); }
+                check('calculator evaluates expression', display?.value === '5');
+                const graphTab = calc?.querySelector('[data-mode="graph"]');
+                const calculateTab = calc?.querySelector('[data-mode="calculate"]');
+                check('calculate view initially visible', !!calc?.querySelector('#azmCalcCalculate') && !calc?.querySelector('#azmCalcCalculate').hidden);
+                graphTab?.click();
+                check('graph tab activates', graphTab?.getAttribute('aria-selected') === 'true');
+                check('calculate view hides after graph switch', !!calc?.querySelector('#azmCalcCalculate')?.hidden);
+                check('graph view shows after graph switch', calc?.querySelector('#azmCalcGraph')?.hidden === false);
+                check('graph controls render', !!calc?.querySelector('#azmGraph') && !!calc?.querySelector('#azmPlot'));
+                calc?.querySelector('#azmPlot')?.click();
+                check('graph canvas is drawable', !!calc?.querySelector('#azmGraph')?.getContext('2d'));
+                calculateTab?.click();
+                check('calculate tab returns', calculateTab?.getAttribute('aria-selected') === 'true' && calc?.querySelector('#azmCalcCalculate')?.hidden === false);
+                const sprIndex = win.SAT_QUESTIONS.math1.findIndex(q => q.type === 'spr');
+                check('Math SPR exists', sprIndex >= 0);
+                const state = readState(); state.qi = sprIndex; writeState(state);
+                phase = 4; frame.contentWindow.location.reload();
+              }, 100);
+            }, 50);
           }, 50);
           return;
         }
@@ -120,6 +126,9 @@
         if (phase === 5) {
           setTimeout(() => {
             check('expired module auto-submits', readState().screen === 'finish' && !!readState().completed.math2 && readState().submitted === true);
+            check('practice report renders', !!doc.querySelector('.results-detail') && doc.querySelector('.results-detail')?.textContent.includes('Practice report'));
+            check('report includes both sections', doc.querySelectorAll('.results-section-card').length === 2);
+            check('report disclaims official score', doc.querySelector('.results-note')?.textContent.includes('not an official SAT scaled score'));
             const state = readState(); state.submitted=false; state.screen='break'; state.mi=2; state.breakEndAt=Date.now()-1; state.completed.math2=false;
             writeState(state); phase=6; frame.contentWindow.location.reload();
           }, 350);
