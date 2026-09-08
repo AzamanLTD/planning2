@@ -26,6 +26,7 @@
           check('27-question module', /Question 1 of 27/.test(doc.querySelector('.test-counter')?.textContent || ''));
           check('student metadata row hidden', doc.querySelector('.q-meta')?.hidden === true && doc.querySelector('.q-meta')?.getAttribute('aria-hidden') === 'true');
           check('student UI labels passage as source', doc.querySelector('.source-label')?.textContent.trim() === 'Source');
+          check('answer choices expose radio semantics', doc.querySelector('.choice')?.getAttribute('role') === 'radio');
           const bank = win.SAT_QUESTIONS.rw1, state = baseState();
           bank.forEach((q, i) => state.answers[`rw1-${i}`] = q.answer);
           state.marked['rw1-0'] = true; state.notes['rw1-0'] = 'smoke note'; state.highlights['rw1-0'] = [qText(bank[0])];
@@ -43,6 +44,7 @@
           doc.querySelector('#nextBtn')?.click();
           setTimeout(() => {
             check('review modal opens', !!frame.contentWindow.document.getElementById('reviewModal'));
+            check('review dialog has accessible label', !!frame.contentWindow.document.getElementById('reviewModal')?.getAttribute('aria-labelledby'));
             frame.contentWindow.document.querySelector('#submitModule')?.click();
             setTimeout(() => {
               const state = readState();
@@ -56,26 +58,27 @@
         }
         if (phase === 3) {
           check('Math module renders', doc.querySelector('.test-title')?.textContent.includes('Math'));
+          check('Math choices expose radio semantics', doc.querySelector('.choice')?.getAttribute('role') === 'radio');
           doc.dispatchEvent(new KeyboardEvent('keydown', { key:'g', ctrlKey:true, altKey:true, bubbles:true, cancelable:true }));
           setTimeout(() => {
             check('keyboard question menu opens', !!frame.contentDocument.getElementById('reviewModal'));
             frame.contentDocument.dispatchEvent(new KeyboardEvent('keydown', { key:'Escape', bubbles:true, cancelable:true }));
             doc.querySelector('#toolsBtn')?.click();
             setTimeout(() => {
+              check('test tools expose menu semantics', doc.querySelector('#toolPopover')?.getAttribute('role') === 'menu');
               doc.querySelector('#calcTool')?.click();
               setTimeout(() => {
                 const calc = frame.contentDocument.getElementById('calculatorPanel');
                 check('calculator opens', !!calc);
                 check('scientific controls render', !!calc?.querySelector('[data-insert="sin("]') && !!calc?.querySelector('[data-insert="sqrt("]'));
                 const display = calc?.querySelector('#calcDisplay'); check('calculator accepts expression input', !!display && !display.readOnly);
-                if (display) { display.value = '2+3'; display.dispatchEvent(new KeyboardEvent('keydown', { key:'Enter', bubbles:true })); }
-                check('calculator evaluates expression', display?.value === '5');
-                if (display) { display.value = '2π'; display.dispatchEvent(new KeyboardEvent('keydown', { key:'Enter', bubbles:true })); }
-                check('calculator supports implicit constant multiplication', display?.value && Math.abs(Number(display.value) - 2 * Math.PI) < 1e-9);
-                if (display) { display.value = 'sin(30)'; display.dispatchEvent(new KeyboardEvent('keydown', { key:'Enter', bubbles:true })); }
-                check('calculator supports degree trig', display?.value && Math.abs(Number(display.value) - 0.5) < 1e-9);
-                if (display) { display.value = '2(3+4)'; display.dispatchEvent(new KeyboardEvent('keydown', { key:'Enter', bubbles:true })); }
-                check('calculator supports implicit parenthesis multiplication', display?.value === '14');
+                const evaluate = (expr, expected, label) => { display.value = expr; display.dispatchEvent(new Event('input', { bubbles:true })); display.dispatchEvent(new KeyboardEvent('keydown', { key:'Enter', bubbles:true })); check(label, Number.isFinite(Number(display.value)) && Math.abs(Number(display.value) - expected) < 1e-9); };
+                evaluate('2+3', 5, 'calculator evaluates expression');
+                evaluate('2π', 2 * Math.PI, 'calculator supports implicit constant multiplication');
+                evaluate('sin(30)', 0.5, 'calculator supports degree trig');
+                evaluate('2(3+4)', 14, 'calculator supports implicit parenthesis multiplication');
+                evaluate('-2^2', -4, 'calculator uses exponent precedence over unary minus');
+                evaluate('2^-2', 0.25, 'calculator supports negative exponents');
                 const graphTab = calc?.querySelector('[data-mode="graph"]'), calculateTab = calc?.querySelector('[data-mode="calculate"]');
                 check('calculate view initially visible', !!calc?.querySelector('#azmCalcCalculate') && !calc?.querySelector('#azmCalcCalculate').hidden);
                 graphTab?.click(); check('graph tab activates', graphTab?.getAttribute('aria-selected') === 'true');
