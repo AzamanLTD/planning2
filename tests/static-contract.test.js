@@ -9,6 +9,7 @@ const spr = read('spr-input.js');
 const tools = read('tools-enhancement.js');
 const notes = read('note-enhancement.js');
 const modal = read('modal-enhancement.js');
+const calculator = read('calculator-enhancement.js');
 const tokens = read('styles.css');
 
 const requiredScripts = [
@@ -19,7 +20,8 @@ const requiredScripts = [
   'spr-input.js',
   'tools-enhancement.js',
   'note-enhancement.js',
-  'modal-enhancement.js'
+  'modal-enhancement.js',
+  'calculator-enhancement.js'
 ];
 for (const src of requiredScripts) assert(html.includes(`src=\"${src}\"`), `index.html missing ${src}`);
 assert(!html.includes('shortcut-enhancement.js'), 'obsolete duplicate shortcut layer must not be loaded');
@@ -55,6 +57,13 @@ for (const phrase of ['FOCUSABLE', 'activeDialog', 'event.key !== \'Tab\'', 'ari
   assert(modal.includes(phrase), `modal focus contract missing: ${phrase}`);
 }
 
+for (const phrase of [
+  'tokenize(input)', 'sin', 'cos', 'tan', 'sqrt', 'log10', 'Graph',
+  'azmGraphExpr', 'azmXMin', 'azmXMax', 'requestAnimationFrame', 'getContext(\'2d\')'
+]) {
+  assert(calculator.includes(phrase), `calculator enhancement contract missing: ${phrase}`);
+}
+
 for (const token of [
   '--color-page:', '--color-surface:', '--color-text:', '--color-border:',
   '--color-primary:', '--color-warning:', '--color-focus:', '--color-selected:'
@@ -62,5 +71,7 @@ for (const token of [
 
 assert(!app.includes('Function('), 'unsafe Function() evaluator must not return');
 assert(!app.includes('eval('), 'unsafe eval() evaluator must not return');
+assert(!calculator.includes('Function('), 'calculator must not use Function()');
+assert(!calculator.includes('eval('), 'calculator must not use eval()');
 
 console.log('Static simulator contract checks passed.');
