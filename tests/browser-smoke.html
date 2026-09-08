@@ -11,10 +11,7 @@
       const KEY = 'azaman-sat-practice-v3';
       let phase = 0;
       const checks = [];
-      function check(name, value) {
-        checks.push(`${value ? 'PASS' : 'FAIL'} ${name}`);
-        if (!value) throw new Error(name);
-      }
+      function check(name, value) { checks.push(`${value ? 'PASS' : 'FAIL'} ${name}`); if (!value) throw new Error(name); }
       function writeState(data) { localStorage.setItem(KEY, JSON.stringify(data)); }
       function readState() { return JSON.parse(localStorage.getItem(KEY)); }
       function baseState() {
@@ -23,15 +20,13 @@
           adaptive:{rw:'easy',math:'easy'}, timerHidden:false, lineReader:false, rules:true, desk:true, warning:{} };
       }
       function afterLoad() {
-        const win = frame.contentWindow;
-        const doc = frame.contentDocument;
+        const win = frame.contentWindow, doc = frame.contentDocument;
         if (phase === 0) {
           check('module 1 renders', !!doc.querySelector('.test-title') && doc.querySelector('.test-title').textContent.includes('Reading and Writing'));
           check('27-question module', /Question 1 of 27/.test(doc.querySelector('.test-counter')?.textContent || ''));
-          check('student UI hides domain metadata', !/Information and Ideas|Craft and Structure|Standard English Conventions/.test(doc.querySelector('.q-meta')?.textContent || ''));
+          check('student metadata row hidden', doc.querySelector('.q-meta')?.hidden === true && doc.querySelector('.q-meta')?.getAttribute('aria-hidden') === 'true');
           check('student UI labels passage as source', doc.querySelector('.source-label')?.textContent.trim() === 'Source');
-          const bank = win.SAT_QUESTIONS.rw1;
-          const state = baseState();
+          const bank = win.SAT_QUESTIONS.rw1, state = baseState();
           bank.forEach((q, i) => state.answers[`rw1-${i}`] = q.answer);
           state.marked['rw1-0'] = true; state.notes['rw1-0'] = 'smoke note'; state.highlights['rw1-0'] = [qText(bank[0])];
           writeState(state); phase = 1; frame.contentWindow.location.reload(); return;
@@ -47,15 +42,13 @@
           check('last question reachable', /Question 27 of 27/.test(doc.querySelector('.test-counter')?.textContent || ''));
           doc.querySelector('#nextBtn')?.click();
           setTimeout(() => {
-            check('review modal opens', !!frame.contentDocument.getElementById('reviewModal'));
-            frame.contentDocument.querySelector('#submitModule')?.click();
+            check('review modal opens', !!frame.contentWindow.document.getElementById('reviewModal'));
+            frame.contentWindow.document.querySelector('#submitModule')?.click();
             setTimeout(() => {
               const state = readState();
-              check('module 1 locked', !!state.completed.rw1);
-              check('hard Module 2 routed', state.adaptive.rw === 'hard');
+              check('module 1 locked', !!state.completed.rw1); check('hard Module 2 routed', state.adaptive.rw === 'hard');
               check('directions after module', state.screen === 'directions' && state.mi === 1);
-              phase = 3;
-              state.screen = 'test'; state.mi = 2; state.qi = 0; state.endAt = Date.now()+600000;
+              phase = 3; state.screen = 'test'; state.mi = 2; state.qi = 0; state.endAt = Date.now()+600000;
               state.completed.rw2 = true; state.completed.math1 = false; state.completed.math2 = false;
               writeState(state); frame.contentWindow.location.reload();
             }, 50);
@@ -63,8 +56,7 @@
         }
         if (phase === 3) {
           check('Math module renders', doc.querySelector('.test-title')?.textContent.includes('Math'));
-          const keyboardEvent = new KeyboardEvent('keydown', { key:'g', ctrlKey:true, altKey:true, bubbles:true, cancelable:true });
-          doc.dispatchEvent(keyboardEvent);
+          doc.dispatchEvent(new KeyboardEvent('keydown', { key:'g', ctrlKey:true, altKey:true, bubbles:true, cancelable:true }));
           setTimeout(() => {
             check('keyboard question menu opens', !!frame.contentDocument.getElementById('reviewModal'));
             frame.contentDocument.dispatchEvent(new KeyboardEvent('keydown', { key:'Escape', bubbles:true, cancelable:true }));
@@ -75,36 +67,28 @@
                 const calc = frame.contentDocument.getElementById('calculatorPanel');
                 check('calculator opens', !!calc);
                 check('scientific controls render', !!calc?.querySelector('[data-insert="sin("]') && !!calc?.querySelector('[data-insert="sqrt("]'));
-                const display = calc?.querySelector('#calcDisplay');
-                check('calculator accepts expression input', !!display && !display.readOnly);
+                const display = calc?.querySelector('#calcDisplay'); check('calculator accepts expression input', !!display && !display.readOnly);
                 if (display) { display.value = '2+3'; display.dispatchEvent(new KeyboardEvent('keydown', { key:'Enter', bubbles:true })); }
                 check('calculator evaluates expression', display?.value === '5');
-                const graphTab = calc?.querySelector('[data-mode="graph"]');
-                const calculateTab = calc?.querySelector('[data-mode="calculate"]');
+                const graphTab = calc?.querySelector('[data-mode="graph"]'), calculateTab = calc?.querySelector('[data-mode="calculate"]');
                 check('calculate view initially visible', !!calc?.querySelector('#azmCalcCalculate') && !calc?.querySelector('#azmCalcCalculate').hidden);
-                graphTab?.click();
-                check('graph tab activates', graphTab?.getAttribute('aria-selected') === 'true');
+                graphTab?.click(); check('graph tab activates', graphTab?.getAttribute('aria-selected') === 'true');
                 check('calculate view hides after graph switch', !!calc?.querySelector('#azmCalcCalculate')?.hidden);
                 check('graph view shows after graph switch', calc?.querySelector('#azmCalcGraph')?.hidden === false);
-                check('graph controls render', !!calc?.querySelector('#azmGraph') && !!calc?.querySelector('#azmPlot'));
-                calc?.querySelector('#azmPlot')?.click();
-                check('graph canvas is drawable', !!calc?.querySelector('#azmGraph')?.getContext('2d'));
-                calculateTab?.click();
+                check('graph controls render', !!calc?.querySelector('#azmGraph') && !!calc?.querySelector('#azmPlot')); calc?.querySelector('#azmPlot')?.click();
+                check('graph canvas is drawable', !!calc?.querySelector('#azmGraph')?.getContext('2d')); calculateTab?.click();
                 check('calculate tab returns', calculateTab?.getAttribute('aria-selected') === 'true' && calc?.querySelector('#azmCalcCalculate')?.hidden === false);
-                const sprIndex = win.SAT_QUESTIONS.math1.findIndex(q => q.type === 'spr');
-                check('Math SPR exists', sprIndex >= 0);
+                const sprIndex = win.SAT_QUESTIONS.math1.findIndex(q => q.type === 'spr'); check('Math SPR exists', sprIndex >= 0);
                 const state = readState(); state.qi = sprIndex; writeState(state); phase = 4; frame.contentWindow.location.reload();
               }, 100);
             }, 50);
           }, 50); return;
         }
         if (phase === 4) {
-          const input = doc.querySelector('.spr-input');
-          check('SPR field renders', !!input); input.value = '.6666';
+          const input = doc.querySelector('.spr-input'); check('SPR field renders', !!input); input.value = '.6666';
           input.dispatchEvent(new Event('input', { bubbles:true })); input.dispatchEvent(new Event('blur', { bubbles:true }));
           setTimeout(() => {
-            const stored = readState().answers[`math1-${readState().qi}`];
-            check('SPR answer persists after normalization', stored === '.6666');
+            const stored = readState().answers[`math1-${readState().qi}`]; check('SPR answer persists after normalization', stored === '.6666');
             const state = readState(); state.mi = 3; state.qi = 0; state.endAt = Date.now()-1; state.completed.math1 = true; state.completed.math2 = false;
             writeState(state); phase = 5; frame.contentWindow.location.reload();
           }, 50); return;
@@ -127,11 +111,8 @@
         }
         if (phase === 7) {
           const fields = [...doc.querySelectorAll('.start-digit')]; check('six start-code inputs render', fields.length === 6);
-          const event = new Event('paste', { bubbles:true, cancelable:true });
-          Object.defineProperty(event, 'clipboardData', { value: { getData: () => '492776' } });
-          fields[0].dispatchEvent(event);
-          check('paste fills start code', fields.map((x) => x.value).join('') === '492776');
-          check('start code state persists', readState().startCode === '492776');
+          const event = new Event('paste', { bubbles:true, cancelable:true }); Object.defineProperty(event, 'clipboardData', { value: { getData: () => '492776' } });
+          fields[0].dispatchEvent(event); check('paste fills start code', fields.map((x) => x.value).join('') === '492776'); check('start code state persists', readState().startCode === '492776');
           out.textContent = checks.join('\n') + '\nSMOKE COMPLETE';
         }
       }
