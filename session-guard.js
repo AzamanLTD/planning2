@@ -39,6 +39,14 @@
     return bank.length ? correct / bank.length : 0;
   }
 
+  function normalizeCompletionChain(state) {
+    let priorComplete = true;
+    for (const module of MODULES) {
+      if (!priorComplete) state.completed[module.id] = false;
+      priorComplete = state.completed[module.id] === true;
+    }
+  }
+
   function advancePastCompleted(state) {
     const current = MODULES[state.mi];
     if (!state.completed[current.id]) return false;
@@ -103,6 +111,7 @@
     state.rules = state.rules === true;
     state.desk = state.desk === true;
 
+    normalizeCompletionChain(state);
     state.screen = SCREENS.has(state.screen) ? state.screen : 'access';
     state.mi = Number.isInteger(state.mi) ? state.mi : 0;
     state.mi = Math.max(0, Math.min(MODULES.length - 1, state.mi));
