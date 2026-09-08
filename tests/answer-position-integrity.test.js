@@ -4,6 +4,7 @@ const assert = require('assert');
 
 const sourceFiles = ['data/questions.js', 'data/rw2-easy.js', 'data/rw-source-overrides.js'];
 const qualitySource = fs.readFileSync('data/question-quality-overrides.js', 'utf8');
+const REAUTHORED = new Set(['MM2HQ14', 'MM2HQ20', 'MM2HQ21', 'MM2HQ22']);
 
 function load(withQuality, runQualityTwice = false) {
   const sandbox = { window: {} };
@@ -22,6 +23,7 @@ const groups = (bank) => [bank.rw1, bank.rw2.easy, bank.rw2.hard, bank.math1, ba
 const letters = ['A', 'B', 'C', 'D'];
 
 const baselineById = new Map(groups(baseline).map((question) => {
+  if (REAUTHORED.has(question.id)) return [question.id, null];
   const index = letters.indexOf(String(question.answer).toUpperCase());
   return [question.id, index >= 0 ? question.options[index] : null];
 }));
@@ -33,5 +35,5 @@ for (const question of groups(effective)) {
   assert.equal(question.options[answerIndex], originalCorrectText, `${question.id} changed its correct answer text during balancing`);
 }
 
-assert.deepEqual(effectiveTwice, effective, 'answer-position balancing is not idempotent');
-console.log('Answer-position integrity checks passed for all effective MCQ records.');
+assert.deepEqual(effectiveTwice, effective, 'question quality layer is not idempotent');
+console.log('Answer-position integrity checks passed; intentional re-authored items excluded from baseline-text comparison.');
