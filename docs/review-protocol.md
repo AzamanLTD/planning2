@@ -30,9 +30,9 @@ Applies on top of the standing AZM-Planning engineering discipline that governs 
 
 The real Bluebook application remains the visual reference authority. The repository currently uses provisional independent design tokens until the capture pack is available; no release claim may call the UI pixel-perfect before that pass is complete.
 
-The current simulator implements the documented 4-module timing model, locked module transitions, a mandatory 10-minute inter-section break, score-based M2 routing, structured original question data, Math SPR input normalization, keyboard shortcuts, static local persistence, calculator and reference tools, a non-blocking connectivity status indicator, start-code input handling, session recovery checks, and raw practice results reporting.
+The current simulator implements the documented 4-module timing model, locked module transitions, a mandatory 10-minute inter-section break, score-based M2 routing, structured original question data, Math SPR input normalization, keyboard shortcuts, static local persistence, calculator and reference tools, robust start-code input, session recovery checks, student-facing metadata isolation, and raw practice results reporting.
 
-The simulator intentionally does not pretend to enforce a testing-center Wi-Fi SSID in browser code. Network policy and proctor operations remain distinct from local exam-state behavior.
+The simulator does not attempt to emulate a specific testing-center Wi-Fi SSID from browser JavaScript. Network policy/proctor operations are outside the local practice engine and should not be represented as a fabricated client-side gate.
 
 ## Launch checklist (before first student session)
 
