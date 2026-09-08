@@ -81,12 +81,22 @@
           setTimeout(() => {
             doc.querySelector('#calcTool')?.click();
             setTimeout(() => {
-              check('calculator opens', !!frame.contentDocument.getElementById('calculatorPanel'));
+              const calc = frame.contentDocument.getElementById('calculatorPanel');
+              check('calculator opens', !!calc);
+              check('scientific controls render', !!calc?.querySelector('[data-insert="sin("]') && !!calc?.querySelector('[data-insert="sqrt("]'));
+              const display = calc?.querySelector('#calcDisplay');
+              check('calculator accepts expression input', !!display && !display.readOnly);
+              if (display) { display.value = '2+3'; display.dispatchEvent(new KeyboardEvent('keydown', { key:'Enter', bubbles:true })); }
+              check('calculator evaluates expression', display?.value === '5');
+              calc?.querySelector('[data-mode="graph"]')?.click();
+              check('graph mode renders', !!calc?.querySelector('#azmGraph') && !!calc?.querySelector('#azmPlot'));
+              calc?.querySelector('#azmPlot')?.click();
+              check('graph canvas is drawable', !!calc?.querySelector('#azmGraph')?.getContext('2d'));
               const sprIndex = win.SAT_QUESTIONS.math1.findIndex(q => q.type === 'spr');
               check('Math SPR exists', sprIndex >= 0);
               const state = readState(); state.qi = sprIndex; writeState(state);
               phase = 4; frame.contentWindow.location.reload();
-            }, 50);
+            }, 100);
           }, 50);
           return;
         }
