@@ -19,8 +19,13 @@ An independent browser-based SAT practice experience for Azaman students. The pr
 - Robust six-digit start-code entry with paste, arrow-key, and backspace behavior
 - Student-facing UI hides internal domain/skill/difficulty metadata
 - Practice completion report with Reading and Writing / Math and per-module raw accuracy
+- Accessibility contract checks for labels, dialog semantics, tabs, focus behavior, and answer controls
 - Automated question-bank validation, content audit, static contract tests, recovery edge-case tests, and Chromium browser smoke coverage
 - Responsive static frontend with no runtime service dependency
+
+## Network boundary
+
+This simulator does not fabricate a testing-center SSID lock. A browser application should not pretend to know the center's Wi-Fi identity unless a real deployment service supplies that contract. The local practice engine therefore keeps exam-state behavior independent of a guessed Wi-Fi value.
 
 ## Practice bank
 
@@ -42,7 +47,7 @@ The repository contains 147 structured original question records across the laun
 
 ## Verification status
 
-The implementation has automated CI coverage for syntax, content contracts, content-audit checks, recovery edge cases, and a real Chromium smoke run. The real Bluebook application remains the visual reference authority. The repository intentionally uses Azaman-owned provisional design tokens until the permitted reference-capture pass is completed, so the product is not described as pixel-perfect.
+The implementation has automated CI coverage for syntax, content contracts, content-audit checks, accessibility contracts, recovery edge cases, and a real Chromium smoke run. The real Bluebook application remains the visual reference authority. The repository intentionally uses Azaman-owned provisional design tokens until the permitted reference-capture pass is completed, so the product is not described as pixel-perfect.
 
 Known release work includes human editorial review, deeper accessibility/device review, richer image/chart interactions, calculator parity decisions, extended recovery testing, real group/proctor-session testing, reference-capture comparison, and owner signoff.
 
