@@ -39,13 +39,52 @@ These must all exist, with the real app's icons, placements, and interactions:
 3. **Reference Sheet** — formula reference shown on all tests with math
    questions. [VERIFY] exact contents/layout from capture pass.
 4. **Highlights & Notes** — highlight text in a question/passage; attach a
-  note to a question.
+   note to a question.
 5. **Mark for Review** — bookmark icon flags a question for return.
 6. **Line Reader** — focus tool for reading test content.
 7. **Option Eliminator** — strike through wrong answer choices; undoable.
 8. **Question Menu (navigator)** — grid showing answered, unanswered, and
    marked questions; jump to any question in the section.
 9. **Zoom** — pinch on tablets / keyboard shortcut on laptops.
+
+### Keyboard shortcuts [VERIFIED — operating-system-specific official pages]
+
+The current official Windows/ChromeOS pages document F1 for the shortcut list,
+F6/Shift+F6 region navigation, zoom, Back, Next, Question Menu, Help,
+Directions, Line Reader, timer, Mark for Review, Highlights & Notes, Calculator,
+Reference Sheet, option selection/elimination, and Option Eliminator Mode.
+Windows/ChromeOS use Control-based combinations; macOS uses the corresponding
+Command/Option combinations, and iPad differs for Help. The official pages
+also document E as an available fifth response position in interfaces that
+support it; this SAT replica exposes only the four answer choices present in its
+current question bank.
+
+For the browser simulator, the implemented verified Windows/ChromeOS subset is:
+
+| Function | Shortcut |
+|---|---|
+| Keyboard shortcuts | F1 |
+| Exam region forward/back | F6 / Shift+F6 |
+| Zoom in/out/reset | Ctrl + + / Ctrl + - / Ctrl + 0 |
+| Back | Ctrl + Alt + B |
+| Next / review module | Ctrl + Alt + X |
+| Question menu | Ctrl + Alt + G |
+| Help | Ctrl + Alt + H |
+| Directions | Ctrl + Alt + Shift + D |
+| Line reader | Ctrl + L |
+| Timer | Ctrl + Alt + T |
+| Mark for Review | Ctrl + Alt + V |
+| Highlights & Notes | Ctrl + H |
+| Calculator | Ctrl + Alt + C |
+| Reference sheet | Ctrl + Alt + R |
+| Option eliminator mode | Ctrl + Alt + O |
+| Eliminate A–D | Ctrl + Alt + 1–4 |
+| Select A–D | Ctrl + Shift + 1–4 |
+
+The exact official current pages should remain the authority for platform-specific
+shortcut differences and assistive-technology commands. Pause Timer is an
+accommodation-dependent Bluebook command and is not exposed as a normal practice
+control in this simulator.
 
 ## 3. Test-day flow (screen inventory) [VERIFY each screen in capture pass]
 
@@ -102,7 +141,9 @@ and typography. No hardcoded literals in components.
 - Answers persist across module revisit (back from review into questions).
 - Module submission is final within a run: after submit, no re-entry to
   the module (matches real exam).
-- Keyboard shortcuts mirror the real app where they exist. [VERIFY] list.
+- Keyboard shortcuts mirror the real app where they exist. [VERIFY] exact
+  platform-specific list; the implemented subset above is based on the current
+  official Windows/ChromeOS documentation.
 - Accessibility: keyboard navigable; color contrast as per real app.
 - Recovery: refresh during an active module or the scheduled break preserves
   the absolute deadline; stale or impossible persisted states are repaired
@@ -128,3 +169,10 @@ not guessed Bluebook behavior.
   real app would show College Board identity — do not claim affiliation.
 - No invented tools, screens, or "improvements" not in the real app.
 - No real College Board questions, passages, or answer keys.
+
+## 8. Official verification links
+
+- Windows shortcuts: https://bluebook.collegeboard.org/help-center/windows-keyboard-shortcuts
+- ChromeOS shortcuts: https://bluebook.collegeboard.org/help-center/chromebook-keyboard-shortcuts
+- macOS shortcuts: https://bluebook.collegeboard.org/help-center/macos-keyboard-shortcuts
+- Accessibility / platform shortcuts: https://bluebook.collegeboard.org/students/accommodations-assistive-technology/accessing-bluebook-features-content
