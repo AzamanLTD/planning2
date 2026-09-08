@@ -106,7 +106,8 @@
 
   function restoreSavedHighlights() {
     installHighlightStyle();
-    document.querySelectorAll('.source-panel .passage').forEach((passage) => {
+    const passages = document.querySelectorAll('.source-panel .passage');
+    passages.forEach((passage) => {
       if (passage.dataset.highlightsRestored === '1') return;
       const saved = [...document.querySelectorAll('.annotation-list span')]
         .map((el) => el.textContent.replace(/^“|”$/g, '').trim())
@@ -115,11 +116,11 @@
         passage.dataset.highlightsRestored = '1';
         return;
       }
-      const walker = document.createTreeWalker(passage, NodeFilter.SHOW_TEXT);
-      const nodes = [];
-      let node;
-      while ((node = walker.nextNode())) nodes.push(node);
       for (const text of saved) {
+        const walker = document.createTreeWalker(passage, NodeFilter.SHOW_TEXT);
+        const nodes = [];
+        let node;
+        while ((node = walker.nextNode())) nodes.push(node);
         for (const candidate of nodes) {
           if (candidate.parentElement?.closest('mark')) continue;
           if (wrapHighlightInTextNode(candidate, text)) break;
