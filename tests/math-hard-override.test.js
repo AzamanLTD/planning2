@@ -37,7 +37,7 @@ const expected = {
   MM2HQ17: { answer: '8/5', type: 'mcq', domain: 'Advanced Math' },
   MM2HQ18: { answer: '7/15', type: 'mcq', domain: 'Problem Solving and Data Analysis' },
   MM2HQ19: { answer: '−6', type: 'mcq', domain: 'Geometry and Trigonometry' },
-  MM2HQ20: { answer: '34', type: 'mcq', domain: 'Algebra' },
+  MM2HQ20: { answer: '34', type: 'spr', domain: 'Algebra' },
   MM2HQ21: { answer: '16', type: 'spr', domain: 'Advanced Math' },
   MM2HQ22: { answer: '108', type: 'spr', domain: 'Problem Solving and Data Analysis' }
 };
