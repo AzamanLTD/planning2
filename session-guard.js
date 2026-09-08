@@ -9,8 +9,12 @@
     { id: 'math1', count: 22 },
     { id: 'math2', count: 22 },
   ];
+  const SCREENS = new Set(['access', 'setup', 'room', 'startcode', 'directions', 'test', 'break', 'finish']);
 
   const normalizeObject = (value) => (value && typeof value === 'object' && !Array.isArray(value) ? value : {});
+  const normalizeBooleanMap = (value) => Object.fromEntries(
+    Object.entries(normalizeObject(value)).filter(([, enabled]) => enabled === true).map(([key]) => [key, true])
+  );
 
   function read() {
     try {
@@ -84,17 +88,22 @@
 
   function repair(state) {
     state.answers = normalizeObject(state.answers);
-    state.marked = normalizeObject(state.marked);
+    state.marked = normalizeBooleanMap(state.marked);
     state.eliminated = normalizeObject(state.eliminated);
     state.notes = normalizeObject(state.notes);
     state.highlights = normalizeObject(state.highlights);
-    state.completed = normalizeObject(state.completed);
-    state.warning = normalizeObject(state.warning);
+    state.completed = normalizeBooleanMap(state.completed);
+    state.warning = normalizeBooleanMap(state.warning);
     state.adaptive = normalizeObject(state.adaptive);
     state.adaptive.rw = state.adaptive.rw === 'hard' ? 'hard' : 'easy';
     state.adaptive.math = state.adaptive.math === 'hard' ? 'hard' : 'easy';
     state.submitted = state.submitted === true;
+    state.timerHidden = state.timerHidden === true;
+    state.lineReader = state.lineReader === true;
+    state.rules = state.rules === true;
+    state.desk = state.desk === true;
 
+    state.screen = SCREENS.has(state.screen) ? state.screen : 'access';
     state.mi = Number.isInteger(state.mi) ? state.mi : 0;
     state.mi = Math.max(0, Math.min(MODULES.length - 1, state.mi));
     const count = MODULES[state.mi].count;
