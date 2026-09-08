@@ -4,6 +4,7 @@ const assert = require('assert');
 const read = (p) => fs.readFileSync(p, 'utf8');
 const html = read('index.html');
 const app = read('app.js');
+const guard = read('session-guard.js');
 const keyboard = read('keyboard.js');
 const spr = read('spr-input.js');
 const tools = read('tools-enhancement.js');
@@ -15,6 +16,7 @@ const tokens = read('styles.css');
 const requiredScripts = [
   'data/questions.js',
   'data/rw2-easy.js',
+  'session-guard.js',
   'app.js',
   'keyboard.js',
   'spr-input.js',
@@ -33,6 +35,12 @@ for (const phrase of [
   'Review questions', 'Mark for review', 'Reference sheet', 'Calculator',
   'Line reader', 'Highlight selection', 'Hide timer'
 ]) assert(app.includes(phrase), `app.js missing contract: ${phrase}`);
+
+for (const phrase of [
+  'STORAGE_KEY', 'MODULES', 'state.submitted', 'state.completed',
+  'state.endAt <= Date.now()', 'state.breakEndAt <= Date.now()',
+  "state.screen = 'directions'", 'state.adaptive.rw', 'state.adaptive.math'
+]) assert(guard.includes(phrase), `session recovery contract missing: ${phrase}`);
 
 for (const phrase of [
   'F1', 'F6', 'Ctrl + Alt + B', 'Ctrl + Alt + X', 'Ctrl + Alt + G',
