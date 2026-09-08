@@ -23,6 +23,13 @@
     (items[0] || dialog).focus?.();
   }
 
+  function removeOrphanedWarning() {
+    if (document.querySelector('.test-shell')) return;
+    document.querySelectorAll('.warning-modal').forEach((modal) => {
+      modal.closest('.modal-backdrop')?.remove();
+    });
+  }
+
   document.addEventListener('click', (event) => {
     const dialog = activeDialog();
     if (!dialog || dialog.contains(event.target)) return;
@@ -48,6 +55,7 @@
   }, true);
 
   const observer = new MutationObserver(() => {
+    removeOrphanedWarning();
     const dialog = activeDialog();
     if (!dialog) {
       if (previous && previous.isConnected) previous.focus?.();
@@ -63,4 +71,5 @@
   });
 
   observer.observe(document.body, { childList: true, subtree: true });
+  removeOrphanedWarning();
 })();
