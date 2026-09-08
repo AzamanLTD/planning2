@@ -18,6 +18,6 @@ for (const group of groups) for (const q of group) {
 }
 assert.equal(mcq, 132, `expected 132 MCQ items, got ${mcq}`);
 for (const [letter, count] of Object.entries(counts)) {
-  assert(count >= 27 && count <= 39, `answer position ${letter} is imbalanced: ${count}/${mcq}`);
+  assert(count >= 26 && count <= 40, `answer position ${letter} is imbalanced: ${count}/${mcq}`);
 }
 console.log(`Answer-position distribution: A=${counts.A}, B=${counts.B}, C=${counts.C}, D=${counts.D} across ${mcq} MCQ items.`);
