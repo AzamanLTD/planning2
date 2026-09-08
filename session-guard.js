@@ -15,6 +15,16 @@
   const normalizeBooleanMap = (value) => Object.fromEntries(
     Object.entries(normalizeObject(value)).filter(([, enabled]) => enabled === true).map(([key]) => [key, true])
   );
+  const normalizeStringMap = (value) => Object.fromEntries(
+    Object.entries(normalizeObject(value)).filter(([, entry]) => typeof entry === 'string')
+  );
+  const normalizeArrayMap = (value, itemGuard) => Object.fromEntries(
+    Object.entries(normalizeObject(value)).map(([key, entries]) => [
+      key,
+      Array.isArray(entries) ? [...new Set(entries.filter(itemGuard))] : []
+    ])
+  );
+  const normalizeFiniteTime = (value) => Number.isFinite(value) ? value : null;
 
   function read() {
     try {
@@ -104,11 +114,11 @@
   }
 
   function repair(state) {
-    state.answers = normalizeObject(state.answers);
+    state.answers = normalizeStringMap(state.answers);
     state.marked = normalizeBooleanMap(state.marked);
-    state.eliminated = normalizeObject(state.eliminated);
-    state.notes = normalizeObject(state.notes);
-    state.highlights = normalizeObject(state.highlights);
+    state.eliminated = normalizeArrayMap(state.eliminated, (entry) => Number.isInteger(entry) && entry >= 0 && entry <= 3);
+    state.notes = normalizeStringMap(state.notes);
+    state.highlights = normalizeArrayMap(state.highlights, (entry) => typeof entry === 'string' && entry.trim() !== '');
     state.completed = normalizeBooleanMap(state.completed);
     state.warning = normalizeBooleanMap(state.warning);
     state.adaptive = normalizeObject(state.adaptive);
@@ -119,6 +129,8 @@
     state.lineReader = state.lineReader === true;
     state.rules = state.rules === true;
     state.desk = state.desk === true;
+    state.endAt = normalizeFiniteTime(state.endAt);
+    state.breakEndAt = normalizeFiniteTime(state.breakEndAt);
 
     normalizeCompletionChain(state);
     state.screen = SCREENS.has(state.screen) ? state.screen : 'access';
@@ -158,8 +170,6 @@
         state.screen = 'directions';
         return;
       }
-      // The break can only precede Math Module 1. Any later completion flags are
-      // impossible here and would otherwise create a resume state that cannot start.
       state.completed.math1 = false;
       state.completed.math2 = false;
       state.mi = 2;

@@ -141,4 +141,31 @@ assert.notEqual(state.completed.math2, true);
 assert.equal(state.screen, 'break');
 assert.equal(state.mi, 2);
 
+state = run({
+  ...base(),
+  screen: 'test',
+  endAt: 'not-a-time',
+  breakEndAt: 'also-invalid',
+  answers: { 'rw1-0': 123, bad: null },
+  marked: ['rw1-0'],
+  eliminated: { 'rw1-0': [0, 0, 1, 4, -1, '2'] },
+  notes: { 'rw1-0': 'valid', bad: 42 },
+  highlights: { 'rw1-0': [' passage ', '', ' passage ', 7] }
+});
+assert.equal(state.endAt, null);
+assert.equal(state.breakEndAt, null);
+assert.deepEqual(state.answers, { 'rw1-0': '123' });
+assert.deepEqual(state.marked, {});
+assert.deepEqual(state.eliminated, { 'rw1-0': [0, 1] });
+assert.deepEqual(state.notes, { 'rw1-0': 'valid' });
+assert.deepEqual(state.highlights, { 'rw1-0': [' passage '] });
+assert.equal(state.screen, 'directions');
+assert.equal(state.mi, 0);
+assert.equal(state.qi, 0);
+
+state = run({ ...base(), screen: 'break', mi: 2, breakEndAt: NOW + 10_000, completed: { rw1: true, rw2: true }, eliminated: { 'math1-0': [0, 4, 0, 2] }, highlights: { 'math1-0': ['note', 'note'] } });
+assert.equal(state.screen, 'break');
+assert.deepEqual(state.eliminated, { 'math1-0': [0, 2] });
+assert.deepEqual(state.highlights, { 'math1-0': ['note'] });
+
 console.log('Session recovery guard tests passed.');
