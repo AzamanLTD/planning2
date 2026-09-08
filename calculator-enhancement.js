@@ -133,10 +133,12 @@
       setDisplay();
       display.focus();
     }));
+    display.addEventListener('input', () => { expression = display.value; });
     display.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
         event.preventDefault();
-        try { expression = String(evaluate(display.value)); } catch (_) { expression = 'Error'; }
+        expression = display.value;
+        try { expression = String(evaluate(expression)); } catch (_) { expression = 'Error'; }
         setDisplay();
       } else if (event.key === 'Escape') {
         event.preventDefault();
@@ -154,7 +156,7 @@
       if (!Number.isFinite(xmin) || !Number.isFinite(xmax) || xmax <= xmin || xmax - xmin > 200 || !fn) {
         status.textContent = 'Use a valid X range (maximum span 200).'; return;
       }
-      const w = canvas.width, h = canvas.height, mid = h / 2;
+      const w = canvas.width, h = canvas.height;
       ctx.clearRect(0, 0, w, h);
       ctx.lineWidth = 1;
       ctx.strokeStyle = '#d7dce1';
