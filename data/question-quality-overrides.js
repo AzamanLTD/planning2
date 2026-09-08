@@ -10,7 +10,11 @@
     MM2EQ20: { options: ['5', '6', '7', '10'] },
     MM2EQ4: { options: ['1', '3', '5', '7'] },
     MM2HQ8: { options: ['2', '4', '7', '9'] },
-    MM2HQ16: { options: ['1', '4', '5', '8'] }
+    MM2HQ16: { options: ['1', '4', '5', '8'] },
+    MM2HQ14: { difficulty: 'hard', prompt: 'A solution is 18% salt by volume. How many milliliters of salt are in 250 mL of solution?' },
+    MM2HQ20: { difficulty: 'hard', prompt: 'For a positive value of x, the equation 7x - 9 = 26 is satisfied. What is x?' },
+    MM2HQ21: { difficulty: 'hard', prompt: 'For positive x, if x² = 121, what is the value of x?' },
+    MM2HQ22: { difficulty: 'hard', prompt: 'A class has 24 students. If 5/8 of the students submitted a project, how many students submitted it?' }
   };
 
   const groups = [
