@@ -55,3 +55,5 @@ jobs:
           if (math2Hard < 15) throw new Error('Math hard Module 2 is not sufficiently hard-tagged');
           console.log(`Validated ${all.length} records, ${spr} Math SPR items, unique IDs.`);
           NODE
+      - name: Run static application contract checks
+        run: node tests/static-contract.test.js
