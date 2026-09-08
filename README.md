@@ -1,40 +1,47 @@
-# planning2 — Bluebook SAT Exam Replica
+# Azaman SAT Practice Simulator
 
-A pixel-faithful web replica of the College Board **Bluebook** digital SAT exam
-experience. Purpose: students preparing for the SAT practice under conditions
-identical to test day — same sign-in flow, same timed modules, same tools, same
-screens — so the real exam feels familiar instead of intimidating.
+An original browser-based SAT practice experience for Azaman students. The goal is high behavioral fidelity to the current digital SAT/Bluebook testing flow without reproducing College Board branding, proprietary assets, or questions.
 
-## What this is
+## Current implementation
 
-- A web app that mirrors the Bluebook exam experience end to end
-- Sign-in with test code, exactly like proctored exam day
-- Full-length digital SAT: Reading & Writing (2 modules) and Math (2 modules),
-  timed to official specifications
-- Every testing tool from the official Bluebook toolset
-- An original question set written for this project (no College Board content)
+- Reading and Writing: 2 × 32-minute modules, 27 questions each
+- Math: 2 × 35-minute modules, 22 questions each
+- 10-minute break between sections
+- Test-code, check-in, room-code, start-code and directions flow
+- Wall-clock module timers with local persistence
+- Back/Next navigation, review grid, and mark-for-review
+- Multiple-choice and student-produced-response Math UI
+- Calculator and reference-sheet tools
+- Completion screen and local practice scoring
+- Responsive static frontend with no runtime dependencies
 
-## What this is not
+## Demo credentials
 
-- Not affiliated with or endorsed by College Board
-- Does not use or reproduce College Board's copyrighted questions
-- Not a scoring service for real SAT results
+- Access code: `SAT26` (also `PRACTICE` or `AZM-SAT`)
+- Room code: `AZM24`
+- Start code: `492776`
 
-## Repository layout
+## Source-of-truth project documents
 
-| Path | Contents |
-|---|---|
-| `ASSIGNMENT.md` | The full assignment brief from the owner. Read this first. |
-| `docs/bluebook-spec.md` | Verified exam structure, timings, flow, and tool inventory. Source of truth for behavior. |
-| `docs/question-set-guidelines.md` | Requirements for the original question bank. |
-| `docs/review-protocol.md` | Engineering standards, branch discipline, and review process. |
+- `ASSIGNMENT.md` — owner brief and acceptance criteria
+- `docs/bluebook-spec.md` — verified exam facts and behavioral requirements
+- `docs/question-set-guidelines.md` — question-bank coverage and quality bar
+- `docs/review-protocol.md` — branch, review, QA and launch discipline
 
-## Working agreement
+## Important status
 
-Jarvis (Codex) builds. Lyra (the project's review agent) audits every PR
-against the acceptance criteria in `docs/bluebook-spec.md` and takes over where
-implementation falls short. The owner monitors mock exams run through this
-app with real students.
+The current app is a functional foundation, not a claim of pixel-perfect completion. The spec still requires a real Bluebook reference-capture pass, exact design tokens, all official tools, richer original content, adaptive Module 2 selection, and full-run QA before student launch.
 
-Priority order: fidelity to the real exam experience above all else. No
-invented features, no "improvements" to the Bluebook UX, no off-brand colors.
+## Run locally
+
+Open `index.html` in a browser, or use any static HTTP server:
+
+```bash
+python3 -m http.server 8080
+```
+
+Then open `http://localhost:8080`.
+
+## Non-affiliation
+
+This is an independent Azaman practice product and is not affiliated with or endorsed by College Board. All practice questions are original.
