@@ -17,18 +17,32 @@ assert(app.includes('aria-pressed'), 'selected choices must expose pressed state
 assert(app.includes('aria-labelledby="warnTitle"'), 'timer warning must have an accessible name');
 assert(keyboard.includes('role="dialog"'), 'shortcut dialog must expose dialog role');
 assert(keyboard.includes('openHelp'), 'help shortcut must have a dedicated help dialog');
-assert(keyboard.includes('Ctrl + Alt + H'), 'Windows/ChromeOS help shortcut must be exposed');
-assert(keyboard.includes('Command + Control + H'), 'macOS help shortcut must be exposed');
-assert(keyboard.includes('Command + Control + P'), 'iPad help shortcut must be exposed');
-assert(keyboard.includes('Command + Shift + V'), 'macOS Mark for Review shortcut must be exposed');
-assert(keyboard.includes('Command + Option + T'), 'macOS timer shortcut must be exposed');
+for (const shortcut of [
+  'Ctrl + Alt + H / Command + Control + H / iPad: Command + Control + P',
+  'Ctrl + Alt + B / Command + Control + B',
+  'Ctrl + Alt + X / Command + Control + X',
+  'Ctrl + Alt + G / Command + Control + G',
+  'Ctrl + Alt + Shift + D / Command + Control + Shift + D',
+  'Ctrl + L / Command + L',
+  'Ctrl + Alt + T / Command + Option + T',
+  'Ctrl + Alt + V / Command + Shift + V',
+  'Ctrl + Alt + C / Command + Option + C',
+  'Ctrl + Alt + R / Command + Option + R',
+  'Ctrl + Alt + O / Command + Control + O',
+  'Ctrl + Alt + 1–4 / Command + Option + 1–4',
+  'Ctrl + Shift + 1–4 / Command + Control + 1–4'
+]) assert(keyboard.includes(shortcut), `platform shortcut must be documented: ${shortcut}`);
 assert(keyboard.includes('const isMac'), 'platform-specific shortcut routing must detect Apple platforms');
 assert(keyboard.includes('const isIPad'), 'iPad-specific shortcut routing must be supported');
+assert(keyboard.includes('const triple = isMac ? command && ctrl : ctrl && alt'), 'shared Control/Command chord must follow platform mapping');
+assert(keyboard.includes('const comboAlt = isMac ? command && alt : ctrl && alt'), 'Option/Alt chord must follow platform mapping');
+assert(keyboard.includes("isIPad && command && ctrl && lower === 'p'"), 'iPad Help must use Command+Control+P');
+assert(keyboard.includes("isMac ? command && event.shiftKey && lower === 'v' : ctrl && alt && lower === 'v'"), 'Mark for Review must use the platform-specific mapping');
 assert(modal.includes('role="dialog"'), 'modal focus layer must target dialog semantics');
 assert(modal.includes('aria-modal="true"'), 'dialogs must be modal to assistive technology');
 assert(modal.includes('FOCUSABLE'), 'dialogs must define keyboard focusable controls');
-assert(calculator.includes('aria-controls="azmCalcCalculate"'), 'calculator tabs must expose tabpanel relationship');
-assert(calculator.includes('aria-controls="azmCalcGraph"'), 'graph tab must expose tabpanel relationship');
+assert(calculator.includes('aria-controls="azmCalcCalculate"'), 'calculator tabs must expose calculate panel relationship');
+assert(calculator.includes('aria-controls="azmCalcGraph"'), 'calculator tabs must expose graph panel relationship');
 assert(calculator.includes('aria-selected'), 'calculator tabs must expose selection state');
 assert(codeInput.includes('setAttribute(\'aria-label\''), 'start-code fields must receive individual accessible labels');
 assert(codeInput.includes('Start code digit ${index + 1} of 6'), 'start-code labels must identify each digit position');
@@ -38,4 +52,4 @@ assert(uiA11y.includes("setAttribute('role', 'menu')"), 'test tools must expose 
 assert(uiA11y.includes('Question ${number}, ${states.join'), 'review buttons must have descriptive labels');
 assert(html.includes('ui-accessibility-enhancement.js'), 'semantic accessibility enhancement must be loaded');
 
-console.log('Accessibility contract checks passed.');
+console.log('Accessibility and platform shortcut contract checks passed.');
