@@ -15,6 +15,13 @@
   const normalizeBooleanMap = (value) => Object.fromEntries(
     Object.entries(normalizeObject(value)).filter(([, enabled]) => enabled === true).map(([key]) => [key, true])
   );
+  const normalizeAnswerMap = (value) => Object.fromEntries(
+    Object.entries(normalizeObject(value)).flatMap(([key, entry]) => {
+      if (typeof entry === 'string' && entry.trim() !== '') return [[key, entry]];
+      if (typeof entry === 'number' && Number.isFinite(entry)) return [[key, String(entry)]];
+      return [];
+    })
+  );
   const normalizeStringMap = (value) => Object.fromEntries(
     Object.entries(normalizeObject(value)).filter(([, entry]) => typeof entry === 'string')
   );
@@ -114,7 +121,7 @@
   }
 
   function repair(state) {
-    state.answers = normalizeStringMap(state.answers);
+    state.answers = normalizeAnswerMap(state.answers);
     state.marked = normalizeBooleanMap(state.marked);
     state.eliminated = normalizeArrayMap(state.eliminated, (entry) => Number.isInteger(entry) && entry >= 0 && entry <= 3);
     state.notes = normalizeStringMap(state.notes);
