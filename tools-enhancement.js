@@ -80,9 +80,10 @@
     if (!visible(panel)) return;
     panel.setAttribute('role', 'dialog');
     panel.setAttribute('aria-modal', 'true');
-    makeDraggable(panel);
+
     if (panel.id === 'referencePanel' && panel.dataset.referenceReady !== '1') {
       const head = panel.querySelector('.panel-head');
+      panel.dataset.dragReady = '0';
       panel.innerHTML = `${head?.outerHTML || ''}${FORMULAS}`;
       panel.setAttribute('aria-labelledby', 'referencePanelTitle');
       const title = panel.querySelector('.panel-head b');
@@ -94,8 +95,12 @@
       close?.setAttribute('aria-label', 'Close reference sheet');
       close?.addEventListener('click', () => panel.remove());
       panel.dataset.referenceReady = '1';
+      makeDraggable(panel);
       close?.focus();
+      return;
     }
+
+    makeDraggable(panel);
     if (panel.id === 'calculatorPanel') {
       panel.setAttribute('aria-labelledby', 'calculatorPanelTitle');
       const title = panel.querySelector('.panel-head b');
