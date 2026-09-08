@@ -3,7 +3,7 @@ const vm = require('vm');
 const assert = require('assert');
 
 const sandbox = { window: {} };
-for (const path of ['data/questions.js', 'data/rw2-easy.js']) vm.runInNewContext(fs.readFileSync(path, 'utf8'), sandbox);
+for (const path of ['data/questions.js', 'data/rw2-easy.js', 'data/rw-source-overrides.js', 'data/question-quality-overrides.js']) vm.runInNewContext(fs.readFileSync(path, 'utf8'), sandbox);
 const b = sandbox.window.SAT_QUESTIONS;
 
 function signature(q) {
