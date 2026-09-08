@@ -226,11 +226,15 @@
       state.screen = 'directions';
       return;
     }
-    if (state.screen !== 'finish' && state.screen !== 'directions' && state.screen !== 'test' && state.mi > firstIncomplete) {
+    if (state.screen !== 'finish' && state.screen !== 'directions' && state.screen !== 'test' && state.screen !== 'break' && state.mi > firstIncomplete) {
       state.mi = firstIncomplete;
       state.qi = 0;
       state.endAt = null;
       return;
+    }
+
+    if (state.screen !== 'finish' && state.screen !== 'break' && state.completed[MODULES[state.mi].id] === true) {
+      if (advancePastCompleted(state)) return;
     }
 
     if ((state.screen === 'directions' || state.screen === 'test') && advancePastCompleted(state)) return;
