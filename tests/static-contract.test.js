@@ -13,6 +13,7 @@ const modal = read('modal-enhancement.js');
 const calculator = read('calculator-enhancement.js');
 const connectivity = read('connectivity-enhancement.js');
 const codeInput = read('code-input-enhancement.js');
+const results = read('results-enhancement.js');
 const tokens = read('styles.css');
 
 const requiredScripts = [
@@ -27,7 +28,8 @@ const requiredScripts = [
   'modal-enhancement.js',
   'calculator-enhancement.js',
   'connectivity-enhancement.js',
-  'code-input-enhancement.js'
+  'code-input-enhancement.js',
+  'results-enhancement.js'
 ];
 for (const src of requiredScripts) assert(html.includes(`src=\"${src}\"`), `index.html missing ${src}`);
 assert(!html.includes('shortcut-enhancement.js'), 'obsolete duplicate shortcut layer must not be loaded');
@@ -84,6 +86,10 @@ for (const phrase of ['bannerId', 'navigator.onLine', "window.addEventListener('
 
 for (const phrase of ['start-digit', 'data-code-ready', 'paste', 'Backspace', 'ArrowLeft', 'ArrowRight', 'codeReady']) {
   assert(codeInput.includes(phrase), `code-input enhancement contract missing: ${phrase}`);
+}
+
+for (const phrase of ['Practice report', 'Reading and Writing', 'Math', 'raw practice-test results', 'not an official SAT scaled score', 'results-section-grid', 'results-module-row']) {
+  assert(results.includes(phrase), `results enhancement contract missing: ${phrase}`);
 }
 
 for (const token of [
