@@ -8,6 +8,7 @@ const keyboard = read('keyboard.js');
 const modal = read('modal-enhancement.js');
 const calculator = read('calculator-enhancement.js');
 const codeInput = read('code-input-enhancement.js');
+const uiA11y = read('ui-accessibility-enhancement.js');
 
 assert(html.includes('<html lang="en">'), 'document language must be declared');
 assert(app.includes('aria-live'), 'application status region must expose live updates');
@@ -23,5 +24,10 @@ assert(calculator.includes('aria-controls="azmCalcGraph"'), 'graph tab must expo
 assert(calculator.includes('aria-selected'), 'calculator tabs must expose selection state');
 assert(codeInput.includes('setAttribute(\'aria-label\''), 'start-code fields must receive individual accessible labels');
 assert(codeInput.includes('Start code digit ${index + 1} of 6'), 'start-code labels must identify each digit position');
+assert(uiA11y.includes("setAttribute('role', 'radio')"), 'answer choices must expose radio semantics');
+assert(uiA11y.includes("setAttribute('aria-checked'"), 'answer choices must expose checked state');
+assert(uiA11y.includes("setAttribute('role', 'menu')"), 'test tools must expose menu semantics');
+assert(uiA11y.includes('Question ${number}, ${states.join'), 'review buttons must have descriptive labels');
+assert(html.includes('ui-accessibility-enhancement.js'), 'semantic accessibility enhancement must be loaded');
 
 console.log('Accessibility contract checks passed.');
