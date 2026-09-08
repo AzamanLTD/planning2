@@ -40,7 +40,7 @@ for (const phrase of ['STORAGE_KEY', 'MODULES', 'state.submitted', 'state.comple
 
 for (const phrase of ['F1', 'F6', 'Ctrl + Alt + B', 'Ctrl + Alt + X', 'Ctrl + Alt + G', 'Ctrl + Alt + Shift + D',
   'Ctrl + Alt + V', 'Ctrl + L', 'Ctrl + H', 'Ctrl + Alt + C', 'Ctrl + Alt + R', 'Ctrl + Alt + O',
-  'Ctrl + Alt + 1–4', 'Ctrl + Shift + 1–4', 'clickText(\'Question menu\')']) {
+  'Ctrl + Alt + 1–4', 'Ctrl + Shift + 1–4', 'clickText(\'Question menu\')', "clickText('Next') || clickText('Review module')"]) {
   assert(keyboard.includes(phrase), `keyboard shortcut missing: ${phrase}`);
 }
 
