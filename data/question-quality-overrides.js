@@ -95,7 +95,7 @@
       prompt: 'A line perpendicular to 3x − 2y = 8 passes through (4, −1). What is the y-intercept of the line?',
       options: ['1/3', '5/3', '7/3', '11/3'],
       answer: 'B',
-      explanation: 'Rewrite the given line as y = (3/2)x − 4, so its slope is 3/2. A perpendicular line has slope −2/3. Using (4, −1): y + 1 = −(2/3)(x − 4), giving y = −(2/3)x + 5/3. The y-intercept is 5/3.'
+      explanation: 'Rewrite the given line as y = (3/2)x − 4, so its slope is 3/2. A perpendicular line has slope −2/3. Using (4, −1) gives y = −(2/3)x + 5/3, so the y-intercept is 5/3.'
     },
     MM2HQ13: {
       difficulty: 'hard',
@@ -121,10 +121,10 @@
     },
     MM2HQ16: {
       difficulty: 'hard',
-      prompt: 'A theater sells adult tickets for $18 and child tickets for $10. One performance sold 84 tickets for $1,376. How many child tickets were sold?',
-      options: ['12', '14', '16', '18'],
-      answer: 'C',
-      explanation: 'Let a and c be adult and child tickets. Then a + c = 84 and 18a + 10c = 1376. Substituting a = 84 − c gives 1512 − 8c = 1376, so c = 17. The data therefore require 17 child tickets; the original choice set did not contain the correct value. This override is intentionally corrected below by using a consistent revenue target of $1,384.'
+      prompt: 'A theater sells adult tickets for $18 and child tickets for $10. One performance sold 84 tickets for $1,384. How many child tickets were sold?',
+      options: ['12', '16', '17', '20'],
+      answer: 'B',
+      explanation: 'Let a and c be adult and child tickets. Then a + c = 84 and 18a + 10c = 1384. Substituting a = 84 − c gives 1512 − 8c = 1384, so c = 16. Therefore 16 child tickets were sold.'
     },
     MM2HQ17: {
       difficulty: 'hard',
@@ -172,12 +172,6 @@
       explanation: 'Let the original number of respondents be n. Then 0.60n = 0.54(n + 12). Solving gives 0.06n = 6.48, so n = 108.'
     }
   };
-
-  // Correct the ticket-data arithmetic while retaining a single explicit authored item.
-  overrides.MM2HQ16.revenueNote = undefined;
-  overrides.MM2HQ16.options = ['12', '16', '17', '20'];
-  overrides.MM2HQ16.answer = 'C';
-  overrides.MM2HQ16.explanation = 'Let a and c be adult and child tickets. Then a + c = 84 and 18a + 10c = 1384. Substituting a = 84 − c gives 1512 − 8c = 1384, so c = 16. Therefore 16 child tickets were sold.';
 
   const groups = [
     window.SAT_QUESTIONS?.rw1 || [],
