@@ -2,15 +2,13 @@
   'use strict';
 
   function sanitize() {
-    const title = document.querySelector('.test-title')?.textContent || '';
     const isTest = !!document.querySelector('.test-shell');
-    if (!isTest || !title) return;
+    if (!isTest) return;
 
     const meta = document.querySelector('.q-meta');
     if (meta) {
-      const counter = document.querySelector('.test-counter')?.textContent?.trim() || '';
-      meta.textContent = counter || 'Question';
-      meta.setAttribute('aria-label', meta.textContent);
+      meta.hidden = true;
+      meta.setAttribute('aria-hidden', 'true');
     }
 
     document.querySelectorAll('.source-panel .source-label').forEach((label) => {
