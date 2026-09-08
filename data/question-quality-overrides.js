@@ -20,22 +20,19 @@
     MM2HQ20: {
       difficulty: 'hard',
       prompt: 'The function f(x) = 3x² - 12x + 7 has its minimum value at which value of x?',
-      options: ['1', '2', '3', '4'],
-      answer: 'B',
+      answer: '2',
       explanation: 'For a quadratic ax² + bx + c, the x-coordinate of the vertex is -b/(2a). Here, -(-12)/(2·3) = 2.'
     },
     MM2HQ21: {
       difficulty: 'hard',
       prompt: 'For x ≥ 0, if √(x + 5) − √x = 1, what is the value of x?',
-      options: ['1', '2', '4', '9'],
-      answer: 'C',
+      answer: '4',
       explanation: 'Squaring gives x + 5 = x + 1 + 2√x, so 4 = 2√x and x = 4.'
     },
     MM2HQ22: {
       difficulty: 'hard',
       prompt: 'A box contains red and blue tiles in a ratio of 3 to 5. After 8 blue tiles are removed, the ratio of red to blue tiles is 3 to 4. How many tiles were in the box originally?',
-      options: ['48', '56', '64', '72'],
-      answer: 'C',
+      answer: '64',
       explanation: 'Let the numbers be 3k and 5k. Then 3k/(5k − 8) = 3/4, which gives 12k = 15k − 24 and k = 8. The original total was 8k = 64.'
     }
   };
