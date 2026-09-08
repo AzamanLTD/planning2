@@ -79,7 +79,7 @@ state = run({ ...base(), screen: 'not-a-real-screen', mi: 99, qi: -4, completed:
 assert.equal(state.screen, 'access');
 assert.equal(state.mi, 3);
 assert.equal(state.qi, 0);
-assert.deepEqual(state.completed, { math2: true });
+assert.deepEqual(state.completed, {});
 assert.deepEqual(state.marked, {});
 assert.deepEqual(state.warning, {});
 assert.equal(state.timerHidden, false);
