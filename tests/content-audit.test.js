@@ -5,10 +5,10 @@ const assert = require('assert');
 function loadBank() {
   const source = fs.readFileSync('data/questions.js', 'utf8');
   const easy = fs.readFileSync('data/rw2-easy.js', 'utf8');
-  const sandbox = {};
+  const sandbox = { window: {} };
   vm.runInNewContext(source, sandbox);
   vm.runInNewContext(easy, sandbox);
-  return sandbox.SAT_QUESTIONS;
+  return sandbox.window.SAT_QUESTIONS;
 }
 
 const bank = loadBank();
@@ -53,6 +53,4 @@ assert.equal(exactSignatures.size, 147, 'expected 147 unique full-item signature
 console.log(`Audited ${exactSignatures.size} unique items.`);
 console.log(`R&W items with source passages under 25 words: ${shortPassages}`);
 console.log(`R&W synthetic placeholder passages detected: ${syntheticSources}`);
-if (shortPassages || syntheticSources) {
-  console.warn('Content-quality follow-up remains open: strengthen short or synthetic passages before student launch.');
-}
+if (shortPassages || syntheticSources) console.warn('Content-quality follow-up remains open: strengthen short or synthetic passages before student launch.');
