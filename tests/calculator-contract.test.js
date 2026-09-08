@@ -18,5 +18,8 @@ assert(source.includes('const unary = ()'), 'calculator must parse unary signs')
 assert(source.includes('return power();'), 'calculator must give exponentiation a dedicated precedence layer');
 assert(source.includes('x from ${xmin} to ${xmax}'), 'graphing mode must report its plotted range');
 assert(source.includes('xmax - xmin > 200'), 'graphing mode must reject unbounded ranges');
+assert(source.includes("panel.dataset.dragReady = '0'"), 'calculator rewrite must reset drag enhancement state');
+assert(source.includes("panel.dataset.resizeReady = '0'"), 'calculator rewrite must reset resize enhancement state');
+assert(source.includes("panel.dataset.focusReady = '0'"), 'calculator rewrite must reset focus enhancement state');
 
 console.log('Calculator safety/capability contract passed.');
