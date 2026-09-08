@@ -29,8 +29,9 @@ for (const phrase of [
 
 for (const phrase of [
   'F1', 'F6', 'Ctrl + Alt + B', 'Ctrl + Alt + X', 'Ctrl + Alt + G',
-  'Ctrl + Alt + V', 'Ctrl + L', 'Ctrl + H', 'Ctrl + Alt + C',
-  'Ctrl + Alt + R', 'Ctrl + Alt + O', 'Ctrl + Alt + 1–4', 'Ctrl + Shift + 1–4'
+  'Ctrl + Alt + Shift + D', 'Ctrl + Alt + V', 'Ctrl + L', 'Ctrl + H',
+  'Ctrl + Alt + C', 'Ctrl + Alt + R', 'Ctrl + Alt + O',
+  'Ctrl + Alt + 1–4', 'Ctrl + Shift + 1–4'
 ]) assert(keyboard.includes(phrase), `keyboard shortcut missing: ${phrase}`);
 
 for (const phrase of ['normalizeFraction', 'normalizeDecimal', 'blur', 'MAX_POSITIVE_CHARS', 'MAX_NEGATIVE_CHARS']) {
@@ -47,6 +48,6 @@ for (const token of [
 ]) assert(tokens.includes(token), `visual token missing: ${token}`);
 
 assert(!app.includes('Function('), 'unsafe Function() evaluator must not return');
-assert(!app.includes('eval('), 'unsafe eval() must not return');
+assert(!app.includes('eval('), 'unsafe eval() evaluator must not return');
 
 console.log('Static simulator contract checks passed.');
