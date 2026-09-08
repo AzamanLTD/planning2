@@ -171,22 +171,25 @@
     if (state.screen === 'break') {
       const rw1Complete = state.completed.rw1 === true;
       const rw2Complete = state.completed.rw2 === true;
-      if (!rw1Complete || !rw2Complete) {
-        state.breakEndAt = null;
-        state.endAt = null;
-        state.mi = firstIncompleteModuleIndex(state);
+      if (rw1Complete && rw2Complete) {
+        state.completed.rw1 = true;
+        state.completed.rw2 = true;
+        state.completed.math1 = false;
+        state.completed.math2 = false;
+        state.mi = 2;
         state.qi = 0;
-        state.screen = 'directions';
+        state.endAt = null;
+        if (!Number.isFinite(state.breakEndAt) || state.breakEndAt <= Date.now()) {
+          state.breakEndAt = null;
+          state.screen = 'directions';
+        }
         return;
       }
-      state.completed.math1 = false;
-      state.completed.math2 = false;
-      state.mi = 2;
+      state.breakEndAt = null;
+      state.endAt = null;
+      state.mi = firstIncompleteModuleIndex(state);
       state.qi = 0;
-      if (!Number.isFinite(state.breakEndAt) || state.breakEndAt <= Date.now()) {
-        state.breakEndAt = null;
-        state.screen = 'directions';
-      }
+      state.screen = 'directions';
       return;
     }
 
