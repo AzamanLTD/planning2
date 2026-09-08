@@ -83,6 +83,8 @@ jobs:
           NODE
       - name: Validate CI trigger and concurrency contract
         run: node tests/ci-contract.test.js
+      - name: Validate effective question-answer integrity
+        run: node tests/question-integrity.test.js
       - name: Run automated content audit
         run: node tests/content-audit.test.js
       - name: Verify authored R&W source override coverage

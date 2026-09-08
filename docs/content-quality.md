@@ -6,7 +6,9 @@ The automated audit loads the exact runtime content, including `data/rw-source-o
 
 The authored-source pass removes the previously identified generic placeholder passages and expands every previously flagged short R&W source to meet the minimum source-length gate. The quality override layer also protects runtime question presentation: exact duplicate prompt/source/option-set groups are blocked, adaptive Module 2 variants must differ substantively, and multiple-choice answer positions are deterministically balanced so the correct choice is not predictably concentrated in one position.
 
-Answer-position balancing is treated as presentation-only: the keyed answer option text must remain identical to the pre-balance record for every non-reauthored MCQ, and the quality layer is idempotent when loaded more than once. The four curated hard Math SPR records are separately contract-tested for their type, answer, prompt, and explanation so a difficulty tag cannot silently drift away from the authored item.
+Effective-question integrity now separately verifies that every MCQ exposes four distinct choices and that its keyed A–D answer identifies exactly one choice. This catches malformed distractor sets even when the raw bank still has the expected count and metadata.
+
+Answer-position balancing is treated as presentation-only: the keyed answer option text must remain identical to the pre-balance record for every non-reauthored MCQ, and the quality layer is idempotent when loaded more than once. The curated hard Math records are separately contract-tested for their type, answer, prompt, and explanation so a difficulty tag cannot silently drift away from the authored item.
 
 Persisted-session validation also treats module completion as an ordered chain. A malformed state cannot mark a later module complete while an earlier module remains incomplete; recovery clears that impossible suffix before resuming the exam. Break recovery additionally requires both Reading and Writing modules to be complete and canonicalizes the state back to Math Module 1 before resuming or allowing the break to expire.
 
