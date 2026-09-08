@@ -83,29 +83,45 @@ Before feature code:
    calculator open, review screen, break, submit warnings).
 3. Store captures in `docs/captures/` with a naming convention of
    `NN-screen-name[-state].png` in flow order.
-4. Build `docs/captures/INDEX.md` mapping each capture to the screen
-   inventory above.
+4. Build `docs/captures/INDEX.md` mapping each capture to the screen inventory
+   above.
 5. Extract the visual token set from captures: exact hex values for
    backgrounds, headers, buttons, text, tool icons, states (hover, selected,
    eliminated, marked). Record in `docs/design-tokens.md`.
 
-The token set in `docs/design-tokens.md` is the only permitted source of
-colors and typography. No hardcoded literals in components.
+The token set in `docs/design-tokens.md` is the only permitted source of colors
+and typography. No hardcoded literals in components.
 
 ## 5. Behavior requirements
 
 - Timer counts down per module; auto-submits (or shows the real app's
   behavior) when time expires — [VERIFY] exact expiry behavior in capture
   pass and mirror it.
-- Question navigation: next/back, question menu grid, review screen —
+- Question navigation: next/back, question menu, review screen —
   never lose an answer on navigation.
 - Answers persist across module revisit (back from review into questions).
 - Module submission is final within a run: after submit, no re-entry to
   the module (matches real exam).
 - Keyboard shortcuts mirror the real app where they exist. [VERIFY] list.
 - Accessibility: keyboard navigable; color contrast as per real app.
+- Recovery: refresh during an active module or the scheduled break preserves
+  the absolute deadline; stale or impossible persisted states are repaired
+  without reopening completed modules.
 
-## 6. Non-goals (explicit)
+## 6. Network boundary [VERIFY / implementation boundary]
+
+The browser simulator must not invent a client-side test-center SSID check.
+Center Wi-Fi requirements, proctoring, room administration, and test-session
+network policy belong to the deployment/proctor layer rather than the local
+exam-state engine. The simulator may require a normal web connection to load
+its assets, but once the app is running, local persistence and timed-state
+behavior must not be tied to a fabricated SSID value.
+
+Any future server-backed practice mode may add explicit session/network
+controls, but those controls must be based on a real deployment contract,
+not guessed Bluebook behavior.
+
+## 7. Non-goals (explicit)
 
 - No College Board branding reproduction beyond what is necessary to
   mirror the exam UX; label the app as a practice simulator in places the
