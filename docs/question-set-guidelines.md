@@ -48,12 +48,12 @@ Per digital SAT domain weighting, each 22-question module should include:
 - **Geometry & Trigonometry** (~15%): area/volume, lines/angles, triangles,
   circles, trig ratios.
 
-Student-produced responses: **11 of the 44 Math questions (25%)** in the
-launch bank. The ratio is intentionally aligned to the official SAT
-specification that approximately 75% of Math questions are multiple-choice
-and the remainder are student-produced response. Answers are non-negative
-integers, decimals, or fractions — mirror the real entry UI, which shows
-fraction formatting. [VERIFY] entry UI in capture pass.
+Student-produced responses: roughly 25% of the delivered Math test. The
+current launch bank contains 5 SPR items in Math Module 1 and 5 SPR items in
+each Module 2 variant, yielding 10 SPR items in either complete 44-question
+adaptive Math path (about 23%). Answers are non-negative integers, decimals,
+or fractions — mirror the real entry UI, which shows fraction formatting.
+[VERIFY] entry UI in capture pass.
 
 ## Quality bar
 
