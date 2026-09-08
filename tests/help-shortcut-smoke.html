@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Azaman help shortcut smoke</title></head>
+<body>
+  <pre id="result">running</pre>
+  <iframe id="app" title="Azaman simulator" style="width:100%;height:500px;border:0"></iframe>
+  <script>
+    (() => {
+      const out = document.getElementById('result');
+      const frame = document.getElementById('app');
+      const KEY = 'azaman-sat-practice-v3';
+      const now = Date.now();
+      const state = {
+        v: 3, screen: 'test', student: 'Help Smoke', accessCode: 'SAT26', roomCode: 'AZM24', startCode: '492776',
+        mi: 2, qi: 0, endAt: now + 600000, breakEndAt: null,
+        answers: {}, marked: {}, eliminated: {}, notes: {}, highlights: {},
+        completed: { rw1: true, rw2: true, math1: false, math2: false }, submitted: false,
+        adaptive: { rw: 'hard', math: 'easy' }, timerHidden: false, lineReader: false, rules: true, desk: true, warning: {}
+      };
+      localStorage.setItem(KEY, JSON.stringify(state));
+      frame.src = '../index.html?help-smoke=' + now;
+      frame.addEventListener('load', () => {
+        const doc = frame.contentDocument;
+        const win = frame.contentWindow;
+        const checks = [];
+        const check = (name, value) => { checks.push(`${value ? 'PASS' : 'FAIL'} ${name}`); if (!value) throw new Error(name); };
+        setTimeout(() => {
+          try {
+            check('Math test surface loads', !!doc.querySelector('.test-shell') && doc.querySelector('.test-title')?.textContent.includes('Math'));
+            doc.dispatchEvent(new KeyboardEvent('keydown', { key: 'h', ctrlKey: true, altKey: true, bubbles: true, cancelable: true }));
+            check('Ctrl+Alt+H opens Help', !!doc.getElementById('helpDialog'));
+            check('Help has dialog semantics', doc.querySelector('#helpDialog > .modal[role="dialog"]')?.getAttribute('aria-modal') === 'true');
+            check('Help is named', doc.querySelector('#helpDialog > .modal[aria-labelledby="helpTitle"]') !== null);
+            check('Help explains autosave', (doc.getElementById('helpDialog')?.textContent || '').includes('saved automatically'));
+            check('Help explains completed-module locking', (doc.getElementById('helpDialog')?.textContent || '').includes('Completed modules cannot be reopened'));
+            doc.getElementById('helpShortcuts')?.click();
+            check('Help opens shortcut reference', !!doc.getElementById('shortcutHelp'));
+            check('Shortcut reference includes Help', (doc.getElementById('shortcutHelp')?.textContent || '').includes('Ctrl + Alt + H'));
+            doc.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+            check('Escape closes shortcut reference', !doc.getElementById('shortcutHelp'));
+            doc.dispatchEvent(new KeyboardEvent('keydown', { key: 'h', metaKey: true, altKey: true, bubbles: true, cancelable: true }));
+            check('Command+Option+H opens Help', !!doc.getElementById('helpDialog'));
+            doc.getElementById('helpDone')?.click();
+            check('Help closes cleanly', !doc.getElementById('helpDialog'));
+            out.textContent = checks.join('\n') + '\nHELP SMOKE COMPLETE';
+          } catch (error) {
+            out.textContent = checks.join('\n') + `\nFAIL ${error.message}`;
+          }
+        }, 100);
+      });
+    })();
+  </script>
+</body>
+</html>
