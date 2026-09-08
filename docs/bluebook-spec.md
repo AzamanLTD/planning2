@@ -39,7 +39,7 @@ These must all exist, with the real app's icons, placements, and interactions:
 3. **Reference Sheet** — formula reference shown on all tests with math
    questions. [VERIFY] exact contents/layout from capture pass.
 4. **Highlights & Notes** — highlight text in a question/passage; attach a
-   note to a question.
+  note to a question.
 5. **Mark for Review** — bookmark icon flags a question for return.
 6. **Line Reader** — focus tool for reading test content.
 7. **Option Eliminator** — strike through wrong answer choices; undoable.
@@ -53,35 +53,36 @@ The current official Windows/ChromeOS pages document F1 for the shortcut list,
 F6/Shift+F6 region navigation, zoom, Back, Next, Question Menu, Help,
 Directions, Line Reader, timer, Mark for Review, Highlights & Notes, Calculator,
 Reference Sheet, option selection/elimination, and Option Eliminator Mode.
-Windows/ChromeOS use Control-based combinations; macOS uses the corresponding
-Command/Option combinations, and iPad differs for Help. The official pages
-also document E as an available fifth response position in interfaces that
-support it; this SAT replica exposes only the four answer choices present in its
-current question bank.
+Windows/ChromeOS use Control-based combinations. macOS uses Command/Control or
+Command/Option combinations depending on the action. iPad follows the
+Command/Control and Command/Option patterns but uses **Command + Control + P**
+for Help. The official pages also document E as an available fifth response
+position in interfaces that support it; this SAT replica exposes only the four
+answer choices present in its current question bank.
 
-For the browser simulator, the implemented verified Windows/ChromeOS subset is:
+For the browser simulator, the implemented verified subset is:
 
-| Function | Shortcut |
-|---|---|
-| Keyboard shortcuts | F1 |
-| Exam region forward/back | F6 / Shift+F6 |
-| Zoom in/out/reset | Ctrl + + / Ctrl + - / Ctrl + 0 |
-| Back | Ctrl + Alt + B |
-| Next / review module | Ctrl + Alt + X |
-| Question menu | Ctrl + Alt + G |
-| Help | Ctrl + Alt + H |
-| Directions | Ctrl + Alt + Shift + D |
-| Line reader | Ctrl + L |
-| Timer | Ctrl + Alt + T |
-| Mark for Review | Ctrl + Alt + V |
-| Highlights & Notes | Ctrl + H |
-| Calculator | Ctrl + Alt + C |
-| Reference sheet | Ctrl + Alt + R |
-| Option eliminator mode | Ctrl + Alt + O |
-| Eliminate A–D | Ctrl + Alt + 1–4 |
-| Select A–D | Ctrl + Shift + 1–4 |
+| Function | Windows/ChromeOS | macOS | iPad |
+|---|---|---|---|
+| Keyboard shortcuts | F1 | F1 | F1 |
+| Exam region forward/back | F6 / Shift+F6 | F6 / Shift+F6 | F6 / Shift+F6 |
+| Zoom in/out/reset | Ctrl + + / Ctrl + - / Ctrl + 0 | Command + + / Command + - / Command + 0 | Command + + / Command + - / Command + 0 |
+| Back | Ctrl + Alt + B | Command + Control + B | Command + Control + B |
+| Next / review module | Ctrl + Alt + X | Command + Control + X | Command + Control + X |
+| Question menu | Ctrl + Alt + G | Command + Control + G | Command + Control + G |
+| Help | Ctrl + Alt + H | Command + Control + H | Command + Control + P |
+| Directions | Ctrl + Alt + Shift + D | Command + Control + Shift + D | Command + Control + Shift + D |
+| Line reader | Ctrl + L | Command + L | Command + L |
+| Timer | Ctrl + Alt + T | Command + Option + T | Command + Option + T |
+| Mark for Review | Ctrl + Alt + V | Command + Shift + V | Command + Shift + V |
+| Highlights & Notes | Ctrl + H | Control + H | Control + H |
+| Calculator | Ctrl + Alt + C | Command + Option + C | Command + Option + C |
+| Reference sheet | Ctrl + Alt + R | Command + Option + R | Command + Option + R |
+| Option eliminator mode | Ctrl + Alt + O | Command + Control + O | Command + Control + O |
+| Eliminate A–D | Ctrl + Alt + 1–4 | Command + Option + 1–4 | Command + Option + 1–4 |
+| Select A–D | Ctrl + Shift + 1–4 | Command + Control + 1–4 | Command + Control + 1–4 |
 
-The exact official current pages should remain the authority for platform-specific
+The exact official pages should remain the authority for additional platform-specific
 shortcut differences and assistive-technology commands. Pause Timer is an
 accommodation-dependent Bluebook command and is not exposed as a normal practice
 control in this simulator.
@@ -143,7 +144,7 @@ and typography. No hardcoded literals in components.
   the module (matches real exam).
 - Keyboard shortcuts mirror the real app where they exist. [VERIFY] exact
   platform-specific list; the implemented subset above is based on the current
-  official Windows/ChromeOS documentation.
+  official Windows/ChromeOS/macOS/iPad documentation.
 - Accessibility: keyboard navigable; color contrast as per real app.
 - Recovery: refresh during an active module or the scheduled break preserves
   the absolute deadline; stale or impossible persisted states are repaired
