@@ -75,4 +75,21 @@ assert.equal(state.screen, 'finish');
 state = run({ ...base(), screen: 'test', endAt: null });
 assert.equal(state.screen, 'directions');
 
+state = run({ ...base(), screen: 'not-a-real-screen', mi: 99, qi: -4, completed: { rw1: 'false', math2: 1 }, marked: { 'rw1-1': 'yes' }, warning: { rw1: 'true' }, timerHidden: 'yes', rules: 1 });
+assert.equal(state.screen, 'access');
+assert.equal(state.mi, 3);
+assert.equal(state.qi, 0);
+assert.deepEqual(state.completed, { math2: true });
+assert.deepEqual(state.marked, {});
+assert.deepEqual(state.warning, {});
+assert.equal(state.timerHidden, false);
+assert.equal(state.rules, false);
+
+state = run({ ...base(), submitted: false, screen: 'break', mi: 0, breakEndAt: NOW + 10_000, adaptive: { rw: 'garbage', math: 'hard' } });
+assert.equal(state.screen, 'break');
+assert.equal(state.mi, 2);
+assert.equal(state.adaptive.rw, 'easy');
+assert.equal(state.adaptive.math, 'hard');
+assert.ok(state.breakEndAt > NOW);
+
 console.log('Session recovery guard tests passed.');
