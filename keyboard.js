@@ -4,23 +4,26 @@
   const shortcuts = [
     ['F1', 'Keyboard shortcuts'],
     ['F6 / Shift+F6', 'Move between exam regions'],
-    ['Ctrl + + / Ctrl + - / Ctrl + 0', 'Zoom in / out / reset'],
-    ['Ctrl + Alt + B', 'Back'],
-    ['Ctrl + Alt + X', 'Next / review module'],
-    ['Ctrl + Alt + G', 'Question menu'],
-    ['Ctrl + Alt + H', 'Help'],
-    ['Ctrl + Alt + Shift + D', 'Open directions'],
+    ['Ctrl + + / Ctrl + - / Ctrl + 0 or Command equivalents', 'Zoom in / out / reset'],
+    ['Ctrl + Alt + B / Command + Control + B', 'Back'],
+    ['Ctrl + Alt + X / Command + Control + X', 'Next / review module'],
+    ['Ctrl + Alt + G / Command + Control + G', 'Question menu'],
+    ['Ctrl + Alt + H / Command + Control + H', 'Help'],
+    ['Ctrl + Alt + Shift + D / Command + Control + Shift + D', 'Directions'],
     ['Ctrl + L', 'Line reader'],
-    ['Ctrl + Alt + T', 'Hide/show timer or close the 5-minute message'],
-    ['Ctrl + Alt + V', 'Mark for Review'],
+    ['Ctrl + Alt + T / Command + Option + T', 'Hide/show timer or close the 5-minute message'],
+    ['Ctrl + Alt + V / Command + Shift + V', 'Mark for Review'],
     ['Ctrl + H', 'Highlights & Notes'],
-    ['Ctrl + Alt + C', 'Calculator'],
-    ['Ctrl + Alt + R', 'Reference sheet'],
-    ['Ctrl + Alt + O', 'Option eliminator'],
-    ['Ctrl + Alt + 1–4', 'Eliminate option A–D'],
-    ['Ctrl + Shift + 1–4', 'Select option A–D'],
+    ['Ctrl + Alt + C / Command + Option + C', 'Calculator'],
+    ['Ctrl + Alt + R / Command + Option + R', 'Reference sheet'],
+    ['Ctrl + Alt + O / Command + Control + O', 'Option eliminator'],
+    ['Ctrl + Alt + 1–4 / Command + Option + 1–4', 'Eliminate option A–D'],
+    ['Ctrl + Shift + 1–4 / Command + Control + 1–4', 'Select option A–D'],
+    ['iPad: Command + Control + P', 'Help'],
   ];
 
+  const isMac = /Mac|iPhone|iPad|iPod/i.test(`${navigator.platform || ''} ${navigator.userAgent || ''}`);
+  const isIPad = /iPad/i.test(`${navigator.platform || ''} ${navigator.userAgent || ''}`) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const isTyping = (target) => {
     if (!target) return false;
     const tag = target.tagName?.toLowerCase();
@@ -114,31 +117,43 @@
   function onKeydown(event) {
     const key = event.key;
     const lower = key.toLowerCase();
-    const mod = event.ctrlKey || event.metaKey;
+    const ctrl = event.ctrlKey;
+    const command = event.metaKey;
     const alt = event.altKey;
     if (key === 'Escape' && closeModal()) { event.preventDefault(); return; }
     if (key === 'F1') { event.preventDefault(); openShortcuts(); return; }
     if (!document.querySelector('.test-shell')) return;
     if (key === 'F6') { event.preventDefault(); focusRegion(event.shiftKey ? -1 : 1); return; }
-    if (mod && (key === '+' || key === '=')) { event.preventDefault(); document.documentElement.style.setProperty('--zoom-scale', String(Math.min(1.25, (Number(getComputedStyle(document.documentElement).getPropertyValue('--zoom-scale')) || 1) + 0.05))); return; }
-    if (mod && (key === '-' || key === '_')) { event.preventDefault(); document.documentElement.style.setProperty('--zoom-scale', String(Math.max(0.85, (Number(getComputedStyle(document.documentElement).getPropertyValue('--zoom-scale')) || 1) - 0.05))); return; }
-    if (mod && key === '0') { event.preventDefault(); document.documentElement.style.setProperty('--zoom-scale', '1'); return; }
+
+    const zoomMod = isMac ? command : ctrl;
+    if (zoomMod && (key === '+' || key === '=')) { event.preventDefault(); document.documentElement.style.setProperty('--zoom-scale', String(Math.min(1.25, (Number(getComputedStyle(document.documentElement).getPropertyValue('--zoom-scale')) || 1) + 0.05))); return; }
+    if (zoomMod && (key === '-' || key === '_')) { event.preventDefault(); document.documentElement.style.setProperty('--zoom-scale', String(Math.max(0.85, (Number(getComputedStyle(document.documentElement).getPropertyValue('--zoom-scale')) || 1) - 0.05))); return; }
+    if (zoomMod && key === '0') { event.preventDefault(); document.documentElement.style.setProperty('--zoom-scale', '1'); return; }
     if (isTyping(event.target)) return;
-    if (mod && alt && lower === 'b') { event.preventDefault(); clickText('Back'); return; }
-    if (mod && alt && lower === 'x') { event.preventDefault(); nextShortcut(); return; }
-    if (mod && alt && lower === 'g') { event.preventDefault(); clickText('Question menu'); return; }
-    if (mod && alt && lower === 'h') { event.preventDefault(); openHelp(); return; }
-    if (mod && alt && lower === 'v') { event.preventDefault(); clickText('Mark for review'); return; }
-    if (mod && alt && lower === 'c') { event.preventDefault(); openToolByText('Calculator'); return; }
-    if (mod && alt && lower === 'r') { event.preventDefault(); openToolByText('Reference sheet'); return; }
-    if (mod && lower === 'l') { event.preventDefault(); openToolByText('Line reader'); return; }
-    if (mod && alt && lower === 't') { event.preventDefault(); openToolByText('Hide timer', () => openToolByText('Show timer')); return; }
-    if (mod && lower === 'h') { event.preventDefault(); openToolByText('Note'); return; }
-    if (mod && alt && lower === 'o') { event.preventDefault(); document.body.classList.toggle('option-eliminator-mode'); return; }
-    if (mod && alt && event.shiftKey && lower === 'd') { event.preventDefault(); openDirections(); return; }
-    if (mod && event.shiftKey && /^[1-4]$/.test(key)) { event.preventDefault(); triggerOption(Number(key), 'select'); return; }
-    if (mod && alt && /^[1-4]$/.test(key)) { event.preventDefault(); triggerOption(Number(key), 'eliminate'); }
+
+    const primaryTriple = isMac ? command && ctrl : ctrl && alt;
+    const primaryShift = isMac ? command && shiftPressed(event) : ctrl && event.shiftKey;
+    const macAlt = isMac && command && alt;
+    const crossPlatformAlt = isMac ? macAlt : ctrl && alt;
+
+    if (primaryTriple && !alt && lower === 'b') { event.preventDefault(); clickText('Back'); return; }
+    if (primaryTriple && !alt && lower === 'x') { event.preventDefault(); nextShortcut(); return; }
+    if (primaryTriple && !alt && lower === 'g') { event.preventDefault(); clickText('Question menu'); return; }
+    if ((isIPad && command && ctrl && lower === 'p') || (!isIPad && primaryTriple && !alt && lower === 'h')) { event.preventDefault(); openHelp(); return; }
+    if (primaryTriple && event.shiftKey && lower === 'd') { event.preventDefault(); openDirections(); return; }
+    if (ctrl && !command && !alt && lower === 'l') { event.preventDefault(); openToolByText('Line reader'); return; }
+    if (macAlt ? command && alt && lower === 't' : ctrl && alt && lower === 't') { event.preventDefault(); openToolByText('Hide timer', () => openToolByText('Show timer')); return; }
+    if (isMac ? command && event.shiftKey && lower === 'v' : ctrl && alt && lower === 'v') { event.preventDefault(); clickText('Mark for review'); return; }
+    if (ctrl && !alt && lower === 'h') { event.preventDefault(); openToolByText('Note'); return; }
+    if (isMac ? command && ctrl && lower === 'c' : ctrl && alt && lower === 'c') { event.preventDefault(); openToolByText('Calculator'); return; }
+    if (isMac ? command && alt && lower === 'r' : ctrl && alt && lower === 'r') { event.preventDefault(); openToolByText('Reference sheet'); return; }
+    if (isMac ? command && ctrl && lower === 'o' : ctrl && alt && lower === 'o') { event.preventDefault(); document.body.classList.toggle('option-eliminator-mode'); return; }
+    if (crossPlatformAlt && /^[1-4]$/.test(key)) { event.preventDefault(); triggerOption(Number(key), 'eliminate'); return; }
+    if (isMac ? command && ctrl && /^[1-4]$/.test(key) : ctrl && event.shiftKey && /^[1-4]$/.test(key)) { event.preventDefault(); triggerOption(Number(key), 'select'); return; }
+    void primaryShift;
   }
+
+  function shiftPressed(event) { return event.shiftKey; }
 
   document.addEventListener('keydown', onKeydown, true);
   const app = document.getElementById('app');
