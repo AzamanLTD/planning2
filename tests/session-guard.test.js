@@ -80,7 +80,7 @@ assert.equal(state.screen, 'finish');
 state = run({ ...base(), screen: 'test', endAt: null });
 assert.equal(state.screen, 'directions');
 
-state = run({ ...base(), screen: 'not-a-real-screen', mi: 99, qi: -4, completed: { rw1: 'false', math2: 1 }, marked: { 'rw1-1': 'yes' }, warning: { rw1: 'true' }, timerHidden: 'yes', rules: 1 });
+state = run({ ...base(), screen: 'not-a-real-screen', mi: 99, qi: -4, completed: { rw1: 'false', math2: 1 }, marked: ['rw1-1'], warning: { rw1: 'true' }, timerHidden: 'yes', rules: 1 });
 assert.equal(state.screen, 'access');
 assert.equal(state.mi, 3);
 assert.equal(state.qi, 0);
@@ -140,6 +140,14 @@ assert.notEqual(state.completed.math1, true);
 assert.notEqual(state.completed.math2, true);
 assert.equal(state.screen, 'break');
 assert.equal(state.mi, 2);
+
+state = run({ ...base(), screen: 'test', mi: 2, endAt: NOW + 60_000, completed: { rw1: true } });
+assert.equal(state.completed.rw1, true);
+assert.notEqual(state.completed.rw2, true);
+assert.equal(state.screen, 'directions');
+assert.equal(state.mi, 1);
+assert.equal(state.qi, 0);
+assert.equal(state.endAt, null);
 
 state = run({
   ...base(),
