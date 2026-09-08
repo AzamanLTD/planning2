@@ -20,7 +20,7 @@ An independent browser-based SAT practice experience for Azaman students. The pr
 - Robust six-digit start-code entry with paste, arrow-key, backspace, and assistive labels
 - Student-facing UI hides internal domain/skill/difficulty metadata
 - Practice completion report with Reading and Writing / Math and per-module raw accuracy
-- Accessibility semantics for answer controls, test tools, review dialogs, calculator tabs, and start-code fields
+- Accessibility semantics for answer controls, test tools, review dialogs, calculator tabs, start-code fields, and reduced-motion preferences
 - Deterministic MCQ answer-position balancing so the correct choice is not predictably concentrated in one option position
 - Automated question-bank validation, authored-source content audit, source-override coverage, diversity audit, adaptive-variant integrity checks, answer-position balance, static contracts, recovery edge-case tests, SPR normalization contracts, accessibility contracts, primary Chromium smoke coverage, and dedicated Help shortcut browser smoke
 - Responsive static frontend with no runtime service dependency
@@ -47,6 +47,7 @@ The repository contains 147 structured original question records across the laun
 - `docs/review-protocol.md` — branch, review, QA and launch discipline
 - `docs/content-quality.md` — automated/editorial content-quality gate
 - `docs/launch-checklist.md` — release acceptance checklist
+- `docs/platform-readiness.md` — 2026–27 platform and accessibility readiness matrix
 - `docs/captures/INDEX.md` — reference-capture requirements and evidence map
 
 ## Verification status
