@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check JavaScript syntax
+        run: node --check app.js
+      - name: Validate question-bank shape
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const source = fs.readFileSync('data/questions.js', 'utf8');
+          const sandbox = {};
+          new Function('window', source)(sandbox);
+          const b = sandbox.SAT_QUESTIONS;
+          const expected = {
+            rw1: 27,
+            rw2Easy: 27,
+            rw2Hard: 27,
+            math1: 22,
+            math2Easy: 22,
+            math2Hard: 22
+          };
+          if (b.rw1.length !== expected.rw1) throw new Error('rw1 count mismatch');
+          if (b.rw2.easy.length !== expected.rw2Easy) throw new Error('rw2 easy count mismatch');
+          if (b.rw2.hard.length !== expected.rw2Hard) throw new Error('rw2 hard count mismatch');
+          if (b.math1.length !== expected.math1) throw new Error('math1 count mismatch');
+          if (b.math2.easy.length !== expected.math2Easy) throw new Error('math2 easy count mismatch');
+          if (b.math2.hard.length !== expected.math2Hard) throw new Error('math2 hard count mismatch');
+          const all = [...b.rw1, ...b.rw2.easy, ...b.rw2.hard, ...b.math1, ...b.math2.easy, ...b.math2.hard];
+          if (all.length !== 147) throw new Error(`expected 147 records, got ${all.length}`);
+          if (all.some(q => !q.id || !q.prompt || !q.answer || !q.difficulty || !q.domain || !q.skill || !q.explanation)) throw new Error('missing required question metadata');
+          if (all.some(q => q.section === 'Reading and Writing' && (!Array.isArray(q.options) || q.options.length !== 4))) throw new Error('R&W question must have 4 options');
+          if (all.some(q => q.section === 'Math' && q.type === 'mcq' && (!Array.isArray(q.options) || q.options.length !== 4))) throw new Error('Math MCQ must have 4 options');
+          if (all.filter(q => q.section === 'Math' && q.type === 'spr').length < 10) throw new Error('too few Math SPR items');
+          console.log(`Validated ${all.length} question records.`);
+          NODE
