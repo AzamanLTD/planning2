@@ -115,6 +115,8 @@ jobs:
         run: node tests/accessibility-contract.test.js
       - name: Run session recovery edge-case tests
         run: node tests/session-guard.test.js
+      - name: Run SAT SPR normalization contract tests
+        run: node tests/spr-contract.test.js
       - name: Run Chromium browser smoke test
         run: |
           set -eu
