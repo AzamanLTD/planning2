@@ -25,8 +25,10 @@ jobs:
           node - <<'NODE'
           const fs = require('fs');
           const source = fs.readFileSync('data/questions.js', 'utf8');
+          const easy = fs.readFileSync('data/rw2-easy.js', 'utf8');
           const sandbox = {};
           new Function('window', source)(sandbox);
+          new Function('window', easy)(sandbox);
           const b = sandbox.SAT_QUESTIONS;
           const groups = [
             ['rw1', b.rw1], ['rw2.easy', b.rw2.easy], ['rw2.hard', b.rw2.hard],
@@ -46,6 +48,10 @@ jobs:
             if (q.section === 'Reading and Writing' && (!Array.isArray(q.options) || q.options.length !== 4)) throw new Error(`R&W options mismatch: ${q.id}`);
             if (q.section === 'Math' && q.type === 'mcq' && (!Array.isArray(q.options) || q.options.length !== 4)) throw new Error(`Math MCQ options mismatch: ${q.id}`);
             if (q.section === 'Math' && q.type === 'spr' && q.options?.length) throw new Error(`SPR should not carry MCQ options: ${q.id}`);
+            if (q.section === 'Reading and Writing') {
+              const words = q.source?.paragraphs?.join(' ').trim().split(/\s+/).filter(Boolean).length || 0;
+              if (words > 150) throw new Error(`R&W source exceeds 150 words: ${q.id} (${words})`);
+            }
           }
           const spr = all.filter(q => q.section === 'Math' && q.type === 'spr').length;
           if (spr < 10 || spr > 20) throw new Error(`unexpected SPR volume: ${spr}`);
@@ -53,6 +59,34 @@ jobs:
           if (rw2Hard < 20) throw new Error('R&W hard Module 2 is not sufficiently hard-tagged');
           const math2Hard = b.math2.hard.filter(q => q.difficulty === 'hard').length;
           if (math2Hard < 15) throw new Error('Math hard Module 2 is not sufficiently hard-tagged');
+
+          const ranges = {
+            'Reading and Writing': {
+              'Craft and Structure': [7, 9],
+              'Information and Ideas': [6, 8],
+              'Standard English Conventions': [6, 8],
+              'Expression of Ideas': [4, 6]
+            },
+            Math: {
+              Algebra: [7, 9],
+              'Advanced Math': [6, 8],
+              'Problem Solving and Data Analysis': [3, 5],
+              'Geometry and Trigonometry': [3, 5]
+            }
+          };
+          const moduleDomainCounts = (items, section) => {
+            const counts = Object.fromEntries(Object.keys(ranges[section]).map(k => [k, 0]));
+            for (const q of items) counts[q.domain] = (counts[q.domain] || 0) + 1;
+            for (const [domain, [min, max]] of Object.entries(ranges[section])) {
+              if (counts[domain] < min || counts[domain] > max) throw new Error(`${section} domain distribution out of range: ${domain}=${counts[domain]} (expected ${min}-${max})`);
+            }
+            return counts;
+          };
+          for (const [name, items] of groups) {
+            const section = items[0].section;
+            const counts = moduleDomainCounts(items, section);
+            console.log(`${name} domain coverage: ${JSON.stringify(counts)}`);
+          }
           console.log(`Validated ${all.length} records, ${spr} Math SPR items, unique IDs.`);
           NODE
       - name: Run static application contract checks
