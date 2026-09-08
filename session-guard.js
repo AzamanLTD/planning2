@@ -47,9 +47,14 @@
     }
   }
 
+  function firstIncompleteModuleIndex(state) {
+    const index = MODULES.findIndex((module) => state.completed[module.id] !== true);
+    return index >= 0 ? index : MODULES.length - 1;
+  }
+
   function advancePastCompleted(state) {
     const current = MODULES[state.mi];
-    if (!state.completed[current.id]) return false;
+    if (!current || !state.completed[current.id]) return false;
 
     state.endAt = null;
     state.qi = 0;
@@ -129,6 +134,16 @@
     }
 
     if (state.screen === 'break') {
+      const rw1Complete = state.completed.rw1 === true;
+      const rw2Complete = state.completed.rw2 === true;
+      if (!rw1Complete || !rw2Complete) {
+        state.breakEndAt = null;
+        state.endAt = null;
+        state.mi = firstIncompleteModuleIndex(state);
+        state.qi = 0;
+        state.screen = 'directions';
+        return;
+      }
       state.mi = 2;
       state.qi = 0;
       if (!Number.isFinite(state.breakEndAt) || state.breakEndAt <= Date.now()) {
