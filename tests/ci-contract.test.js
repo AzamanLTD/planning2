@@ -11,8 +11,8 @@ assert.match(workflow, /\nconcurrency:\n\s+group:\s+ci-\$\{\{\s*github\.event\.p
 assert.match(workflow, /\n\s+cancel-in-progress:\s+true\s*\n/, 'CI must cancel superseded runs');
 assert.match(workflow, /Run dedicated Help shortcut smoke test/, 'CI must include a dedicated Help browser smoke step');
 assert.match(workflow, /tests\/help-shortcut-smoke\.html/, 'CI Help smoke must target the dedicated fixture');
-assert(helpSmoke.includes('Ctrl+Alt+H'), 'Help smoke must exercise Control-based Help');
-assert(helpSmoke.includes('metaKey: true'), 'Help smoke must exercise Command-based Help');
+assert(helpSmoke.includes('Ctrl+Alt+H'), 'Help smoke must exercise Windows/ChromeOS Help');
+assert(helpSmoke.includes('Command + Control + H'), 'Help smoke must verify the documented macOS Help shortcut');
 assert(helpSmoke.includes('HELP SMOKE COMPLETE'), 'Help smoke must expose a machine-checkable completion marker');
 
 console.log('CI trigger/concurrency and dedicated Help-smoke contracts passed.');
