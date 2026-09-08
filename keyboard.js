@@ -48,7 +48,7 @@
     if (!nodes.length) return;
     nodes.forEach((node) => { if (node.tabIndex < 0) node.tabIndex = 0; });
     const active = document.activeElement;
-    let index = nodes.indexOf(active);
+    let index = nodes.findIndex((node) => node === active || node.contains(active));
     if (index < 0) index = direction > 0 ? -1 : 0;
     const next = nodes[(index + direction + nodes.length) % nodes.length];
     next.focus({ preventScroll: false });
