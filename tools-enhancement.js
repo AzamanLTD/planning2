@@ -76,6 +76,50 @@
     handle.addEventListener('pointercancel', () => { drag = null; });
   }
 
+  function wrapHighlightInTextNode(node, text) {
+    if (!text || !node.nodeValue) return false;
+    const source = node.nodeValue;
+    const start = source.indexOf(text);
+    if (start < 0) return false;
+    const end = start + text.length;
+    const before = source.slice(0, start);
+    const after = source.slice(end);
+    const mark = document.createElement('mark');
+    mark.className = 'azm-saved-highlight';
+    mark.textContent = text;
+    const parent = node.parentNode;
+    if (!parent) return false;
+    if (before) parent.insertBefore(document.createTextNode(before), node);
+    parent.insertBefore(mark, node);
+    if (after) parent.insertBefore(document.createTextNode(after), node);
+    parent.removeChild(node);
+    return true;
+  }
+
+  function restoreSavedHighlights() {
+    document.querySelectorAll('.source-panel .passage').forEach((passage) => {
+      if (passage.dataset.highlightsRestored === '1') return;
+      const saved = [...document.querySelectorAll('.annotation-list span')]
+        .map((el) => el.textContent.replace(/^“|”$/g, '').trim())
+        .filter(Boolean);
+      if (!saved.length) {
+        passage.dataset.highlightsRestored = '1';
+        return;
+      }
+      const walker = document.createTreeWalker(passage, NodeFilter.SHOW_TEXT);
+      const nodes = [];
+      let node;
+      while ((node = walker.nextNode())) nodes.push(node);
+      for (const text of saved) {
+        for (const candidate of nodes) {
+          if (candidate.parentElement?.closest('mark')) continue;
+          if (wrapHighlightInTextNode(candidate, text)) break;
+        }
+      }
+      passage.dataset.highlightsRestored = '1';
+    });
+  }
+
   function enhance(panel) {
     if (!visible(panel)) return;
     panel.setAttribute('role', 'dialog');
@@ -120,6 +164,7 @@
   const observer = new MutationObserver(() => {
     enhance(document.getElementById('calculatorPanel'));
     enhance(document.getElementById('referencePanel'));
+    restoreSavedHighlights();
   });
 
   const app = document.getElementById('app');
