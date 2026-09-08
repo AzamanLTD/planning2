@@ -43,7 +43,6 @@
     };
     const primary = () => {
       if (eat(/^\+/)) return primary();
-      if (eat(/^- /)) return -primary();
       if (eat(/^-/)) return -primary();
       if (eat(/^\(/)) {
         const value = expression();
