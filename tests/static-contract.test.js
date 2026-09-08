@@ -65,7 +65,7 @@ for (const phrase of ['start-digit', 'paste', 'Backspace', 'ArrowLeft', 'ArrowRi
 for (const phrase of ['Practice report', 'Reading and Writing', 'Math', 'raw practice-test results', 'not an official SAT scaled score', 'results-section-grid', 'results-module-row']) {
   assert(results.includes(phrase), `results enhancement contract missing: ${phrase}`);
 }
-for (const phrase of ['q-meta', 'domain', 'difficulty', 'source-label', "textContent = 'Source'", 'MutationObserver', 'sanitize']) {
+for (const phrase of ['q-meta', 'source-label', 'hidden = true', 'aria-hidden', "textContent = 'Source'", 'MutationObserver', 'sanitize']) {
   assert(sanitizer.includes(phrase), `student UI sanitizer contract missing: ${phrase}`);
 }
 
