@@ -14,7 +14,12 @@ jobs:
         with:
           node-version: 22
       - name: Check JavaScript syntax
-        run: node --check app.js
+        run: |
+          set -eu
+          for file in $(find . -name '*.js' -not -path './node_modules/*' | sort); do
+            echo "Checking $file"
+            node --check "$file"
+          done
       - name: Validate question-bank shape and coverage
         run: |
           node - <<'NODE'
