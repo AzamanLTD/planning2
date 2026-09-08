@@ -11,8 +11,6 @@
       .replace(/π/g, 'pi').replace(/√/g, 'sqrt')
       .replace(/\s+/g, '')
       .replace(/\^/g, '^');
-    // Accept the notation students naturally type into a graphing calculator:
-    // 2x, 2(x+1), 2sin(30), (x+1)(x-1), and 2π.
     x = x.replace(/(\d|\))(?=(?:[A-Za-z]+|\())/g, '$1*');
     x = x.replace(/(pi|e|\))(?=(?:\d|\())/g, '$1*');
     return x;
@@ -42,8 +40,6 @@
       return match[0];
     };
     const primary = () => {
-      if (eat(/^\+/)) return primary();
-      if (eat(/^-/)) return -primary();
       if (eat(/^\(/)) {
         const value = expression();
         if (!eat(/^\)/)) throw new Error('paren');
@@ -64,13 +60,18 @@
     };
     const power = () => {
       const base = primary();
-      return eat(/^\^/) ? Math.pow(base, power()) : base;
+      return eat(/^\^/) ? Math.pow(base, unary()) : base;
+    };
+    const unary = () => {
+      if (eat(/^\+/)) return unary();
+      if (eat(/^-/)) return -unary();
+      return power();
     };
     const term = () => {
-      let value = power();
+      let value = unary();
       for (;;) {
-        if (eat(/^\*/)) value *= power();
-        else if (eat(/^\//)) value /= power();
+        if (eat(/^\*/)) value *= unary();
+        else if (eat(/^\//)) value /= unary();
         else break;
       }
       return value;
@@ -90,8 +91,7 @@
   }
 
   function graphExpression(input, x) {
-    const substituted = input.replace(/\bx\b/gi, `(${x})`);
-    return evaluate(substituted);
+    return evaluate(input.replace(/\bx\b/gi, `(${x})`));
   }
 
   function install(panel) {
@@ -110,7 +110,7 @@
           <button type="button" data-insert="sin(">sin</button><button type="button" data-insert="cos(">cos</button><button type="button" data-insert="tan(">tan</button><button type="button" data-insert="sqrt(">√</button><button type="button" data-insert="^">xʸ</button><button type="button" data-insert="pi">π</button>
         </div>
         <div class="calc-grid">${['7','8','9','÷','4','5','6','×','1','2','3','−','0','.','(',')','+','⌫','=','C'].map(v => `<button class="calc-key" type="button" data-calc="${v}">${v}</button>`).join('')}</div>
-        <p class="small azm-calc-help">Angles use degrees. Supported functions include sin, cos, tan, inverse trig, √, abs, ln, log, exp, π and e. Implicit multiplication such as 2x and 2π is supported.</p>
+        <p class="small azm-calc-help">Angles use degrees. Supported functions include sin, cos, tan, inverse trig, √, abs, ln, log, exp, π and e. Implicit multiplication such as 2x, 2π, and 2(x+1) is supported.</p>
       </section>
       <section id="azmCalcGraph" data-calc-view="graph" role="tabpanel" hidden>
         <label class="small" for="azmGraphExpr">Function</label>
@@ -121,10 +121,7 @@
       </section>`;
 
     panel.querySelector('#closeCalc')?.addEventListener('click', () => panel.remove());
-    const views = {
-      calculate: panel.querySelector('#azmCalcCalculate'),
-      graph: panel.querySelector('#azmCalcGraph'),
-    };
+    const views = { calculate: panel.querySelector('#azmCalcCalculate'), graph: panel.querySelector('#azmCalcGraph') };
     panel.querySelectorAll('.azm-calc-tab').forEach((tab) => tab.addEventListener('click', () => {
       const mode = tab.dataset.mode;
       panel.querySelectorAll('.azm-calc-tab').forEach((item) => {
@@ -147,21 +144,17 @@
       const value = button.dataset.calc;
       if (value === 'C') expression = '';
       else if (value === '⌫') expression = expression.slice(0, -1);
-      else if (value === '=') {
-        try { expression = String(evaluate(expression)); } catch (_) { expression = 'Error'; }
-      } else expression = expression === 'Error' ? value : expression + value;
+      else if (value === '=') { try { expression = String(evaluate(expression)); } catch (_) { expression = 'Error'; } }
+      else expression = expression === 'Error' ? value : expression + value;
       setDisplay(); display.focus();
     }));
     display.addEventListener('input', () => { expression = display.value; });
     display.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
-        event.preventDefault();
-        expression = display.value;
+        event.preventDefault(); expression = display.value;
         try { expression = String(evaluate(expression)); } catch (_) { expression = 'Error'; }
         setDisplay();
-      } else if (event.key === 'Escape') {
-        event.preventDefault(); close.click();
-      }
+      } else if (event.key === 'Escape') { event.preventDefault(); close.click(); }
     });
 
     const graphCanvas = panel.querySelector('#azmGraph');
@@ -171,25 +164,25 @@
       const xmin = Number(panel.querySelector('#azmXMin').value);
       const xmax = Number(panel.querySelector('#azmXMax').value);
       const fn = panel.querySelector('#azmGraphExpr').value.trim();
-      if (!Number.isFinite(xmin) || !Number.isFinite(xmax) || xmax <= xmin || xmax - xmin > 200 || !fn) {
-        status.textContent = 'Use a valid X range (maximum span 200).'; return;
-      }
-      const w = graphCanvas.width, h = graphCanvas.height;
-      ctx.clearRect(0, 0, w, h);
-      const yMin = -10, yMax = 10;
+      if (!Number.isFinite(xmin) || !Number.isFinite(xmax) || xmax <= xmin || xmax - xmin > 200 || !fn) { status.textContent = 'Use a valid X range (maximum span 200).'; return; }
+      const w = graphCanvas.width;
+      const h = graphCanvas.height;
+      const yMin = -10;
+      const yMax = 10;
       const pxY = (y) => h - (y - yMin) / (yMax - yMin) * h;
+      ctx.clearRect(0, 0, w, h);
       ctx.lineWidth = 1;
       ctx.strokeStyle = '#d7dce1';
       ctx.beginPath();
       const zeroX = xmin <= 0 && xmax >= 0 ? (0 - xmin) / (xmax - xmin) * w : null;
-      const zeroY = yMin <= 0 && yMax >= 0 ? pxY(0) : null;
+      const zeroY = pxY(0);
       if (zeroX !== null) { ctx.moveTo(zeroX, 0); ctx.lineTo(zeroX, h); }
-      if (zeroY !== null) { ctx.moveTo(0, zeroY); ctx.lineTo(w, zeroY); }
-      ctx.stroke();
+      ctx.moveTo(0, zeroY); ctx.lineTo(w, zeroY); ctx.stroke();
       ctx.strokeStyle = '#18212a';
       ctx.lineWidth = 2;
       ctx.beginPath();
-      let drawing = false, good = 0;
+      let drawing = false;
+      let good = 0;
       for (let i = 0; i < w; i += 2) {
         const x = xmin + (xmax - xmin) * i / (w - 1);
         let y;
@@ -197,7 +190,8 @@
         if (!Number.isFinite(y) || Math.abs(y) > 1000) { drawing = false; continue; }
         const py = pxY(clamp(y, yMin, yMax));
         if (!drawing) ctx.moveTo(i, py); else ctx.lineTo(i, py);
-        drawing = true; good += 1;
+        drawing = true;
+        good += 1;
       }
       ctx.stroke();
       status.textContent = good ? `Plotted ${fn} for x from ${xmin} to ${xmax}. Y-axis shown from −10 to 10.` : 'The function could not be plotted in this range.';
