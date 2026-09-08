@@ -50,6 +50,8 @@ assert(uiA11y.includes("setAttribute('role', 'radio')"), 'answer choices must ex
 assert(uiA11y.includes("setAttribute('aria-checked'"), 'answer choices must expose checked state');
 assert(uiA11y.includes("setAttribute('role', 'menu')"), 'test tools must expose menu semantics');
 assert(uiA11y.includes('Question ${number}, ${states.join'), 'review buttons must have descriptive labels');
+assert(uiA11y.includes('installReducedMotionSupport'), 'reduced-motion preference must have a dedicated accessibility path');
+assert(uiA11y.includes('prefers-reduced-motion: reduce'), 'reduced-motion preference must be honored');
 assert(html.includes('ui-accessibility-enhancement.js'), 'semantic accessibility enhancement must be loaded');
 
-console.log('Accessibility and platform shortcut contract checks passed.');
+console.log('Accessibility, reduced-motion, and platform shortcut contract checks passed.');
