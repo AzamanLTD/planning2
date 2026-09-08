@@ -24,8 +24,7 @@
     return normalizeDecimal(raw);
   }
 
-  document.addEventListener('input', (event) => {
-    const field = event.target;
+  function handleField(field, commit) {
     if (!field?.matches('.spr-input')) return;
     const normalized = normalize(field.value);
     if (normalized === null) {
@@ -33,9 +32,12 @@
       return;
     }
     field.setCustomValidity('');
-    if (normalized !== field.value.trim()) {
+    if (commit && normalized !== field.value.trim()) {
       field.value = normalized;
       field.dispatchEvent(new Event('change', { bubbles: true }));
     }
-  }, true);
+  }
+
+  document.addEventListener('input', (event) => handleField(event.target, false), true);
+  document.addEventListener('blur', (event) => handleField(event.target, true), true);
 })();
