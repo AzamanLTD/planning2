@@ -190,6 +190,17 @@
       return;
     }
 
+    if (state.screen === 'directions' || state.screen === 'test') {
+      const firstIncomplete = firstIncompleteModuleIndex(state);
+      if (state.mi > firstIncomplete) {
+        state.mi = firstIncomplete;
+        state.qi = 0;
+        state.endAt = null;
+        state.screen = 'directions';
+        return;
+      }
+    }
+
     if ((state.screen === 'directions' || state.screen === 'test') && advancePastCompleted(state)) return;
 
     if (state.screen === 'test') {
