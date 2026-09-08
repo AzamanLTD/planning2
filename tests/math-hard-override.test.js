@@ -29,7 +29,7 @@ const expected = {
   MM2HQ9: { answer: '8', type: 'mcq', domain: 'Advanced Math' },
   MM2HQ10: { answer: '6', type: 'mcq', domain: 'Problem Solving and Data Analysis' },
   MM2HQ11: { answer: '54π', type: 'mcq', domain: 'Geometry and Trigonometry' },
-  MM2HQ12: { answer: '5/3', type: 'mcq', domain: 'Geometry and Trigonometry' },
+  MM2HQ12: { answer: '5/3', type: 'mcq', domain: 'Algebra' },
   MM2HQ13: { answer: '3', type: 'mcq', domain: 'Advanced Math' },
   MM2HQ14: { answer: '7.5', type: 'spr', domain: 'Problem Solving and Data Analysis' },
   MM2HQ15: { answer: '36', type: 'mcq', domain: 'Geometry and Trigonometry' },
