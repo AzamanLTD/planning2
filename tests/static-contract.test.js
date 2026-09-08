@@ -14,6 +14,7 @@ const calculator = read('calculator-enhancement.js');
 const codeInput = read('code-input-enhancement.js');
 const results = read('results-enhancement.js');
 const sanitizer = read('exam-ui-sanitizer.js');
+const accessibility = read('tests/accessibility-contract.test.js');
 const tokens = read('styles.css');
 
 const requiredScripts = [
@@ -32,7 +33,6 @@ for (const phrase of [
   'Review questions', 'Question menu', 'Mark for review', 'Reference sheet', 'Calculator', 'Line reader',
   'Highlight selection', 'Hide timer'
 ]) assert(app.includes(phrase), `app.js missing contract: ${phrase}`);
-
 for (const phrase of ['STORAGE_KEY', 'MODULES', 'state.submitted', 'state.completed', 'state.endAt <= Date.now()',
   'state.breakEndAt <= Date.now()', "state.screen = 'directions'", 'state.adaptive.rw', 'state.adaptive.math']) {
   assert(guard.includes(phrase), `session recovery contract missing: ${phrase}`);
@@ -42,36 +42,17 @@ for (const phrase of ['F1', 'F6', 'Ctrl + Alt + B', 'Ctrl + Alt + X', 'Ctrl + Al
   'Ctrl + Alt + 1–4', 'Ctrl + Shift + 1–4', 'clickText(\'Question menu\')', "clickText('Next') || clickText('Review module')"]) {
   assert(keyboard.includes(phrase), `keyboard shortcut missing: ${phrase}`);
 }
-for (const phrase of ['normalizeFraction', 'normalizeDecimal', 'blur', 'MAX_POSITIVE_CHARS', 'MAX_NEGATIVE_CHARS']) {
-  assert(spr.includes(phrase), `SPR normalization contract missing: ${phrase}`);
-}
-for (const phrase of ['setAttribute(\'role\', \'dialog\')', 'aria-modal', 'Resize calculator', 'makeDraggable', 'makeResizable', 'restoreSavedHighlights']) {
-  assert(tools.includes(phrase), `tool enhancement contract missing: ${phrase}`);
-}
-for (const phrase of ['STORAGE_KEY', 'questionKey', 'saveNote', 'azmNoteEditor', 'stopImmediatePropagation']) {
-  assert(notes.includes(phrase), `note enhancement contract missing: ${phrase}`);
-}
-for (const phrase of ['FOCUSABLE', 'activeDialog', 'event.key !== \'Tab\'', 'aria-modal', 'focusFirst']) {
-  assert(modal.includes(phrase), `modal focus contract missing: ${phrase}`);
-}
-for (const phrase of ['tokenize(input)', 'sin', 'cos', 'tan', 'sqrt', 'log10', 'Graph', 'azmGraphExpr', 'azmXMin', 'azmXMax',
-  'getContext(\'2d\')', 'aria-controls="azmCalcCalculate"', 'aria-controls="azmCalcGraph"', 'Object.entries(views)',
-  'view.hidden = name !== mode']) {
-  assert(calculator.includes(phrase), `calculator enhancement contract missing: ${phrase}`);
-}
-for (const phrase of ['start-digit', 'paste', 'Backspace', 'ArrowLeft', 'ArrowRight', 'codeReady']) {
-  assert(codeInput.includes(phrase), `code-input enhancement contract missing: ${phrase}`);
-}
-for (const phrase of ['Practice report', 'Reading and Writing', 'Math', 'raw practice-test results', 'not an official SAT scaled score', 'results-section-grid', 'results-module-row']) {
-  assert(results.includes(phrase), `results enhancement contract missing: ${phrase}`);
-}
-for (const phrase of ['q-meta', 'source-label', 'hidden = true', 'aria-hidden', "textContent = 'Source'", 'MutationObserver', 'sanitize']) {
-  assert(sanitizer.includes(phrase), `student UI sanitizer contract missing: ${phrase}`);
-}
+for (const phrase of ['normalizeFraction', 'normalizeDecimal', 'blur', 'MAX_POSITIVE_CHARS', 'MAX_NEGATIVE_CHARS']) assert(spr.includes(phrase), `SPR normalization contract missing: ${phrase}`);
+for (const phrase of ['setAttribute(\'role\', \'dialog\')', 'aria-modal', 'Resize calculator', 'makeDraggable', 'makeResizable', 'restoreSavedHighlights']) assert(tools.includes(phrase), `tool enhancement contract missing: ${phrase}`);
+for (const phrase of ['STORAGE_KEY', 'questionKey', 'saveNote', 'azmNoteEditor', 'stopImmediatePropagation']) assert(notes.includes(phrase), `note enhancement contract missing: ${phrase}`);
+for (const phrase of ['FOCUSABLE', 'activeDialog', 'event.key !== \'Tab\'', 'aria-modal', 'focusFirst']) assert(modal.includes(phrase), `modal focus contract missing: ${phrase}`);
+for (const phrase of ['tokenize(input)', 'sin', 'cos', 'tan', 'sqrt', 'log10', 'Graph', 'azmGraphExpr', 'azmXMin', 'azmXMax', 'getContext(\'2d\')', 'aria-controls="azmCalcCalculate"', 'aria-controls="azmCalcGraph"', 'Object.entries(views)', 'view.hidden = name !== mode']) assert(calculator.includes(phrase), `calculator enhancement contract missing: ${phrase}`);
+for (const phrase of ['start-digit', 'paste', 'Backspace', 'ArrowLeft', 'ArrowRight', 'codeReady']) assert(codeInput.includes(phrase), `code-input enhancement contract missing: ${phrase}`);
+for (const phrase of ['Practice report', 'Reading and Writing', 'Math', 'raw practice-test results', 'not an official SAT scaled score', 'results-section-grid', 'results-module-row']) assert(results.includes(phrase), `results enhancement contract missing: ${phrase}`);
+for (const phrase of ['q-meta', 'source-label', 'hidden = true', 'aria-hidden', "textContent = 'Source'", 'MutationObserver', 'sanitize']) assert(sanitizer.includes(phrase), `student UI sanitizer contract missing: ${phrase}`);
+for (const phrase of ['aria-live', 'aria-pressed', 'aria-modal', 'FOCUSABLE', 'aria-selected', 'aria-controls', 'Start code digit']) assert(accessibility.includes(phrase), `accessibility contract missing: ${phrase}`);
 
-for (const token of ['--color-page:', '--color-surface:', '--color-text:', '--color-border:', '--color-primary:', '--color-warning:', '--color-focus:', '--color-selected:']) {
-  assert(tokens.includes(token), `visual token missing: ${token}`);
-}
+for (const token of ['--color-page:', '--color-surface:', '--color-text:', '--color-border:', '--color-primary:', '--color-warning:', '--color-focus:', '--color-selected:']) assert(tokens.includes(token), `visual token missing: ${token}`);
 assert(!app.includes('Function('), 'unsafe Function() evaluator must not return');
 assert(!app.includes('eval('), 'unsafe eval() evaluator must not return');
 assert(!calculator.includes('Function('), 'calculator must not use Function()');
