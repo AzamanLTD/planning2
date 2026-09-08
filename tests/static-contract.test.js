@@ -60,7 +60,7 @@ for (const phrase of ['q-meta', 'source-label', 'hidden = true', 'aria-hidden', 
 for (const phrase of ['aria-live', 'aria-pressed', 'aria-modal', 'FOCUSABLE', 'aria-selected', 'aria-controls', 'Start code digit']) assert(accessibility.includes(phrase), `accessibility contract missing: ${phrase}`);
 for (const phrase of ["setAttribute('role', 'radio')", "setAttribute('aria-checked'", "setAttribute('role', 'menu')", 'a11yReady']) assert(uiA11y.includes(phrase), `semantic UI accessibility contract missing: ${phrase}`);
 for (const phrase of ['Ctrl + Alt + H', 'Command + Control + H', 'HELP SMOKE COMPLETE']) assert(helpSmoke.includes(phrase), `Help smoke contract missing: ${phrase}`);
-for (const phrase of ['ChromeOS 144', 'macOS 15', 'iPadOS 18', 'Windows 11 24H2', 'platform support matrix']) assert(platformReadiness.includes(phrase), `platform readiness documentation missing: ${phrase}`);
+for (const phrase of ['ChromeOS 144', 'macOS 15', 'iPadOS 18', 'Windows 11 24H2', 'support matrix']) assert(platformReadiness.includes(phrase), `platform readiness documentation missing: ${phrase}`);
 for (const phrase of ['hash(value)', 'question.options = original.map', 'question.answer = letters', 'difficulty: \'hard\'']) assert(quality.includes(phrase), `question quality override missing: ${phrase}`);
 
 for (const token of ['--color-page:', '--color-surface:', '--color-text:', '--color-border:', '--color-primary:', '--color-warning:', '--color-focus:', '--color-selected:']) assert(tokens.includes(token), `visual token missing: ${token}`);
