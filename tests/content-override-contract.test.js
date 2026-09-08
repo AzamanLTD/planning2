@@ -16,13 +16,11 @@ const expected = [
   'RWM2HQ1','RWM2HQ4','RWM2HQ5','RWM2HQ6','RWM2HQ7','RWM2HQ8','RWM2HQ10','RWM2HQ11','RWM2HQ12','RWM2HQ13','RWM2HQ14','RWM2HQ15','RWM2HQ17','RWM2HQ18','RWM2HQ19','RWM2HQ20','RWM2HQ21','RWM2HQ22','RWM2HQ23','RWM2HQ25','RWM2HQ26','RWM2HQ27'
 ];
 
-assert.equal(new Set(expected).size, 60, 'expected authored source override manifest must contain 60 unique IDs');
-for (const id of expected) {
-  assert(overrideSource.includes(`${id}:`), `override source is missing ${id}`);
-}
+assert.equal(new Set(expected).size, 70, 'expected authored source override manifest must contain 70 unique IDs');
+for (const id of expected) assert(overrideSource.includes(`${id}:`), `override source is missing ${id}`);
 
-const all = [sandbox.window.SAT_QUESTIONS.rw1, ...Object.values(sandbox.window.SAT_QUESTIONS.rw2), sandbox.window.SAT_QUESTIONS.rw2.easy];
-const byId = new Map(all.flat().map((q) => [q.id, q]));
+const rw = [sandbox.window.SAT_QUESTIONS.rw1, sandbox.window.SAT_QUESTIONS.rw2.easy, sandbox.window.SAT_QUESTIONS.rw2.hard];
+const byId = new Map(rw.flat().map((q) => [q.id, q]));
 for (const id of expected) {
   const q = byId.get(id);
   assert(q, `runtime question ${id} is missing`);
@@ -30,4 +28,4 @@ for (const id of expected) {
   assert(words >= 25 && words <= 150, `${id} override source must be 25-150 words, got ${words}`);
 }
 
-console.log('R&W authored-source override contract passed for 60 IDs.');
+console.log('R&W authored-source override contract passed for 70 IDs.');

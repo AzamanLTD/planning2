@@ -24,9 +24,7 @@
     modal.querySelector('#submitModule')?.setAttribute('aria-label', 'Finish this module');
     modal.querySelectorAll('.review-q').forEach((button) => {
       const number = button.textContent.trim();
-      const states = [];
-      if (button.classList.contains('answered')) states.push('answered');
-      else states.push('unanswered');
+      const states = [button.classList.contains('answered') ? 'answered' : 'unanswered'];
       if (button.classList.contains('marked')) states.push('marked for review');
       button.setAttribute('aria-label', `Question ${number}, ${states.join(', ')}`);
     });
@@ -46,9 +44,21 @@
   }
 
   function enhanceStartCode(root = document) {
-    root.querySelectorAll('.start-digit').forEach((field, index, fields) => {
+    const fields = [...root.querySelectorAll('.start-digit')];
+    fields.forEach((field, index) => {
       field.setAttribute('aria-label', `Start code digit ${index + 1} of ${fields.length || 6}`);
+      field.setAttribute('aria-posinset', String(index + 1));
+      field.setAttribute('aria-setsize', String(fields.length || 6));
     });
+  }
+
+  function installReducedMotionSupport() {
+    if (!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    if (document.getElementById('azmReducedMotion')) return;
+    const style = document.createElement('style');
+    style.id = 'azmReducedMotion';
+    style.textContent = '*,:before,:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}';
+    document.head.appendChild(style);
   }
 
   function enhance() {
@@ -56,6 +66,7 @@
     enhanceReview(document.getElementById('reviewModal'));
     enhanceTools(document.getElementById('toolPopover'));
     enhanceStartCode();
+    installReducedMotionSupport();
   }
 
   const observer = new MutationObserver(enhance);

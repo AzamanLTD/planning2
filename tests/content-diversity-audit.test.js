@@ -3,7 +3,7 @@ const vm = require('vm');
 
 function loadBank() {
   const sandbox = { window: {} };
-  for (const path of ['data/questions.js', 'data/rw2-easy.js', 'data/rw-source-overrides.js']) {
+  for (const path of ['data/questions.js', 'data/rw2-easy.js', 'data/rw-source-overrides.js', 'data/question-quality-overrides.js']) {
     vm.runInNewContext(fs.readFileSync(path, 'utf8'), sandbox);
   }
   const b = sandbox.window.SAT_QUESTIONS;
@@ -12,26 +12,23 @@ function loadBank() {
 
 const normalize = (value) => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 const bank = loadBank();
-const promptGroups = new Map();
-const sourceGroups = new Map();
-const optionGroups = new Map();
+const groups = { prompt: new Map(), source: new Map(), options: new Map() };
 for (const q of bank) {
-  const prompt = normalize(q.prompt);
-  const source = normalize(q.source?.paragraphs?.join(' '));
-  const options = normalize((q.options || []).join(' | '));
-  if (prompt) promptGroups.set(prompt, [...(promptGroups.get(prompt) || []), q.id]);
-  if (source) sourceGroups.set(source, [...(sourceGroups.get(source) || []), q.id]);
-  if (options) optionGroups.set(options, [...(optionGroups.get(options) || []), q.id]);
+  const values = {
+    prompt: normalize(q.prompt),
+    source: normalize(q.source?.paragraphs?.join(' ')),
+    options: normalize((q.options || []).join(' | ')),
+  };
+  for (const [kind, key] of Object.entries(values)) {
+    if (key) groups[kind].set(key, [...(groups[kind].get(key) || []), q.id]);
+  }
 }
-
-const repeatedPrompts = [...promptGroups.values()].filter((ids) => ids.length > 1);
-const repeatedSources = [...sourceGroups.values()].filter((ids) => ids.length > 1);
-const repeatedOptions = [...optionGroups.values()].filter((ids) => ids.length > 1);
-
+const repeats = Object.fromEntries(Object.entries(groups).map(([kind, map]) => [kind, [...map.values()].filter((ids) => ids.length > 1)]));
 console.log(`Diversity audit: ${bank.length} items.`);
-console.log(`Exact repeated prompts: ${repeatedPrompts.length}`);
-console.log(`Exact repeated sources: ${repeatedSources.length}`);
-console.log(`Exact repeated option sets: ${repeatedOptions.length}`);
-for (const [label, groups] of [['prompt', repeatedPrompts], ['source', repeatedSources], ['options', repeatedOptions]]) {
-  groups.slice(0, 10).forEach((ids) => console.log(`Repeated ${label}: ${ids.join(', ')}`));
+for (const [kind, duplicateGroups] of Object.entries(repeats)) {
+  console.log(`Exact repeated ${kind}: ${duplicateGroups.length}`);
+  duplicateGroups.slice(0, 20).forEach((ids) => console.log(`Repeated ${kind}: ${ids.join(', ')}`));
 }
+if (repeats.prompt.length !== 0) throw new Error(`R&W prompt diversity gate found ${repeats.prompt.length} exact repeats`);
+if (repeats.source.length !== 0) throw new Error(`source diversity gate found ${repeats.source.length} exact repeats`);
+if (repeats.options.length !== 0) throw new Error(`option-set diversity gate found ${repeats.options.length} exact repeats`);
