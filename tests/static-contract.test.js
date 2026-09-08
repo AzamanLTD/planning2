@@ -8,6 +8,7 @@ const keyboard = read('keyboard.js');
 const spr = read('spr-input.js');
 const tools = read('tools-enhancement.js');
 const notes = read('note-enhancement.js');
+const modal = read('modal-enhancement.js');
 const tokens = read('styles.css');
 
 const requiredScripts = [
@@ -17,7 +18,8 @@ const requiredScripts = [
   'keyboard.js',
   'spr-input.js',
   'tools-enhancement.js',
-  'note-enhancement.js'
+  'note-enhancement.js',
+  'modal-enhancement.js'
 ];
 for (const src of requiredScripts) assert(html.includes(`src=\"${src}\"`), `index.html missing ${src}`);
 
@@ -46,6 +48,10 @@ for (const phrase of ['role=\"dialog\"', 'aria-modal', 'Resize calculator', 'mak
 
 for (const phrase of ['STORAGE_KEY', 'questionKey', 'saveNote', 'azmNoteEditor', 'stopImmediatePropagation']) {
   assert(notes.includes(phrase), `note enhancement contract missing: ${phrase}`);
+}
+
+for (const phrase of ['FOCUSABLE', 'activeDialog', 'event.key !== \'Tab\'', 'aria-modal', 'focusFirst']) {
+  assert(modal.includes(phrase), `modal focus contract missing: ${phrase}`);
 }
 
 for (const token of [
