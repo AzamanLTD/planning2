@@ -79,7 +79,7 @@ state = run({ ...base(), screen: 'not-a-real-screen', mi: 99, qi: -4, completed:
 assert.equal(state.screen, 'access');
 assert.equal(state.mi, 3);
 assert.equal(state.qi, 0);
-assert.deepEqual(state.completed, {});
+assert.deepEqual(state.completed, { rw2: false, math1: false, math2: false });
 assert.deepEqual(state.marked, {});
 assert.deepEqual(state.warning, {});
 assert.equal(state.timerHidden, false);
@@ -91,6 +91,18 @@ assert.equal(state.mi, 2);
 assert.equal(state.adaptive.rw, 'easy');
 assert.equal(state.adaptive.math, 'hard');
 assert.ok(state.breakEndAt > NOW);
+
+state = run({ ...base(), screen: 'break', mi: 0, breakEndAt: NOW + 10_000, completed: {} });
+assert.equal(state.screen, 'directions');
+assert.equal(state.mi, 0);
+assert.equal(state.qi, 0);
+assert.equal(state.breakEndAt, null);
+
+state = run({ ...base(), screen: 'break', mi: 1, breakEndAt: NOW + 10_000, completed: { rw1: true } });
+assert.equal(state.screen, 'directions');
+assert.equal(state.mi, 1);
+assert.equal(state.qi, 0);
+assert.equal(state.breakEndAt, null);
 
 state = run({ ...base(), screen: 'directions', mi: 1, completed: { rw1: true, math1: true, math2: true } });
 assert.equal(state.completed.rw1, true);
