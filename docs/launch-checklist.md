@@ -11,10 +11,12 @@ This checklist is intentionally explicit about what automated CI proves and what
 - Full-item signatures are unique.
 - Exact repeated prompts, sources, and option sets are blocked.
 - Multiple-choice answer-position distribution stays within the configured balance band.
+- MCQ balancing preserves the original semantic correct-answer text and is idempotent.
+- Curated hard Math SPR overrides are explicitly contract-tested for type, answer, prompt, and explanation.
 - Adaptive Module 2 pairs are substantively different and hard variants are fully hard-tagged.
-- Session recovery edge cases pass, including non-contiguous completion repair.
+- Session recovery edge cases pass, including non-contiguous completion repair, invalid break prerequisites, later-completion cleanup, and terminal-state canonicalization.
 - Accessibility contract checks pass.
-- Chromium browser smoke passes the end-to-end simulator path.
+- Chromium browser smoke passes the end-to-end simulator path, including keyboard shortcut help, directions shortcut, F6 region navigation, calculator/graph behavior, break recovery, and start-code accessibility.
 
 ## Human / environment gates
 
