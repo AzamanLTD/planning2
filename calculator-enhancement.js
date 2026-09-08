@@ -3,6 +3,11 @@
 
   const DEG = Math.PI / 180;
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+  const tanDegrees = (value) => {
+    const radians = value * DEG;
+    if (Math.abs(Math.cos(radians)) < 1e-12) throw new Error('tan undefined');
+    return Math.tan(radians);
+  };
 
   function tokenize(input) {
     let x = input
@@ -24,7 +29,7 @@
     const names = new Map([
       ['pi', Math.PI], ['e', Math.E],
       ['sin', (v) => Math.sin(v * DEG)], ['cos', (v) => Math.cos(v * DEG)],
-      ['tan', (v) => Math.tan(v * DEG)],
+      ['tan', tanDegrees],
       ['asin', (v) => Math.asin(v) / DEG], ['acos', (v) => Math.acos(v) / DEG],
       ['atan', (v) => Math.atan(v) / DEG],
       ['sqrt', Math.sqrt], ['abs', Math.abs], ['ln', Math.log],
