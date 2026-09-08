@@ -15,15 +15,16 @@ const codeInput = read('code-input-enhancement.js');
 const results = read('results-enhancement.js');
 const sanitizer = read('exam-ui-sanitizer.js');
 const accessibility = read('tests/accessibility-contract.test.js');
+const uiA11y = read('ui-accessibility-enhancement.js');
 const tokens = read('styles.css');
 
 const requiredScripts = [
-  'data/questions.js', 'data/rw2-easy.js', 'session-guard.js', 'app.js', 'keyboard.js',
-  'spr-input.js', 'tools-enhancement.js', 'note-enhancement.js', 'modal-enhancement.js',
-  'calculator-enhancement.js', 'code-input-enhancement.js', 'results-enhancement.js',
-  'exam-ui-sanitizer.js'
+  'data/questions.js', 'data/rw2-easy.js', 'data/rw-source-overrides.js', 'session-guard.js', 'app.js', 'keyboard.js',
+  'spr-input.js', 'tools-enhancement.js', 'note-enhancement.js', 'modal-enhancement.js', 'calculator-enhancement.js',
+  'code-input-enhancement.js', 'results-enhancement.js', 'exam-ui-sanitizer.js', 'ui-accessibility-enhancement.js'
 ];
 for (const src of requiredScripts) assert(html.includes(`src=\"${src}\"`), `index.html missing ${src}`);
+assert(html.indexOf('data/rw-source-overrides.js') < html.indexOf('app.js'), 'authored source overrides must load before app.js');
 assert(!html.includes('shortcut-enhancement.js'), 'obsolete duplicate shortcut layer must not be loaded');
 assert(!html.includes('connectivity-enhancement.js'), 'non-authoritative connectivity UI must not be loaded');
 
@@ -51,6 +52,7 @@ for (const phrase of ['start-digit', 'paste', 'Backspace', 'ArrowLeft', 'ArrowRi
 for (const phrase of ['Practice report', 'Reading and Writing', 'Math', 'raw practice-test results', 'not an official SAT scaled score', 'results-section-grid', 'results-module-row']) assert(results.includes(phrase), `results enhancement contract missing: ${phrase}`);
 for (const phrase of ['q-meta', 'source-label', 'hidden = true', 'aria-hidden', "textContent = 'Source'", 'MutationObserver', 'sanitize']) assert(sanitizer.includes(phrase), `student UI sanitizer contract missing: ${phrase}`);
 for (const phrase of ['aria-live', 'aria-pressed', 'aria-modal', 'FOCUSABLE', 'aria-selected', 'aria-controls', 'Start code digit']) assert(accessibility.includes(phrase), `accessibility contract missing: ${phrase}`);
+for (const phrase of ["setAttribute('role', 'radio')", "setAttribute('aria-checked'", "setAttribute('role', 'menu')", 'a11yReady']) assert(uiA11y.includes(phrase), `semantic UI accessibility contract missing: ${phrase}`);
 
 for (const token of ['--color-page:', '--color-surface:', '--color-text:', '--color-border:', '--color-primary:', '--color-warning:', '--color-focus:', '--color-selected:']) assert(tokens.includes(token), `visual token missing: ${token}`);
 assert(!app.includes('Function('), 'unsafe Function() evaluator must not return');
