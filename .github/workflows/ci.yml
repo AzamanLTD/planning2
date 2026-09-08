@@ -91,6 +91,8 @@ jobs:
           NODE
       - name: Run static application contract checks
         run: node tests/static-contract.test.js
+      - name: Run session recovery edge-case tests
+        run: node tests/session-guard.test.js
       - name: Run Chromium browser smoke test
         run: |
           set -eu
