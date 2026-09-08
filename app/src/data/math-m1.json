@@ -1,0 +1,238 @@
+[
+  {
+    "id": "m1-01",
+    "type": "mcq",
+    "domain": "Algebra",
+    "skill": "Linear equations in one variable",
+    "difficulty": "easy",
+    "prompt": "What is the value of x if 3x + 7 = 22?",
+    "choices": ["3", "5", "7", "15"],
+    "answer": 1,
+    "explanation": "3x = 15, so x = 5."
+  },
+  {
+    "id": "m1-02",
+    "type": "mcq",
+    "domain": "Algebra",
+    "skill": "Systems of linear equations",
+    "difficulty": "easy",
+    "prompt": "The system x + y = 10 and x - y = 4 has solution (x, y). What is the value of y?",
+    "choices": ["2", "3", "6", "7"],
+    "answer": 1,
+    "explanation": "Adding the equations gives 2x = 14, so x = 7 and y = 3."
+  },
+  {
+    "id": "m1-03",
+    "type": "spr",
+    "domain": "Algebra",
+    "skill": "Linear equations in one variable",
+    "difficulty": "easy",
+    "prompt": "If 5(x - 2) = 3x + 8, what is the value of x?",
+    "spr": { "answer": "9" },
+    "explanation": "5x - 10 = 3x + 8, so 2x = 18 and x = 9."
+  },
+  {
+    "id": "m1-04",
+    "type": "mcq",
+    "domain": "Algebra",
+    "skill": "Linear functions",
+    "difficulty": "medium",
+    "prompt": "The line y = mx + b passes through the points (2, 5) and (4, 11). What is the value of b?",
+    "choices": ["-1", "1", "2", "3"],
+    "answer": 0,
+    "explanation": "Slope m = (11-5)/(4-2) = 3, and 5 = 3(2) + b gives b = -1."
+  },
+  {
+    "id": "m1-05",
+    "type": "mcq",
+    "domain": "Algebra",
+    "skill": "Linear inequalities",
+    "difficulty": "medium",
+    "prompt": "Which of the following describes all values of x that satisfy 4 - 2x >= 10?",
+    "choices": ["x >= -3", "x <= -3", "x >= 3", "x <= 3"],
+    "answer": 1,
+    "explanation": "-2x >= 6; dividing by -2 flips the inequality, giving x <= -3."
+  },
+  {
+    "id": "m1-06",
+    "type": "spr",
+    "domain": "Algebra",
+    "skill": "Systems of linear equations",
+    "difficulty": "medium",
+    "prompt": "If 2x + 3y = 12 and x - y = 1, what is the value of x?",
+    "spr": { "answer": "3" },
+    "explanation": "From x - y = 1, x = y + 1. Substituting: 2(y+1) + 3y = 12, so 5y = 10, y = 2, x = 3."
+  },
+  {
+    "id": "m1-07",
+    "type": "mcq",
+    "domain": "Algebra",
+    "skill": "Modeling linear relationships",
+    "difficulty": "hard",
+    "prompt": "A prepaid phone plan charges a 20 cedi monthly fee plus 0.10 cedis per minute of calls. If a customer's total charge for a month was 45 cedis, how many minutes did the customer use?",
+    "choices": ["160", "220", "250", "450"],
+    "answer": 2,
+    "explanation": "20 + 0.10m = 45 gives 0.10m = 25, so m = 250 minutes."
+  },
+  {
+    "id": "m1-08",
+    "type": "mcq",
+    "domain": "Algebra",
+    "skill": "Function notation",
+    "difficulty": "hard",
+    "prompt": "The function f is defined by f(x) = (x + 3) / 2. If f(k) = 7, what is the value of k?",
+    "choices": ["5", "8", "11", "17"],
+    "answer": 2,
+    "explanation": "(k+3)/2 = 7 gives k + 3 = 14, so k = 11."
+  },
+  {
+    "id": "m1-09",
+    "type": "mcq",
+    "domain": "Advanced Math",
+    "skill": "Quadratic equations",
+    "difficulty": "easy",
+    "prompt": "If x is a positive number and x^2 - 4 = 12, what is the value of x?",
+    "choices": ["2", "4", "8", "16"],
+    "answer": 1,
+    "explanation": "x^2 = 16, so the positive solution is x = 4."
+  },
+  {
+    "id": "m1-10",
+    "type": "mcq",
+    "domain": "Advanced Math",
+    "skill": "Exponent properties",
+    "difficulty": "easy",
+    "prompt": "What is the value of (3^2)(3^3)?",
+    "choices": ["3^5", "3^6", "9^3", "27^2"],
+    "answer": 0,
+    "explanation": "When multiplying powers with the same base, add exponents: 3^(2+3) = 3^5 = 243."
+  },
+  {
+    "id": "m1-11",
+    "type": "mcq",
+    "domain": "Advanced Math",
+    "skill": "Sum and product of roots",
+    "difficulty": "medium",
+    "prompt": "What is the sum of the solutions to the equation x^2 - 5x + 6 = 0?",
+    "choices": ["-5", "1", "5", "6"],
+    "answer": 2,
+    "explanation": "The solutions are 2 and 3, whose sum is 5 (also -b/a = 5)."
+  },
+  {
+    "id": "m1-12",
+    "type": "spr",
+    "domain": "Advanced Math",
+    "skill": "Evaluating functions",
+    "difficulty": "medium",
+    "prompt": "If f(x) = x^2 + 2x, what is the value of f(-3)?",
+    "spr": { "answer": "3" },
+    "explanation": "f(-3) = 9 - 6 = 3."
+  },
+  {
+    "id": "m1-13",
+    "type": "mcq",
+    "domain": "Advanced Math",
+    "skill": "Polynomial expansion",
+    "difficulty": "medium",
+    "prompt": "What is the coefficient of the x term when (x + 2)(x - 5) is expanded?",
+    "choices": ["-10", "-3", "3", "10"],
+    "answer": 1,
+    "explanation": "(x + 2)(x - 5) = x^2 - 3x - 10, so the coefficient of x is -3."
+  },
+  {
+    "id": "m1-14",
+    "type": "spr",
+    "domain": "Advanced Math",
+    "skill": "Exponential equations",
+    "difficulty": "hard",
+    "prompt": "If 2^(x + 1) = 32, what is the value of x?",
+    "spr": { "answer": "4" },
+    "explanation": "32 = 2^5, so x + 1 = 5 and x = 4."
+  },
+  {
+    "id": "m1-15",
+    "type": "mcq",
+    "domain": "Advanced Math",
+    "skill": "Quadratic functions and their graphs",
+    "difficulty": "hard",
+    "prompt": "The function y = (x - 2)^2 + 3 is graphed in the xy-plane. What is the minimum value of y?",
+    "choices": ["-3", "2", "3", "5"],
+    "answer": 2,
+    "explanation": "The squared term is 0 when x = 2, so the minimum value of y is 3."
+  },
+  {
+    "id": "m1-16",
+    "type": "mcq",
+    "domain": "Problem Solving and Data Analysis",
+    "skill": "Ratios and rates",
+    "difficulty": "easy",
+    "prompt": "A recipe uses flour and sugar in a ratio of 3 cups to 2 cups. If a baker uses 12 cups of flour, how many cups of sugar does the recipe use?",
+    "choices": ["6", "8", "9", "18"],
+    "answer": 1,
+    "explanation": "12 is 4 times 3, so the sugar is 4 times 2 = 8 cups."
+  },
+  {
+    "id": "m1-17",
+    "type": "mcq",
+    "domain": "Problem Solving and Data Analysis",
+    "skill": "Percentages",
+    "difficulty": "medium",
+    "prompt": "A store applies a 25% discount to a shirt priced at 60 cedis. What is the discounted price?",
+    "choices": ["15 cedis", "35 cedis", "45 cedis", "48 cedis"],
+    "answer": 2,
+    "explanation": "The discount is 25% of 60 = 15 cedis, so the price is 60 - 15 = 45 cedis."
+  },
+  {
+    "id": "m1-18",
+    "type": "spr",
+    "domain": "Problem Solving and Data Analysis",
+    "skill": "Statistics",
+    "difficulty": "medium",
+    "prompt": "The list 3, 7, 9, 10, 11 shows the ages of five players on a team. What is the median age?",
+    "spr": { "answer": "9" },
+    "explanation": "With five values in order, the median is the middle value, 9."
+  },
+  {
+    "id": "m1-19",
+    "type": "mcq",
+    "domain": "Geometry and Trigonometry",
+    "skill": "Area",
+    "difficulty": "easy",
+    "prompt": "A triangle has a base of length 10 and a height of 6. What is its area?",
+    "choices": ["16", "30", "60", "120"],
+    "answer": 1,
+    "explanation": "Area = (1/2)(10)(6) = 30."
+  },
+  {
+    "id": "m1-20",
+    "type": "mcq",
+    "domain": "Geometry and Trigonometry",
+    "skill": "Circles",
+    "difficulty": "medium",
+    "prompt": "The circle x^2 + y^2 = 25 is drawn in the xy-plane. What is the radius of the circle?",
+    "choices": ["5", "10", "25", "50"],
+    "answer": 0,
+    "explanation": "The radius squared is 25, so the radius is 5."
+  },
+  {
+    "id": "m1-21",
+    "type": "spr",
+    "domain": "Geometry and Trigonometry",
+    "skill": "Pythagorean theorem",
+    "difficulty": "medium",
+    "prompt": "A right triangle has legs with lengths 6 and 8. What is the length of the hypotenuse?",
+    "spr": { "answer": "10" },
+    "explanation": "sqrt(36 + 64) = sqrt(100) = 10."
+  },
+  {
+    "id": "m1-22",
+    "type": "mcq",
+    "domain": "Geometry and Trigonometry",
+    "skill": "Trigonometric ratios",
+    "difficulty": "hard",
+    "prompt": "In a right triangle, angle θ is acute and sin(θ) = 3/5. What is the value of cos(θ)?",
+    "choices": ["3/5", "4/5", "5/3", "5/4"],
+    "answer": 1,
+    "explanation": "For an acute angle, cos(theta) = sqrt(1 - 9/25) = sqrt(16/25) = 4/5."
+  }
+]

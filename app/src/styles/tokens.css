@@ -1,0 +1,48 @@
+/* Design tokens for the Bluebook replica.
+   IMPORTANT: hex values marked VERIFY are best-effort approximations from
+   public references. When the screenshot capture pack exists, replace every
+   VERIFY value with the measured one from docs/design-tokens.md. Only this
+   file and design-tokens.md define colors; components never hardcode. */
+
+:root {
+  /* Header / chrome */
+  --bb-header: #013E6B;         /* VERIFY: top bar navy */
+  --bb-header-ink: #ffffff;
+  --bb-header-sub: #0a5a9e;     /* VERIFY: secondary header blue */
+
+  /* Primary actions */
+  --bb-primary: #0170be;        /* VERIFY: primary button blue */
+  --bb-primary-hover: #015c9e;  /* VERIFY */
+  --bb-primary-ink: #ffffff;
+
+  /* Surfaces */
+  --bb-bg: #ffffff;             /* exam content background */
+  --bb-panel: #f4f6f9;          /* VERIFY: passage panel light */
+  --bb-border: #d5dbe3;         /* VERIFY: hairline borders */
+  --bb-card: #ffffff;
+
+  /* Text */
+  --bb-ink: #1a1a1a;            /* main question text */
+  --bb-ink-soft: #5a6472;       /* secondary text */
+
+  /* States */
+  --bb-correct: #1e7d32;
+  --bb-marked: #e8912d;         /* VERIFY: mark-for-review orange */
+  --bb-marked-bg: #fdf3e3;
+  --bb-answered: #0170be;       /* answered question fill in navigator */
+  --bb-eliminated: #b00020;    /* strike color */
+  --bb-highlight: #ffe066;     /* highlight yellow */
+  --bb-alert: #b00020;          /* timer alert red */
+  --bb-focus: #005b9f;
+
+  /* Spacing / type */
+  --bb-radius: 6px;
+  --bb-font: "Inter", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --bb-size-question: 19px;
+  --bb-size-passage: 19px;
+  --bb-size-ui: 15px;
+
+  /* Layout */
+  --bb-header-h: 56px;
+  --bb-maxw: 1180px;
+}
