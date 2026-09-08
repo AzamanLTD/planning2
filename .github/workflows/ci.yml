@@ -49,8 +49,7 @@ jobs:
             if (q.section === 'Math' && q.type === 'spr' && q.options?.length) throw new Error(`SPR should not carry MCQ options: ${q.id}`);
             if (q.section === 'Reading and Writing') {
               const words = q.source?.paragraphs?.join(' ').trim().split(/\s+/).filter(Boolean).length || 0;
-              if (words > 150) throw new Error(`R&W source exceeds 150 words: ${q.id} (${words})`);
-              if (words < 25) throw new Error(`R&W source is below 25 words: ${q.id} (${words})`);
+              if (words > 150 || words < 25) throw new Error(`R&W source outside 25-150 word window: ${q.id} (${words})`);
             }
           }
           const spr = all.filter(q => q.section === 'Math' && q.type === 'spr').length;
@@ -85,6 +84,8 @@ jobs:
         run: node tests/content-diversity-audit.test.js
       - name: Validate adaptive Module 2 variants
         run: node tests/adaptive-integrity.test.js
+      - name: Audit MCQ answer-position balance
+        run: node tests/answer-distribution-audit.test.js
       - name: Run static application contract checks
         run: node tests/static-contract.test.js
       - name: Run accessibility contract checks
