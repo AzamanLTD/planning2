@@ -81,6 +81,8 @@ jobs:
           for (const [name, items] of groups) console.log(`${name} domain coverage: ${JSON.stringify(moduleDomainCounts(items, items[0].section))}`);
           console.log(`Validated ${all.length} effective records, ${spr} Math SPR items, unique IDs.`);
           NODE
+      - name: Validate CI trigger and concurrency contract
+        run: node tests/ci-contract.test.js
       - name: Run automated content audit
         run: node tests/content-audit.test.js
       - name: Verify authored R&W source override coverage
