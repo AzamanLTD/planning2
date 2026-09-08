@@ -36,18 +36,34 @@
               check('recovered timer cannot remain hidden', !!timerNow && !timerNow.classList.contains('hidden'));
               check('warning modal appears after recovery', !!current.querySelector('.warning-modal'));
               check('warning state persists after recovery', read().warning.rw1 === true);
-              current.querySelector('#dismissWarn')?.click();
-              check('warning modal dismisses after recovery', !current.querySelector('.warning-modal'));
-              const next = read(); next.warning = {}; next.endAt = Date.now() + 299500; next.timerHidden = true; write(next);
-              phase = 1; frame.contentWindow.location.reload();
+              const expired = read();
+              expired.endAt = Date.now() - 1;
+              write(expired);
+              phase = 1;
+              frame.contentWindow.location.reload();
             });
             return;
           }
           if (phase === 1) {
             wait(() => {
               const current = frame.contentDocument;
+              const next = read();
+              check('expired module completes', next.completed.rw1 === true);
+              check('expired module advances to directions', next.screen === 'directions' && next.mi === 1);
+              check('orphaned warning overlay is removed on module transition', !current.querySelector('.warning-modal'));
+              next.screen = 'test'; next.mi = 0; next.qi = 0; next.endAt = Date.now() + 299500; next.completed = {}; next.warning = {}; next.timerHidden = true; write(next);
+              phase = 2;
+              frame.contentWindow.location.reload();
+            });
+            return;
+          }
+          if (phase === 2) {
+            wait(() => {
+              const current = frame.contentDocument;
               check('warning can reappear after a fresh module state', !!current.querySelector('.warning-modal'));
-              check('second warning state persists', read().warning.rw1 === true);
+              check('fresh warning state persists', read().warning.rw1 === true);
+              current.querySelector('#dismissWarn')?.click();
+              check('fresh warning modal dismisses', !current.querySelector('.warning-modal'));
               out.textContent = checks.join('\n') + '\nTIMER WARNING RECOVERY COMPLETE';
             });
           }
