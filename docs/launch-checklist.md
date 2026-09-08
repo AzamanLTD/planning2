@@ -14,9 +14,11 @@ This checklist is intentionally explicit about what automated CI proves and what
 - MCQ balancing preserves the original semantic correct-answer text and is idempotent.
 - Curated hard Math SPR overrides are explicitly contract-tested for type, answer, prompt, and explanation.
 - Adaptive Module 2 pairs are substantively different and hard variants are fully hard-tagged.
-- Session recovery edge cases pass, including non-contiguous completion repair, invalid break prerequisites, later-completion cleanup, and terminal-state canonicalization.
-- Accessibility contract checks pass.
-- Chromium browser smoke passes the end-to-end simulator path, including keyboard shortcut help, directions shortcut, F6 region navigation, calculator/graph behavior, break recovery, and start-code accessibility.
+- Calculator safety/capability contracts reject unsafe evaluators and verify scientific/graphing behavior, including undefined tangent handling.
+- Math SPR normalization is behaviorally tested for fractions, decimals, invalid symbols, zero denominators, canonicalization, and field-length limits.
+- Session recovery edge cases pass, including non-contiguous completion repair, invalid break prerequisites, later-completion cleanup, stale timers, scalar numeric answers, and terminal-state canonicalization.
+- Accessibility contract checks pass, including Help and keyboard-shortcut semantics.
+- Chromium browser smoke passes the end-to-end simulator path, including sign-in/setup/room/start code, persistence, answer selection, review/lock transition, adaptive routing, tools, calculator/graph behavior, SPR normalization, results, break recovery, and start-code accessibility.
 
 ## Human / environment gates
 
