@@ -109,6 +109,22 @@ assert.equal(state.mi, 1);
 assert.equal(state.qi, 0);
 assert.equal(state.breakEndAt, null);
 
+state = run({ ...base(), screen: 'break', mi: 2, breakEndAt: NOW + 10_000, completed: { rw1: true, rw2: true, math1: true, math2: true } });
+assert.equal(state.screen, 'finish');
+assert.equal(state.submitted, true);
+assert.equal(state.mi, 3);
+assert.equal(state.breakEndAt, null);
+assert.equal(state.completed.rw1, true);
+assert.equal(state.completed.rw2, true);
+assert.equal(state.completed.math1, true);
+assert.equal(state.completed.math2, true);
+
+state = run({ ...base(), screen: 'directions', mi: 3, completed: { rw1: true, rw2: true, math1: true, math2: true } });
+assert.equal(state.screen, 'finish');
+assert.equal(state.submitted, true);
+assert.equal(state.mi, 3);
+assert.equal(state.qi, 0);
+
 state = run({ ...base(), screen: 'directions', mi: 1, completed: { rw1: true, math1: true, math2: true } });
 assert.equal(state.completed.rw1, true);
 assert.notEqual(state.completed.rw2, true);
