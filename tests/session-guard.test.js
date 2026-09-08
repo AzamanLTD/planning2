@@ -45,6 +45,11 @@ assert.equal(state.screen, 'directions');
 assert.equal(state.mi, 1);
 assert.equal(state.qi, 0);
 
+state = run({ ...base(), screen: 'directions', completed: { rw2: true }, mi: 1 });
+assert.equal(state.screen, 'break');
+assert.equal(state.mi, 2);
+assert.ok(state.breakEndAt > NOW);
+
 state = run({ ...base(), mi: 2, endAt: null });
 assert.equal(state.screen, 'directions');
 assert.equal(state.mi, 2);
