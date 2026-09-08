@@ -7,7 +7,7 @@
     <section><strong>Rectangle</strong><p>Area: A = lw</p></section>
     <section><strong>Triangle</strong><p>Area: A = ½bh</p></section>
     <section><strong>Right triangle</strong><p>c² = a² + b²</p></section>
-    <section><strong>Special right triangles</strong><p>30°–60°–90°: x, x√3, 2x</p><p>45°–45°–90°: s, s, s√2</p></section>
+    <section><strong>Special Right Triangles</strong><p>30°–60°–90°: short leg = x, long leg = x√3, hypotenuse = 2x</p><p>45°–45°–90°: legs = s, hypotenuse = s√2</p></section>
     <section><strong>Rectangular prism</strong><p>V = lwh</p></section>
     <section><strong>Cylinder</strong><p>V = πr²h</p></section>
     <section><strong>Sphere</strong><p>V = 4/3πr³</p></section>
@@ -17,13 +17,21 @@
 
   function visible(el) { return !!el && el.getClientRects().length > 0; }
 
+  function closeOnEscape(event) {
+    if (event.key !== 'Escape') return;
+    const panel = document.querySelector('#calculatorPanel, #referencePanel');
+    if (!panel) return;
+    panel.querySelector('.panel-head .icon-btn')?.click();
+    event.preventDefault();
+  }
+
   function makeDraggable(panel) {
     if (panel.dataset.dragReady === '1') return;
     const head = panel.querySelector('.panel-head');
     if (!head) return;
     panel.dataset.dragReady = '1';
-    let drag = null;
     head.style.cursor = 'move';
+    let drag = null;
     head.addEventListener('pointerdown', (event) => {
       if (event.target.closest('button')) return;
       const rect = panel.getBoundingClientRect();
@@ -49,6 +57,7 @@
     handle.type = 'button';
     handle.className = 'resize-handle';
     handle.setAttribute('aria-label', 'Resize calculator');
+    handle.setAttribute('title', 'Drag to resize');
     handle.textContent = '↘';
     panel.appendChild(handle);
     let drag = null;
@@ -69,16 +78,39 @@
 
   function enhance(panel) {
     if (!visible(panel)) return;
+    panel.setAttribute('role', 'dialog');
+    panel.setAttribute('aria-modal', 'true');
     makeDraggable(panel);
     if (panel.id === 'referencePanel' && panel.dataset.referenceReady !== '1') {
       const head = panel.querySelector('.panel-head');
       panel.innerHTML = `${head?.outerHTML || ''}${FORMULAS}`;
+      panel.setAttribute('aria-labelledby', 'referencePanelTitle');
+      const title = panel.querySelector('.panel-head b');
+      if (title) {
+        title.id = 'referencePanelTitle';
+        title.textContent = 'Reference sheet';
+      }
       const close = panel.querySelector('#closeRef');
+      close?.setAttribute('aria-label', 'Close reference sheet');
       close?.addEventListener('click', () => panel.remove());
       panel.dataset.referenceReady = '1';
+      close?.focus();
     }
-    if (panel.id === 'calculatorPanel') makeResizable(panel);
+    if (panel.id === 'calculatorPanel') {
+      panel.setAttribute('aria-labelledby', 'calculatorPanelTitle');
+      const title = panel.querySelector('.panel-head b');
+      if (title) title.id = 'calculatorPanelTitle';
+      const close = panel.querySelector('#closeCalc');
+      close?.setAttribute('aria-label', 'Close calculator');
+      makeResizable(panel);
+      if (panel.dataset.focusReady !== '1') {
+        panel.dataset.focusReady = '1';
+        panel.querySelector('#calcDisplay')?.focus();
+      }
+    }
   }
+
+  document.addEventListener('keydown', closeOnEscape, true);
 
   const observer = new MutationObserver(() => {
     enhance(document.getElementById('calculatorPanel'));
