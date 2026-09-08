@@ -8,19 +8,9 @@ const NOW = 1_000_000;
 function run(initial, bank = {}) {
   let raw = JSON.stringify(initial);
   const sandbox = {
-    Date: { now: () => NOW },
-    JSON,
-    Math,
-    String,
-    Number,
-    Array,
-    Object,
-    Set,
+    Date: { now: () => NOW }, JSON, Math, String, Number, Array, Object, Set,
     window: { SAT_QUESTIONS: bank },
-    localStorage: {
-      getItem: () => raw,
-      setItem: (_, value) => { raw = value; }
-    }
+    localStorage: { getItem: () => raw, setItem: (_, value) => { raw = value; } }
   };
   sandbox.window.localStorage = sandbox.localStorage;
   vm.runInNewContext(source, sandbox);
@@ -45,10 +35,20 @@ assert.equal(state.screen, 'directions');
 assert.equal(state.mi, 1);
 assert.equal(state.qi, 0);
 
+state = run({ ...base(), screen: 'directions', completed: { rw1: true }, mi: 0 });
+assert.equal(state.screen, 'directions');
+assert.equal(state.mi, 1);
+assert.equal(state.qi, 0);
+
 state = run({ ...base(), screen: 'directions', completed: { rw2: true }, mi: 1 });
 assert.equal(state.screen, 'break');
 assert.equal(state.mi, 2);
 assert.ok(state.breakEndAt > NOW);
+
+state = run({ ...base(), screen: 'directions', completed: { math1: true }, mi: 2 });
+assert.equal(state.screen, 'directions');
+assert.equal(state.mi, 3);
+assert.equal(state.qi, 0);
 
 state = run({ ...base(), mi: 2, endAt: null });
 assert.equal(state.screen, 'directions');
