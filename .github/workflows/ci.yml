@@ -25,11 +25,9 @@ jobs:
         run: |
           node - <<'NODE'
           const fs = require('fs');
-          const source = fs.readFileSync('data/questions.js', 'utf8');
-          const easy = fs.readFileSync('data/rw2-easy.js', 'utf8');
+          const files = ['data/questions.js', 'data/rw2-easy.js', 'data/rw-source-overrides.js', 'data/question-quality-overrides.js'];
           const sandbox = {};
-          new Function('window', source)(sandbox);
-          new Function('window', easy)(sandbox);
+          for (const path of files) new Function('window', fs.readFileSync(path, 'utf8'))(sandbox);
           const b = sandbox.SAT_QUESTIONS;
           const groups = [
             ['rw1', b.rw1], ['rw2.easy', b.rw2.easy], ['rw2.hard', b.rw2.hard],
@@ -52,14 +50,15 @@ jobs:
             if (q.section === 'Reading and Writing') {
               const words = q.source?.paragraphs?.join(' ').trim().split(/\s+/).filter(Boolean).length || 0;
               if (words > 150) throw new Error(`R&W source exceeds 150 words: ${q.id} (${words})`);
+              if (words < 25) throw new Error(`R&W source is below 25 words: ${q.id} (${words})`);
             }
           }
           const spr = all.filter(q => q.section === 'Math' && q.type === 'spr').length;
           if (spr < 10 || spr > 20) throw new Error(`unexpected SPR volume: ${spr}`);
           const rw2Hard = b.rw2.hard.filter(q => q.difficulty === 'hard').length;
-          if (rw2Hard < 20) throw new Error('R&W hard Module 2 is not sufficiently hard-tagged');
+          if (rw2Hard !== 27) throw new Error(`R&W hard Module 2 should be fully hard-tagged: ${rw2Hard}/27`);
           const math2Hard = b.math2.hard.filter(q => q.difficulty === 'hard').length;
-          if (math2Hard < 15) throw new Error('Math hard Module 2 is not sufficiently hard-tagged');
+          if (math2Hard !== 22) throw new Error(`Math hard Module 2 should be fully hard-tagged: ${math2Hard}/22`);
           const ranges = {
             'Reading and Writing': {
               'Craft and Structure': [7, 9], 'Information and Ideas': [6, 8],
@@ -76,7 +75,7 @@ jobs:
             return counts;
           };
           for (const [name, items] of groups) console.log(`${name} domain coverage: ${JSON.stringify(moduleDomainCounts(items, items[0].section))}`);
-          console.log(`Validated ${all.length} records, ${spr} Math SPR items, unique IDs.`);
+          console.log(`Validated ${all.length} effective records, ${spr} Math SPR items, unique IDs.`);
           NODE
       - name: Run automated content audit
         run: node tests/content-audit.test.js
