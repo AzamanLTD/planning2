@@ -32,7 +32,7 @@ for (const phrase of [
   'screen:\"access\"', 'show(\"break\")', 's.screen=\"finish\"',
   'breakSec:600', 'warnSec:300', 'minutes:32,count:27', 'minutes:35,count:22',
   'completed[m().id]=true', 'routeNext()', 's.submitted=true',
-  'Review questions', 'Mark for review', 'Reference sheet', 'Calculator',
+  'Review questions', 'Question menu', 'Mark for review', 'Reference sheet', 'Calculator',
   'Line reader', 'Highlight selection', 'Hide timer'
 ]) assert(app.includes(phrase), `app.js missing contract: ${phrase}`);
 
@@ -46,7 +46,7 @@ for (const phrase of [
   'F1', 'F6', 'Ctrl + Alt + B', 'Ctrl + Alt + X', 'Ctrl + Alt + G',
   'Ctrl + Alt + Shift + D', 'Ctrl + Alt + V', 'Ctrl + L', 'Ctrl + H',
   'Ctrl + Alt + C', 'Ctrl + Alt + R', 'Ctrl + Alt + O',
-  'Ctrl + Alt + 1–4', 'Ctrl + Shift + 1–4'
+  'Ctrl + Alt + 1–4', 'Ctrl + Shift + 1–4', 'clickText(\'Question menu\')'
 ]) assert(keyboard.includes(phrase), `keyboard shortcut missing: ${phrase}`);
 
 for (const phrase of ['normalizeFraction', 'normalizeDecimal', 'blur', 'MAX_POSITIVE_CHARS', 'MAX_NEGATIVE_CHARS']) {
@@ -67,7 +67,9 @@ for (const phrase of ['FOCUSABLE', 'activeDialog', 'event.key !== \'Tab\'', 'ari
 
 for (const phrase of [
   'tokenize(input)', 'sin', 'cos', 'tan', 'sqrt', 'log10', 'Graph',
-  'azmGraphExpr', 'azmXMin', 'azmXMax', 'getContext(\'2d\')'
+  'azmGraphExpr', 'azmXMin', 'azmXMax', 'getContext(\'2d\')',
+  'aria-controls="azmCalcCalculate"', 'aria-controls="azmCalcGraph"',
+  'Object.entries(views)', 'view.hidden = name !== mode'
 ]) {
   assert(calculator.includes(phrase), `calculator enhancement contract missing: ${phrase}`);
 }
