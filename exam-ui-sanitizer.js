@@ -2,6 +2,9 @@
   'use strict';
 
   function sanitize() {
+    const access = document.querySelector('#access');
+    if (access) access.setAttribute('placeholder', 'Enter access code');
+
     if (!document.querySelector('.test-shell')) return;
 
     const meta = document.querySelector('.q-meta');
@@ -13,9 +16,7 @@
     });
   }
 
-  const observer = new MutationObserver(() => {
-    if (document.querySelector('.test-shell')) sanitize();
-  });
+  const observer = new MutationObserver(() => sanitize());
   observer.observe(document.body, { childList: true, subtree: true });
   sanitize();
 })();
