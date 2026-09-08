@@ -176,6 +176,6 @@
     restoreSavedHighlights();
   });
 
-  const app = document.getElementById('app');
-  if (app) observer.observe(document.body, { childList: true, subtree: true });
+  if (document.getElementById('app')) observer.observe(document.body, { childList: true, subtree: true });
+  restoreSavedHighlights();
 })();
