@@ -19,10 +19,10 @@ An independent browser-based SAT practice experience for Azaman students. The pr
 - Pre-boot recovery guard that repairs stale/corrupt timed-session state, prevents reopening completed modules, and clears non-contiguous completion flags created by malformed state
 - Robust six-digit start-code entry with paste, arrow-key, backspace, and assistive labels
 - Student-facing UI hides internal domain/skill/difficulty metadata and neutralizes demo credential placeholders
-- Practice completion report with Reading and Writing / Math and per-module raw accuracy, including numeric-equivalent SPR scoring
+- Practice completion report with Reading and Writing / Math and per-module raw accuracy
 - Accessibility semantics for answer controls, test tools, review dialogs, calculator tabs, start-code fields, and reduced-motion preferences
 - Deterministic MCQ answer-position balancing so the correct choice is not predictably concentrated in one option position
-- Automated question-bank validation, authored-source content audit, source-override coverage, diversity audit, adaptive-variant integrity checks, answer-position balance, static contracts, recovery edge-case tests, SPR normalization contracts, accessibility contracts, representative Chromium smoke, complete 98-question Chromium smoke, mobile viewport smoke, dedicated Help smoke, timer-warning recovery smoke, and results SPR-equivalence smoke
+- Automated question-bank validation, authored-source content audit, source-override coverage, diversity audit, adaptive-variant integrity checks, answer-position balance, static contracts, recovery edge-case tests, SPR normalization contracts, accessibility contracts, representative Chromium smoke, complete 98-question Chromium smoke, mobile viewport smoke, dedicated Help smoke, and timer-warning recovery smoke
 - Responsive static frontend with no runtime service dependency
 
 ## Network boundary
