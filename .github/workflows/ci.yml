@@ -26,8 +26,11 @@ jobs:
             echo "Checking $file"
             node --check "$file"
           done
+      - name: Validate canonical repository entrypoint
+        run: node tests/entrypoint-contract.test.js
       - name: Validate question-bank shape and coverage
         run: |
+          set -eu
           node - <<'NODE'
           const fs = require('fs');
           const files = ['data/questions.js', 'data/rw2-easy.js', 'data/rw-source-overrides.js', 'data/question-quality-overrides.js'];
