@@ -18,6 +18,7 @@ assert(app.includes('aria-labelledby="warnTitle"'), 'timer warning must have an 
 assert(keyboard.includes('role="dialog"'), 'shortcut dialog must expose dialog role');
 assert(keyboard.includes('openHelp'), 'help shortcut must have a dedicated help dialog');
 for (const shortcut of [
+  'F1 (Windows/macOS/iPad)', 'Control + Search + S (ChromeOS)',
   'Ctrl + Alt + H / Command + Control + H / iPad: Command + Control + P',
   'Ctrl + Alt + B / Command + Control + B',
   'Ctrl + Alt + X / Command + Control + X',
@@ -32,10 +33,12 @@ for (const shortcut of [
   'Ctrl + Alt + 1–4 / Command + Option + 1–4',
   'Ctrl + Shift + 1–4 / Command + Control + 1–4'
 ]) assert(keyboard.includes(shortcut), `platform shortcut must be documented: ${shortcut}`);
+assert(keyboard.includes('const isChromeOS'), 'ChromeOS-specific shortcut routing must detect CrOS');
 assert(keyboard.includes('const isMac'), 'platform-specific shortcut routing must detect Apple platforms');
 assert(keyboard.includes('const isIPad'), 'iPad-specific shortcut routing must be supported');
 assert(keyboard.includes('const triple = isMac ? command && ctrl : ctrl && alt'), 'shared Control/Command chord must follow platform mapping');
 assert(keyboard.includes('const comboAlt = isMac ? command && alt : ctrl && alt'), 'Option/Alt chord must follow platform mapping');
+assert(keyboard.includes("isChromeOS && ctrl && command && lower === 's'"), 'ChromeOS keyboard shortcut list must open with Control+Search+S');
 assert(keyboard.includes("isIPad && command && ctrl && lower === 'p'"), 'iPad Help must use Command+Control+P');
 assert(keyboard.includes("isMac ? command && event.shiftKey && lower === 'v' : ctrl && alt && lower === 'v'"), 'Mark for Review must use the platform-specific mapping');
 assert(modal.includes('role="dialog"'), 'modal focus layer must target dialog semantics');
