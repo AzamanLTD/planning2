@@ -5,12 +5,17 @@
   const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 
   function tokenize(input) {
-    return input
+    let x = input
       .replace(/[×·]/g, '*').replace(/[÷]/g, '/')
       .replace(/[−–]/g, '-')
       .replace(/π/g, 'pi').replace(/√/g, 'sqrt')
       .replace(/\s+/g, '')
       .replace(/\^/g, '^');
+    // Accept the notation students naturally type into a graphing calculator:
+    // 2x, 2(x+1), 2sin(30), (x+1)(x-1), and 2π.
+    x = x.replace(/(\d|\))(?=(?:[A-Za-z]+|\())/g, '$1*');
+    x = x.replace(/(pi|e|\))(?=(?:\d|\())/g, '$1*');
+    return x;
   }
 
   function evaluate(input) {
@@ -38,6 +43,7 @@
     };
     const primary = () => {
       if (eat(/^\+/)) return primary();
+      if (eat(/^- /)) return -primary();
       if (eat(/^-/)) return -primary();
       if (eat(/^\(/)) {
         const value = expression();
@@ -85,9 +91,7 @@
   }
 
   function graphExpression(input, x) {
-    const substituted = tokenize(input)
-      .replace(/\bx\b/g, `(${x})`)
-      .replace(/([0-9.)])(pi|e)/g, '$1*$2');
+    const substituted = input.replace(/\bx\b/gi, `(${x})`);
     return evaluate(substituted);
   }
 
@@ -107,7 +111,7 @@
           <button type="button" data-insert="sin(">sin</button><button type="button" data-insert="cos(">cos</button><button type="button" data-insert="tan(">tan</button><button type="button" data-insert="sqrt(">√</button><button type="button" data-insert="^">xʸ</button><button type="button" data-insert="pi">π</button>
         </div>
         <div class="calc-grid">${['7','8','9','÷','4','5','6','×','1','2','3','−','0','.','(',')','+','⌫','=','C'].map(v => `<button class="calc-key" type="button" data-calc="${v}">${v}</button>`).join('')}</div>
-        <p class="small azm-calc-help">Angles use degrees. Supported functions include sin, cos, tan, inverse trig, √, abs, ln, log, exp, π and e.</p>
+        <p class="small azm-calc-help">Angles use degrees. Supported functions include sin, cos, tan, inverse trig, √, abs, ln, log, exp, π and e. Implicit multiplication such as 2x and 2π is supported.</p>
       </section>
       <section id="azmCalcGraph" data-calc-view="graph" role="tabpanel" hidden>
         <label class="small" for="azmGraphExpr">Function</label>
