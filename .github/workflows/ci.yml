@@ -80,6 +80,8 @@ jobs:
           NODE
       - name: Run automated content audit
         run: node tests/content-audit.test.js
+      - name: Verify authored R&W source override coverage
+        run: node tests/content-override-contract.test.js
       - name: Run static application contract checks
         run: node tests/static-contract.test.js
       - name: Run accessibility contract checks
