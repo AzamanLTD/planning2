@@ -28,26 +28,20 @@
         if (phase === 0) {
           check('module 1 renders', !!doc.querySelector('.test-title') && doc.querySelector('.test-title').textContent.includes('Reading and Writing'));
           check('27-question module', /Question 1 of 27/.test(doc.querySelector('.test-counter')?.textContent || ''));
+          check('student UI hides domain metadata', !/Information and Ideas|Craft and Structure|Standard English Conventions/.test(doc.querySelector('.q-meta')?.textContent || ''));
+          check('student UI labels passage as source', doc.querySelector('.source-label')?.textContent.trim() === 'Source');
           const bank = win.SAT_QUESTIONS.rw1;
           const state = baseState();
           bank.forEach((q, i) => state.answers[`rw1-${i}`] = q.answer);
-          state.marked['rw1-0'] = true;
-          state.notes['rw1-0'] = 'smoke note';
-          state.highlights['rw1-0'] = [qText(bank[0])];
-          writeState(state);
-          phase = 1;
-          frame.contentWindow.location.reload();
-          return;
+          state.marked['rw1-0'] = true; state.notes['rw1-0'] = 'smoke note'; state.highlights['rw1-0'] = [qText(bank[0])];
+          writeState(state); phase = 1; frame.contentWindow.location.reload(); return;
         }
         if (phase === 1) {
           check('answer persisted', readState().answers['rw1-0'] === win.SAT_QUESTIONS.rw1[0].answer);
           check('mark persisted', !!readState().marked['rw1-0']);
           check('note persisted', readState().notes['rw1-0'] === 'smoke note');
           check('saved highlight rendered', !!doc.querySelector('.azm-saved-highlight'));
-          phase = 2;
-          const state = readState(); state.qi = 26; writeState(state);
-          frame.contentWindow.location.reload();
-          return;
+          phase = 2; const state = readState(); state.qi = 26; writeState(state); frame.contentWindow.location.reload(); return;
         }
         if (phase === 2) {
           check('last question reachable', /Question 27 of 27/.test(doc.querySelector('.test-counter')?.textContent || ''));
@@ -63,11 +57,9 @@
               phase = 3;
               state.screen = 'test'; state.mi = 2; state.qi = 0; state.endAt = Date.now()+600000;
               state.completed.rw2 = true; state.completed.math1 = false; state.completed.math2 = false;
-              writeState(state);
-              frame.contentWindow.location.reload();
+              writeState(state); frame.contentWindow.location.reload();
             }, 50);
-          }, 50);
-          return;
+          }, 50); return;
         }
         if (phase === 3) {
           check('Math module renders', doc.querySelector('.test-title')?.textContent.includes('Math'));
@@ -101,27 +93,21 @@
                 check('calculate tab returns', calculateTab?.getAttribute('aria-selected') === 'true' && calc?.querySelector('#azmCalcCalculate')?.hidden === false);
                 const sprIndex = win.SAT_QUESTIONS.math1.findIndex(q => q.type === 'spr');
                 check('Math SPR exists', sprIndex >= 0);
-                const state = readState(); state.qi = sprIndex; writeState(state);
-                phase = 4; frame.contentWindow.location.reload();
+                const state = readState(); state.qi = sprIndex; writeState(state); phase = 4; frame.contentWindow.location.reload();
               }, 100);
             }, 50);
-          }, 50);
-          return;
+          }, 50); return;
         }
         if (phase === 4) {
           const input = doc.querySelector('.spr-input');
-          check('SPR field renders', !!input);
-          input.value = '.6666';
-          input.dispatchEvent(new Event('input', { bubbles:true }));
-          input.dispatchEvent(new Event('blur', { bubbles:true }));
+          check('SPR field renders', !!input); input.value = '.6666';
+          input.dispatchEvent(new Event('input', { bubbles:true })); input.dispatchEvent(new Event('blur', { bubbles:true }));
           setTimeout(() => {
             const stored = readState().answers[`math1-${readState().qi}`];
             check('SPR answer persists after normalization', stored === '.6666');
-            const state = readState(); state.mi = 3; state.qi = 0; state.endAt = Date.now()-1;
-            state.completed.math1 = true; state.completed.math2 = false; writeState(state);
-            phase = 5; frame.contentWindow.location.reload();
-          }, 50);
-          return;
+            const state = readState(); state.mi = 3; state.qi = 0; state.endAt = Date.now()-1; state.completed.math1 = true; state.completed.math2 = false;
+            writeState(state); phase = 5; frame.contentWindow.location.reload();
+          }, 50); return;
         }
         if (phase === 5) {
           setTimeout(() => {
@@ -131,21 +117,26 @@
             check('report disclaims official score', doc.querySelector('.results-note')?.textContent.includes('not an official SAT scaled score'));
             const state = readState(); state.submitted=false; state.screen='break'; state.mi=2; state.breakEndAt=Date.now()-1; state.completed.math2=false;
             writeState(state); phase=6; frame.contentWindow.location.reload();
-          }, 350);
-          return;
+          }, 350); return;
         }
         if (phase === 6) {
           setTimeout(() => {
-            const state = readState();
-            check('expired break advances to Math directions', state.screen === 'directions' && state.mi === 2 && state.breakEndAt === null);
-            out.textContent = checks.join('\n') + '\nSMOKE COMPLETE';
-          }, 350);
+            const state = readState(); check('expired break advances to Math directions', state.screen === 'directions' && state.mi === 2 && state.breakEndAt === null);
+            state.screen='startcode'; state.startCode=''; writeState(state); phase=7; frame.contentWindow.location.reload();
+          }, 350); return;
+        }
+        if (phase === 7) {
+          const fields = [...doc.querySelectorAll('.start-digit')]; check('six start-code inputs render', fields.length === 6);
+          const event = new Event('paste', { bubbles:true, cancelable:true });
+          Object.defineProperty(event, 'clipboardData', { value: { getData: () => '492776' } });
+          fields[0].dispatchEvent(event);
+          check('paste fills start code', fields.map((x) => x.value).join('') === '492776');
+          check('start code state persists', readState().startCode === '492776');
+          out.textContent = checks.join('\n') + '\nSMOKE COMPLETE';
         }
       }
       function qText(q) { return q.source?.paragraphs?.[0]?.split(' ').slice(0, 3).join(' ') || ''; }
-      writeState(baseState());
-      frame.addEventListener('load', afterLoad);
-      frame.src = '../index.html?browser-smoke=1';
+      writeState(baseState()); frame.addEventListener('load', afterLoad); frame.src = '../index.html?browser-smoke=1';
     })();
   </script>
 </body>
