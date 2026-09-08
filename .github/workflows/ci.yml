@@ -28,6 +28,7 @@ jobs:
           done
       - name: Validate question-bank shape and coverage
         run: |
+          set -eu
           node - <<'NODE'
           const fs = require('fs');
           const files = ['data/questions.js', 'data/rw2-easy.js', 'data/rw-source-overrides.js', 'data/question-quality-overrides.js'];
@@ -141,3 +142,13 @@ jobs:
           chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=5000 --dump-dom http://127.0.0.1:8081/tests/help-shortcut-smoke.html > /tmp/azaman-help-smoke.html
           cat /tmp/azaman-help-smoke.html
           grep -q 'HELP SMOKE COMPLETE' /tmp/azaman-help-smoke.html
+      - name: Run complete 98-question browser smoke test
+        run: |
+          set -eu
+          python3 -m http.server 8082 >/tmp/azaman-full-run-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          sleep 1
+          chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=15000 --dump-dom http://127.0.0.1:8082/tests/full-run-smoke.html > /tmp/azaman-full-run-smoke.html
+          cat /tmp/azaman-full-run-smoke.html
+          grep -q 'FULL RUN SMOKE COMPLETE' /tmp/azaman-full-run-smoke.html
