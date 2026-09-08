@@ -99,8 +99,39 @@
           setTimeout(() => {
             const stored = readState().answers[`math1-${readState().qi}`];
             check('SPR answer persists after normalization', stored === '.6666');
-            out.textContent = checks.join('\n') + '\nSMOKE COMPLETE';
+            const state = readState();
+            state.mi = 3;
+            state.qi = 0;
+            state.endAt = Date.now() - 1;
+            state.completed.math1 = true;
+            state.completed.math2 = false;
+            writeState(state);
+            phase = 5;
+            frame.contentWindow.location.reload();
           }, 50);
+          return;
+        }
+        if (phase === 5) {
+          setTimeout(() => {
+            check('expired module auto-submits', readState().screen === 'finish' && !!readState().completed.math2 && readState().submitted === true);
+            const state = readState();
+            state.submitted = false;
+            state.screen = 'break';
+            state.mi = 2;
+            state.breakEndAt = Date.now() - 1;
+            state.completed.math2 = false;
+            writeState(state);
+            phase = 6;
+            frame.contentWindow.location.reload();
+          }, 350);
+          return;
+        }
+        if (phase === 6) {
+          setTimeout(() => {
+            const state = readState();
+            check('expired break advances to Math directions', state.screen === 'directions' && state.mi === 2 && state.breakEndAt === null);
+            out.textContent = checks.join('\n') + '\nSMOKE COMPLETE';
+          }, 350);
         }
       }
 
