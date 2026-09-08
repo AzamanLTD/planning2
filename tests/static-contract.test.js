@@ -20,6 +20,7 @@ const uiA11y = read('ui-accessibility-enhancement.js');
 const quality = read('data/question-quality-overrides.js');
 const tokens = read('styles.css');
 const platformReadiness = read('docs/platform-readiness.md');
+const spec = read('docs/bluebook-spec.md');
 
 const requiredScripts = [
   'data/questions.js', 'data/rw2-easy.js', 'data/rw-source-overrides.js', 'data/question-quality-overrides.js', 'session-guard.js', 'app.js', 'keyboard.js',
@@ -63,6 +64,7 @@ assert(helpSmoke.includes("key: 'h', ctrlKey: true, altKey: true"), 'Help smoke 
 assert(helpSmoke.includes('Command + Control + H'), 'Help smoke must verify the documented macOS Help shortcut');
 assert(helpSmoke.includes('HELP SMOKE COMPLETE'), 'Help smoke must expose a machine-checkable completion marker');
 for (const phrase of ['ChromeOS 144', 'macOS 15', 'iPadOS 18', 'Windows 11 24H2', 'support matrix']) assert(platformReadiness.includes(phrase), `platform readiness documentation missing: ${phrase}`);
+for (const phrase of ['Control + Search + S', 'ChromeOS', 'macOS', 'iPad', 'Command + Control + P', 'Setup/check-in state']) assert(spec.includes(phrase), `Bluebook platform spec missing: ${phrase}`);
 for (const phrase of ['hash(value)', 'question.options = original.map', 'question.answer = letters', 'difficulty: \'hard\'']) assert(quality.includes(phrase), `question quality override missing: ${phrase}`);
 
 for (const token of ['--color-page:', '--color-surface:', '--color-text:', '--color-border:', '--color-primary:', '--color-warning:', '--color-focus:', '--color-selected:']) assert(tokens.includes(token), `visual token missing: ${token}`);
