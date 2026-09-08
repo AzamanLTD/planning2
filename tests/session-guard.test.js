@@ -52,7 +52,9 @@ assert.equal(state.qi, 0);
 
 state = run({ ...base(), mi: 2, endAt: null });
 assert.equal(state.screen, 'directions');
-assert.equal(state.mi, 2);
+assert.equal(state.mi, 0);
+assert.equal(state.qi, 0);
+assert.equal(state.endAt, null);
 
 state = run({ ...base(), screen: 'break', mi: 1, breakEndAt: NOW - 1 });
 assert.equal(state.screen, 'directions');
@@ -61,7 +63,7 @@ assert.equal(state.breakEndAt, null);
 
 state = run({ ...base(), screen: 'break', mi: 1, breakEndAt: NOW - 1, completed: { rw1: true, rw2: true } });
 assert.equal(state.screen, 'directions');
-assert.equal(state.mi, 2, `expired valid break recovery produced unexpected state: ${JSON.stringify(state)}`);
+assert.equal(state.mi, 2);
 assert.equal(state.breakEndAt, null);
 assert.equal(state.endAt, null);
 assert.equal(state.completed.rw1, true);
