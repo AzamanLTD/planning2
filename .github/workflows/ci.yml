@@ -15,7 +15,7 @@ jobs:
           node-version: 22
       - name: Check JavaScript syntax
         run: node --check app.js
-      - name: Validate question-bank shape
+      - name: Validate question-bank shape and coverage
         run: |
           node - <<'NODE'
           const fs = require('fs');
@@ -23,25 +23,30 @@ jobs:
           const sandbox = {};
           new Function('window', source)(sandbox);
           const b = sandbox.SAT_QUESTIONS;
-          const expected = {
-            rw1: 27,
-            rw2Easy: 27,
-            rw2Hard: 27,
-            math1: 22,
-            math2Easy: 22,
-            math2Hard: 22
-          };
-          if (b.rw1.length !== expected.rw1) throw new Error('rw1 count mismatch');
-          if (b.rw2.easy.length !== expected.rw2Easy) throw new Error('rw2 easy count mismatch');
-          if (b.rw2.hard.length !== expected.rw2Hard) throw new Error('rw2 hard count mismatch');
-          if (b.math1.length !== expected.math1) throw new Error('math1 count mismatch');
-          if (b.math2.easy.length !== expected.math2Easy) throw new Error('math2 easy count mismatch');
-          if (b.math2.hard.length !== expected.math2Hard) throw new Error('math2 hard count mismatch');
-          const all = [...b.rw1, ...b.rw2.easy, ...b.rw2.hard, ...b.math1, ...b.math2.easy, ...b.math2.hard];
+          const groups = [
+            ['rw1', b.rw1], ['rw2.easy', b.rw2.easy], ['rw2.hard', b.rw2.hard],
+            ['math1', b.math1], ['math2.easy', b.math2.easy], ['math2.hard', b.math2.hard]
+          ];
+          const expected = [27, 27, 27, 22, 22, 22];
+          groups.forEach(([name, items], i) => {
+            if (!Array.isArray(items) || items.length !== expected[i]) throw new Error(`${name} count mismatch`);
+          });
+          const all = groups.flatMap(([, items]) => items);
           if (all.length !== 147) throw new Error(`expected 147 records, got ${all.length}`);
-          if (all.some(q => !q.id || !q.prompt || !q.answer || !q.difficulty || !q.domain || !q.skill || !q.explanation)) throw new Error('missing required question metadata');
-          if (all.some(q => q.section === 'Reading and Writing' && (!Array.isArray(q.options) || q.options.length !== 4))) throw new Error('R&W question must have 4 options');
-          if (all.some(q => q.section === 'Math' && q.type === 'mcq' && (!Array.isArray(q.options) || q.options.length !== 4))) throw new Error('Math MCQ must have 4 options');
-          if (all.filter(q => q.section === 'Math' && q.type === 'spr').length < 10) throw new Error('too few Math SPR items');
-          console.log(`Validated ${all.length} question records.`);
+          const ids = new Set();
+          for (const q of all) {
+            if (ids.has(q.id)) throw new Error(`duplicate question id: ${q.id}`);
+            ids.add(q.id);
+            if (!q.id || !q.prompt || !q.answer || !q.difficulty || !q.domain || !q.skill || !q.explanation) throw new Error(`missing metadata: ${q.id}`);
+            if (q.section === 'Reading and Writing' && (!Array.isArray(q.options) || q.options.length !== 4)) throw new Error(`R&W options mismatch: ${q.id}`);
+            if (q.section === 'Math' && q.type === 'mcq' && (!Array.isArray(q.options) || q.options.length !== 4)) throw new Error(`Math MCQ options mismatch: ${q.id}`);
+            if (q.section === 'Math' && q.type === 'spr' && q.options?.length) throw new Error(`SPR should not carry MCQ options: ${q.id}`);
+          }
+          const spr = all.filter(q => q.section === 'Math' && q.type === 'spr').length;
+          if (spr < 10 || spr > 20) throw new Error(`unexpected SPR volume: ${spr}`);
+          const rw2Hard = b.rw2.hard.filter(q => q.difficulty === 'hard').length;
+          if (rw2Hard < 20) throw new Error('R&W hard Module 2 is not sufficiently hard-tagged');
+          const math2Hard = b.math2.hard.filter(q => q.difficulty === 'hard').length;
+          if (math2Hard < 15) throw new Error('Math hard Module 2 is not sufficiently hard-tagged');
+          console.log(`Validated ${all.length} records, ${spr} Math SPR items, unique IDs.`);
           NODE
