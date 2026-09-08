@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      - name: Validate timer warning recovery contract
+        run: node tests/timer-warning-recovery-contract.test.js
       - name: Run timer warning recovery smoke
         run: |
           set -eu
