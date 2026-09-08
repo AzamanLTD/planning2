@@ -52,11 +52,21 @@
     });
   }
 
+  function installReducedMotionSupport() {
+    if (!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    if (document.getElementById('azmReducedMotion')) return;
+    const style = document.createElement('style');
+    style.id = 'azmReducedMotion';
+    style.textContent = '*,:before,:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}';
+    document.head.appendChild(style);
+  }
+
   function enhance() {
     enhanceChoices();
     enhanceReview(document.getElementById('reviewModal'));
     enhanceTools(document.getElementById('toolPopover'));
     enhanceStartCode();
+    installReducedMotionSupport();
   }
 
   const observer = new MutationObserver(enhance);
