@@ -90,13 +90,15 @@ control in this simulator.
 ## 3. Test-day flow (screen inventory) [VERIFY each screen in capture pass]
 
 The replica must reproduce this sequence. Screen names are descriptive; the
-capture pass supplies exact wording, layout, and styling:
+capture pass supplies exact wording, layout, and styling. Internally, the
+simulator's setup/check-in state is represented as `checkin` so refresh recovery
+can preserve the exact active state used by the browser runtime:
 
 1. **Sign-in / test code entry** — proctor gives a test code; student enters
    it to start. [VERIFY] exact sign-in variants (test code vs. College Board
    account login) and which apply to proctored test day.
-2. **Exam setup** — student confirms info, agrees to test rules, device
-   lock-in messaging.
+2. **Exam setup / check-in** — student confirms info, agrees to test rules,
+   and acknowledges the practice workspace/setup reminders.
 3. **Welcome / instructions screens** — per-module directions: what the
    section covers, number of questions, time, calculator availability.
 4. **Module screens** — the exam itself: passage left / questions right
@@ -148,7 +150,8 @@ and typography. No hardcoded literals in components.
 - Accessibility: keyboard navigable; color contrast as per real app.
 - Recovery: refresh during an active module or the scheduled break preserves
   the absolute deadline; stale or impossible persisted states are repaired
-  without reopening completed modules.
+  without reopening completed modules. Setup/check-in state must also survive
+  reload instead of falling back to the access screen.
 
 ## 6. Network boundary [VERIFY / implementation boundary]
 
