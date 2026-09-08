@@ -25,7 +25,12 @@ function base() {
   };
 }
 
-let state = run({ ...base(), submitted: true, screen: 'test', mi: 0 });
+let state = run({ ...base(), screen: 'checkin' });
+assert.equal(state.screen, 'checkin');
+assert.equal(state.mi, 0);
+assert.equal(state.qi, 4);
+
+state = run({ ...base(), submitted: true, screen: 'test', mi: 0 });
 assert.equal(state.screen, 'finish');
 assert.equal(state.endAt, null);
 assert.equal(state.breakEndAt, null);
@@ -79,6 +84,16 @@ assert.equal(state.mi, 1);
 assert.equal(state.screen, 'directions');
 assert.equal(state.adaptive.rw, 'easy');
 
+state = run({ ...base(), mi: 0, endAt: NOW - 1, answers: { 'rw1-0': 'A' } }, {
+  rw1: Array.from({ length: 27 }, (_, i) => ({ answer: i === 0 ? 'A' : 'B' }))
+});
+assert.equal(state.adaptive.rw, 'easy');
+
+state = run({ ...base(), mi: 0, endAt: NOW - 1, answers: { 'rw1-0': '7/2' } }, {
+  rw1: Array.from({ length: 27 }, (_, i) => ({ answer: i === 0 ? '3.5' : 'B' }))
+});
+assert.equal(state.adaptive.rw, 'easy');
+
 state = run({ ...base(), mi: 3, endAt: NOW - 1, completed: { rw1: true, rw2: true, math1: true } });
 assert.equal(state.completed.math2, true);
 assert.equal(state.submitted, true);
@@ -120,6 +135,7 @@ state = run({ ...base(), screen: 'break', mi: 2, breakEndAt: NOW + 10_000, compl
 assert.equal(state.screen, 'finish');
 assert.equal(state.submitted, true);
 assert.equal(state.mi, 3);
+assert.equal(state.qi, 0);
 assert.equal(state.breakEndAt, null);
 assert.equal(state.completed.rw1, true);
 assert.equal(state.completed.rw2, true);
