@@ -1,6 +1,9 @@
 (() => {
   'use strict';
 
+  const platform = `${navigator.platform || ''} ${navigator.userAgent || ''}`;
+  const isMac = /Mac|iPhone|iPad|iPod/i.test(platform);
+  const isIPad = /iPad/i.test(platform) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const shortcuts = [
     ['F1', 'Keyboard shortcuts'],
     ['F6 / Shift+F6', 'Move between exam regions'],
@@ -8,9 +11,9 @@
     ['Ctrl + Alt + B / Command + Control + B', 'Back'],
     ['Ctrl + Alt + X / Command + Control + X', 'Next / review module'],
     ['Ctrl + Alt + G / Command + Control + G', 'Question menu'],
-    ['Ctrl + Alt + H / Command + Control + H', 'Help'],
+    ['Ctrl + Alt + H / Command + Control + H / iPad: Command + Control + P', 'Help'],
     ['Ctrl + Alt + Shift + D / Command + Control + Shift + D', 'Directions'],
-    ['Ctrl + L', 'Line reader'],
+    ['Ctrl + L / Command + L', 'Line reader'],
     ['Ctrl + Alt + T / Command + Option + T', 'Hide/show timer or close the 5-minute message'],
     ['Ctrl + Alt + V / Command + Shift + V', 'Mark for Review'],
     ['Ctrl + H', 'Highlights & Notes'],
@@ -19,12 +22,8 @@
     ['Ctrl + Alt + O / Command + Control + O', 'Option eliminator'],
     ['Ctrl + Alt + 1–4 / Command + Option + 1–4', 'Eliminate option A–D'],
     ['Ctrl + Shift + 1–4 / Command + Control + 1–4', 'Select option A–D'],
-    ['iPad: Command + Control + P', 'Help'],
   ];
 
-  const platform = `${navigator.platform || ''} ${navigator.userAgent || ''}`;
-  const isMac = /Mac|iPhone|iPad|iPod/i.test(platform);
-  const isIPad = /iPad/i.test(platform) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const isTyping = (target) => {
     if (!target) return false;
     const tag = target.tagName?.toLowerCase();
@@ -140,7 +139,7 @@
     if (triple && !alt && lower === 'g') { event.preventDefault(); clickText('Question menu'); return; }
     if ((isIPad && command && ctrl && lower === 'p') || (!isIPad && triple && !alt && lower === 'h')) { event.preventDefault(); openHelp(); return; }
     if (triple && event.shiftKey && lower === 'd') { event.preventDefault(); openDirections(); return; }
-    if (ctrl && !command && !alt && lower === 'l') { event.preventDefault(); openToolByText('Line reader'); return; }
+    if ((isMac ? command : ctrl) && !alt && lower === 'l') { event.preventDefault(); openToolByText('Line reader'); return; }
     if (comboAlt && lower === 't') { event.preventDefault(); openToolByText('Hide timer', () => openToolByText('Show timer')); return; }
     if (isMac ? command && event.shiftKey && lower === 'v' : ctrl && alt && lower === 'v') { event.preventDefault(); clickText('Mark for review'); return; }
     if (ctrl && !alt && lower === 'h') { event.preventDefault(); openToolByText('Note'); return; }
