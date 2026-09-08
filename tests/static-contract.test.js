@@ -40,9 +40,9 @@ for (const phrase of ['STORAGE_KEY', 'MODULES', 'state.submitted', 'state.comple
   'state.breakEndAt <= Date.now()', "state.screen = 'directions'", 'state.adaptive.rw', 'state.adaptive.math']) {
   assert(guard.includes(phrase), `session recovery contract missing: ${phrase}`);
 }
-for (const phrase of ['F1', 'F6', 'Ctrl + Alt + B', 'Ctrl + Alt + X', 'Ctrl + Alt + G', 'Ctrl + Alt + Shift + D',
+for (const phrase of ['F1', 'F6', 'Ctrl + Alt + B', 'Ctrl + Alt + X', 'Ctrl + Alt + G', 'Ctrl + Alt + H', 'Ctrl + Alt + Shift + D',
   'Ctrl + Alt + V', 'Ctrl + L', 'Ctrl + H', 'Ctrl + Alt + C', 'Ctrl + Alt + R', 'Ctrl + Alt + O',
-  'Ctrl + Alt + 1–4', 'Ctrl + Shift + 1–4', 'clickText(\'Question menu\')', "clickText('Next') || clickText('Review module')"]) {
+  'Ctrl + Alt + 1–4', 'Ctrl + Shift + 1–4', 'clickText(\'Question menu\')', "clickText('Next') || clickText('Review module')", 'openHelp']) {
   assert(keyboard.includes(phrase), `keyboard shortcut missing: ${phrase}`);
 }
 for (const phrase of ['normalizeFraction', 'normalizeDecimal', 'blur', 'MAX_POSITIVE_CHARS', 'MAX_NEGATIVE_CHARS']) assert(spr.includes(phrase), `SPR normalization contract missing: ${phrase}`);
