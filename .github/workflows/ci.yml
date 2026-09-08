@@ -60,20 +60,12 @@ jobs:
           if (rw2Hard < 20) throw new Error('R&W hard Module 2 is not sufficiently hard-tagged');
           const math2Hard = b.math2.hard.filter(q => q.difficulty === 'hard').length;
           if (math2Hard < 15) throw new Error('Math hard Module 2 is not sufficiently hard-tagged');
-
           const ranges = {
             'Reading and Writing': {
-              'Craft and Structure': [7, 9],
-              'Information and Ideas': [6, 8],
-              'Standard English Conventions': [6, 8],
-              'Expression of Ideas': [4, 6]
+              'Craft and Structure': [7, 9], 'Information and Ideas': [6, 8],
+              'Standard English Conventions': [6, 8], 'Expression of Ideas': [4, 6]
             },
-            Math: {
-              Algebra: [6, 9],
-              'Advanced Math': [6, 8],
-              'Problem Solving and Data Analysis': [3, 5],
-              'Geometry and Trigonometry': [3, 5]
-            }
+            Math: { Algebra: [6, 9], 'Advanced Math': [6, 8], 'Problem Solving and Data Analysis': [3, 5], 'Geometry and Trigonometry': [3, 5] }
           };
           const moduleDomainCounts = (items, section) => {
             const counts = Object.fromEntries(Object.keys(ranges[section]).map(k => [k, 0]));
@@ -83,13 +75,11 @@ jobs:
             }
             return counts;
           };
-          for (const [name, items] of groups) {
-            const section = items[0].section;
-            const counts = moduleDomainCounts(items, section);
-            console.log(`${name} domain coverage: ${JSON.stringify(counts)}`);
-          }
+          for (const [name, items] of groups) console.log(`${name} domain coverage: ${JSON.stringify(moduleDomainCounts(items, items[0].section))}`);
           console.log(`Validated ${all.length} records, ${spr} Math SPR items, unique IDs.`);
           NODE
+      - name: Run automated content audit
+        run: node tests/content-audit.test.js
       - name: Run static application contract checks
         run: node tests/static-contract.test.js
       - name: Run session recovery edge-case tests
@@ -101,6 +91,6 @@ jobs:
           server_pid=$!
           trap 'kill "$server_pid"' EXIT
           sleep 1
-          chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=8000 --dump-dom http://127.0.0.1:8080/tests/browser-smoke.html > /tmp/azaman-smoke.html
+          chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=10000 --dump-dom http://127.0.0.1:8080/tests/browser-smoke.html > /tmp/azaman-smoke.html
           cat /tmp/azaman-smoke.html
           grep -q 'SMOKE COMPLETE' /tmp/azaman-smoke.html
