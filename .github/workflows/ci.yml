@@ -84,6 +84,8 @@ jobs:
         run: node tests/content-override-contract.test.js
       - name: Audit question-bank diversity
         run: node tests/content-diversity-audit.test.js
+      - name: Validate adaptive Module 2 variants
+        run: node tests/adaptive-integrity.test.js
       - name: Run static application contract checks
         run: node tests/static-contract.test.js
       - name: Run accessibility contract checks
