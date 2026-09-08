@@ -96,6 +96,8 @@ jobs:
         run: node tests/note-and-sanitizer-contract.test.js
       - name: Validate reference sheet and exam-tool contracts
         run: node tests/tools-contract.test.js
+      - name: Validate GitHub Pages deployment contract
+        run: node tests/pages-deploy-contract.test.js
       - name: Run static application contract checks
         run: node tests/static-contract.test.js
       - name: Run accessibility contract checks
