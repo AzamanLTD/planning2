@@ -27,7 +27,7 @@
       const value = current.answers?.[`${module.id}-${index}`];
       if (value === undefined || String(value).trim() === '') return;
       answered += 1;
-      if (String(value).trim().toLowerCase() === String(question.answer).trim().toLowerCase()) correct += 1;
+      if (window.same ? window.same(value, question.answer) : String(value).trim().toLowerCase() === String(question.answer).trim().toLowerCase()) correct += 1;
     });
     return { answered, correct, total: bank.length, accuracy: bank.length ? Math.round(correct / bank.length * 100) : 0 };
   }
