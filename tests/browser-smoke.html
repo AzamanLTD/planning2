@@ -64,7 +64,7 @@
           check('answer choices expose radio semantics', doc.querySelector('.choice')?.getAttribute('role') === 'radio');
           const bank = win.SAT_QUESTIONS.rw1, state = baseState();
           bank.forEach((q, i) => state.answers[`rw1-${i}`] = q.answer);
-          state.marked['rw1-0'] = true; state.notes['rw1-0'] = 'smoke note'; state.highlights['rw1-0'] = [qText(bank[0])];
+          state.marked['rw1-0'] = true; state.notes['rw1-0'] = 'smoke note'; state.highlights['rw1-0'] = [bank[0].source?.paragraphs?.[0] || 'smoke passage'];
           writeState(state); phase = 1; frame.contentWindow.location.reload(); return;
         }
         if (phase === 1) {
