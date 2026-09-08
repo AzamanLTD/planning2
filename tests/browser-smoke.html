@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Azaman browser smoke</title></head>
+<body>
+  <pre id="result">running</pre>
+  <iframe id="app" title="Azaman simulator" style="width:100%;height:800px;border:0"></iframe>
+  <script>
+    (() => {
+      const out = document.getElementById('result');
+      const frame = document.getElementById('app');
+      const KEY = 'azaman-sat-practice-v3';
+      let phase = 0;
+      const checks = [];
+
+      function check(name, value) {
+        checks.push(`${value ? 'PASS' : 'FAIL'} ${name}`);
+        if (!value) throw new Error(name);
+      }
+
+      function writeState(data) { localStorage.setItem(KEY, JSON.stringify(data)); }
+      function readState() { return JSON.parse(localStorage.getItem(KEY)); }
+      function baseState() {
+        return { v:3, screen:'test', student:'Smoke Student', accessCode:'SAT26', roomCode:'AZM24', startCode:'492776', mi:0, qi:0,
+          endAt:Date.now()+600000, breakEndAt:null, answers:{}, marked:{}, eliminated:{}, notes:{}, highlights:{}, completed:{}, submitted:false,
+          adaptive:{rw:'easy',math:'easy'}, timerHidden:false, lineReader:false, rules:true, desk:true, warning:{} };
+      }
+
+      function afterLoad() {
+        const win = frame.contentWindow;
+        const doc = frame.contentDocument;
+        if (phase === 0) {
+          check('module 1 renders', !!doc.querySelector('.test-title') && doc.querySelector('.test-title').textContent.includes('Reading and Writing'));
+          check('27-question module', /Question 1 of 27/.test(doc.querySelector('.test-counter')?.textContent || ''));
+          const bank = win.SAT_QUESTIONS.rw1;
+          const state = baseState();
+          bank.forEach((q, i) => state.answers[`rw1-${i}`] = q.answer);
+          state.marked['rw1-0'] = true;
+          state.notes['rw1-0'] = 'smoke note';
+          state.highlights['rw1-0'] = [qText(bank[0])];
+          writeState(state);
+          phase = 1;
+          frame.contentWindow.location.reload();
+          return;
+        }
+        if (phase === 1) {
+          check('answer persisted', readState().answers['rw1-0'] === win.SAT_QUESTIONS.rw1[0].answer);
+          check('mark persisted', !!readState().marked['rw1-0']);
+          check('note persisted', readState().notes['rw1-0'] === 'smoke note');
+          check('saved highlight rendered', !!doc.querySelector('.azm-saved-highlight'));
+          phase = 2;
+          const state = readState();
+          state.qi = 26;
+          writeState(state);
+          frame.contentWindow.location.reload();
+          return;
+        }
+        if (phase === 2) {
+          check('last question reachable', /Question 27 of 27/.test(doc.querySelector('.test-counter')?.textContent || ''));
+          doc.querySelector('#nextBtn')?.click();
+          setTimeout(() => {
+            check('review modal opens', !!frame.contentDocument.getElementById('reviewModal'));
+            frame.contentDocument.querySelector('#submitModule')?.click();
+            setTimeout(() => {
+              const state = readState();
+              check('module 1 locked', !!state.completed.rw1);
+              check('hard Module 2 routed', state.adaptive.rw === 'hard');
+              check('directions after module', state.screen === 'directions' && state.mi === 1);
+              phase = 3;
+              state.screen = 'test'; state.mi = 2; state.qi = 0; state.endAt = Date.now()+600000;
+              state.completed.rw2 = true; state.completed.math1 = false; state.completed.math2 = false;
+              writeState(state);
+              frame.contentWindow.location.reload();
+            }, 50);
+          }, 50);
+          return;
+        }
+        if (phase === 3) {
+          check('Math module renders', doc.querySelector('.test-title')?.textContent.includes('Math'));
+          const tools = doc.querySelector('#toolsBtn');
+          tools?.click();
+          setTimeout(() => {
+            doc.querySelector('#calcTool')?.click();
+            setTimeout(() => {
+              check('calculator opens', !!frame.contentDocument.getElementById('calculatorPanel'));
+              const sprIndex = win.SAT_QUESTIONS.math1.findIndex(q => q.type === 'spr');
+              check('Math SPR exists', sprIndex >= 0);
+              const state = readState(); state.qi = sprIndex; writeState(state);
+              phase = 4; frame.contentWindow.location.reload();
+            }, 50);
+          }, 50);
+          return;
+        }
+        if (phase === 4) {
+          const input = doc.querySelector('.spr-input');
+          check('SPR field renders', !!input);
+          input.value = '.6666';
+          input.dispatchEvent(new Event('input', { bubbles:true }));
+          input.dispatchEvent(new Event('blur', { bubbles:true }));
+          setTimeout(() => {
+            const stored = readState().answers[`math1-${readState().qi}`];
+            check('SPR answer persists after normalization', stored === '.6666');
+            out.textContent = checks.join('\n') + '\nSMOKE COMPLETE';
+          }, 50);
+        }
+      }
+
+      function qText(q) { return q.source?.paragraphs?.[0]?.split(' ').slice(0, 3).join(' ') || ''; }
+      writeState(baseState());
+      frame.addEventListener('load', afterLoad);
+      frame.src = '../index.html?browser-smoke=1';
+    })();
+  </script>
+</body>
+</html>
