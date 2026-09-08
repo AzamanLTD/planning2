@@ -6,7 +6,7 @@
     ['F6 / Shift+F6', 'Move between exam regions'],
     ['Ctrl + + / Ctrl + - / Ctrl + 0', 'Zoom in / out / reset'],
     ['Ctrl + Alt + B', 'Back'],
-    ['Ctrl + Alt + X', 'Next'],
+    ['Ctrl + Alt + X', 'Next / review module'],
     ['Ctrl + Alt + G', 'Question menu'],
     ['Ctrl + Alt + Shift + D', 'Open directions'],
     ['Ctrl + L', 'Line reader'],
@@ -40,17 +40,8 @@
     requestAnimationFrame(() => clickText(label) || fallback?.());
   }
 
-  function regionNodes() {
-    return [
-      document.querySelector('.test-top'),
-      document.querySelector('.source-panel'),
-      document.querySelector('.question-panel'),
-      document.querySelector('.test-footer')
-    ].filter(Boolean);
-  }
-
   function focusRegion(direction) {
-    const nodes = regionNodes();
+    const nodes = [document.querySelector('.test-top'), document.querySelector('.source-panel'), document.querySelector('.question-panel'), document.querySelector('.test-footer')].filter(Boolean);
     if (!nodes.length) return;
     nodes.forEach((node) => { if (node.tabIndex < 0) node.tabIndex = 0; });
     const active = document.activeElement;
@@ -66,11 +57,7 @@
     const n = document.createElement('div');
     n.id = 'shortcutHelp';
     n.className = 'modal-backdrop';
-    n.innerHTML = `<div class="modal shortcut-help" role="dialog" aria-modal="true" aria-labelledby="shortcutTitle">
-      <div class="modal-head"><h3 id="shortcutTitle">Keyboard shortcuts</h3><button class="icon-btn" id="shortcutClose" aria-label="Close">×</button></div>
-      <div class="shortcut-list">${shortcuts.map(([key, desc]) => `<div class="shortcut-row"><kbd>${key}</kbd><span>${desc}</span></div>`).join('')}</div>
-      <div class="modal-actions"><button class="btn" id="shortcutDone">Done</button></div>
-    </div>`;
+    n.innerHTML = `<div class="modal shortcut-help" role="dialog" aria-modal="true" aria-labelledby="shortcutTitle"><div class="modal-head"><h3 id="shortcutTitle">Keyboard shortcuts</h3><button class="icon-btn" id="shortcutClose" aria-label="Close">×</button></div><div class="shortcut-list">${shortcuts.map(([key, desc]) => `<div class="shortcut-row"><kbd>${key}</kbd><span>${desc}</span></div>`).join('')}</div><div class="modal-actions"><button class="btn" id="shortcutDone">Done</button></div></div>`;
     document.body.appendChild(n);
     const close = () => n.remove();
     n.querySelector('#shortcutClose').onclick = close;
@@ -84,12 +71,7 @@
     const n = document.createElement('div');
     n.id = 'directionHelp';
     n.className = 'modal-backdrop';
-    n.innerHTML = `<div class="modal directions-modal" role="dialog" aria-modal="true" aria-labelledby="directionTitle">
-      <div class="modal-head"><h3 id="directionTitle">${title} directions</h3><button class="icon-btn" id="directionClose" aria-label="Close">×</button></div>
-      <p>Review each question before moving on. You can use the question menu to move within this module. Your response is saved automatically.</p>
-      <p>Use the available test tools when appropriate. The module timer continues while these directions are open.</p>
-      <div class="modal-actions"><button class="btn" id="directionDone">Continue testing</button></div>
-    </div>`;
+    n.innerHTML = `<div class="modal directions-modal" role="dialog" aria-modal="true" aria-labelledby="directionTitle"><div class="modal-head"><h3 id="directionTitle">${title} directions</h3><button class="icon-btn" id="directionClose" aria-label="Close">×</button></div><p>Review each question before moving on. You can use the question menu to move within this module. Your response is saved automatically.</p><p>Use the available test tools when appropriate. The module timer continues while these directions are open.</p><div class="modal-actions"><button class="btn" id="directionDone">Continue testing</button></div></div>`;
     document.body.appendChild(n);
     const close = () => n.remove();
     n.querySelector('#directionClose').onclick = close;
@@ -112,6 +94,10 @@
     target?.click();
   }
 
+  function nextShortcut() {
+    clickText('Next') || clickText('Review module');
+  }
+
   function onKeydown(event) {
     const key = event.key;
     const lower = key.toLowerCase();
@@ -122,22 +108,13 @@
     if (key === 'F1') { event.preventDefault(); openShortcuts(); return; }
     if (!document.querySelector('.test-shell')) return;
     if (key === 'F6') { event.preventDefault(); focusRegion(event.shiftKey ? -1 : 1); return; }
-
-    if (mod && (key === '+' || key === '=')) {
-      event.preventDefault();
-      document.documentElement.style.setProperty('--zoom-scale', String(Math.min(1.25, (Number(getComputedStyle(document.documentElement).getPropertyValue('--zoom-scale')) || 1) + 0.05)));
-      return;
-    }
-    if (mod && (key === '-' || key === '_')) {
-      event.preventDefault();
-      document.documentElement.style.setProperty('--zoom-scale', String(Math.max(0.85, (Number(getComputedStyle(document.documentElement).getPropertyValue('--zoom-scale')) || 1) - 0.05)));
-      return;
-    }
+    if (mod && (key === '+' || key === '=')) { event.preventDefault(); document.documentElement.style.setProperty('--zoom-scale', String(Math.min(1.25, (Number(getComputedStyle(document.documentElement).getPropertyValue('--zoom-scale')) || 1) + 0.05))); return; }
+    if (mod && (key === '-' || key === '_')) { event.preventDefault(); document.documentElement.style.setProperty('--zoom-scale', String(Math.max(0.85, (Number(getComputedStyle(document.documentElement).getPropertyValue('--zoom-scale')) || 1) - 0.05))); return; }
     if (mod && key === '0') { event.preventDefault(); document.documentElement.style.setProperty('--zoom-scale', '1'); return; }
     if (isTyping(event.target)) return;
 
     if (mod && alt && lower === 'b') { event.preventDefault(); clickText('Back'); return; }
-    if (mod && alt && lower === 'x') { event.preventDefault(); clickText('Next'); return; }
+    if (mod && alt && lower === 'x') { event.preventDefault(); nextShortcut(); return; }
     if (mod && alt && lower === 'g') { event.preventDefault(); clickText('Question menu'); return; }
     if (mod && alt && lower === 'v') { event.preventDefault(); clickText('Mark for review'); return; }
     if (mod && alt && lower === 'c') { event.preventDefault(); openToolByText('Calculator'); return; }
@@ -147,19 +124,11 @@
     if (mod && lower === 'h') { event.preventDefault(); openToolByText('Note'); return; }
     if (mod && alt && lower === 'o') { event.preventDefault(); document.body.classList.toggle('option-eliminator-mode'); return; }
     if (mod && alt && event.shiftKey && lower === 'd') { event.preventDefault(); openDirections(); return; }
-
-    if (mod && event.shiftKey && /^[1-4]$/.test(key)) {
-      event.preventDefault(); triggerOption(Number(key), 'select'); return;
-    }
-    if (mod && alt && /^[1-4]$/.test(key)) {
-      event.preventDefault(); triggerOption(Number(key), 'eliminate');
-    }
+    if (mod && event.shiftKey && /^[1-4]$/.test(key)) { event.preventDefault(); triggerOption(Number(key), 'select'); return; }
+    if (mod && alt && /^[1-4]$/.test(key)) { event.preventDefault(); triggerOption(Number(key), 'eliminate'); }
   }
 
   document.addEventListener('keydown', onKeydown, true);
   const app = document.getElementById('app');
-  if (app) new MutationObserver(() => {
-    if (!document.querySelector('.test-shell')) return;
-    regionNodes().forEach((node) => { if (node.tabIndex < 0) node.tabIndex = 0; });
-  }).observe(app, { childList: true, subtree: true });
+  if (app) new MutationObserver(() => { if (!document.querySelector('.test-shell')) return; focusRegion(0); }).observe(app, { childList: true, subtree: true });
 })();
