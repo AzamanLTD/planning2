@@ -12,7 +12,7 @@ An independent browser-based SAT practice experience for Azaman students. The pr
 - Locked module transitions with score-based easy/hard Module 2 routing
 - Back/Next navigation, question menu/review grid, and Mark for Review
 - Highlights, notes, line reader, option elimination, zoom, timer hide/show, and keyboard shortcuts
-- Help dialog plus keyboard-shortcut reference
+- Help dialog plus keyboard-shortcut reference, with dedicated Control/Command Help smoke coverage
 - Math multiple-choice and student-produced-response input with normalization/persistence
 - Scientific calculator with safe expression evaluation, degree trig, implicit multiplication, guarded tangent singularities, and an independent lightweight graphing mode
 - Formula reference sheet and draggable/resizable tool panels
@@ -51,7 +51,7 @@ The repository contains 147 structured original question records across the laun
 
 ## Verification status
 
-Automated CI covers JavaScript syntax, effective question-bank shape/coverage, content integrity, authored-source override coverage, diversity, adaptive-variant integrity, answer-position balance, calculator safety, static simulator contracts, accessibility contracts, session recovery edge cases, SPR normalization behavior, and a Chromium browser smoke test that exercises the sign-in/setup/check-in flow plus the timed exam path. The real Bluebook application remains the visual reference authority. The repository intentionally uses Azaman-owned provisional design tokens until the permitted reference-capture pass is completed, so the product is not described as pixel-perfect.
+Automated CI covers JavaScript syntax, effective question-bank shape/coverage, content integrity, authored-source override coverage, diversity, adaptive-variant integrity, answer-position balance, calculator safety, static simulator contracts, accessibility contracts, session recovery edge cases, SPR normalization behavior, the main Chromium browser smoke path, and a dedicated Help shortcut browser smoke for Control- and Command-based Help. The real Bluebook application remains the visual reference authority. The repository intentionally uses Azaman-owned provisional design tokens until the permitted reference-capture pass is completed, so the product is not described as pixel-perfect.
 
 Known release work includes human editorial review of every item, deeper accessibility/device review, richer image/chart interactions, calculator parity decisions, extended recovery testing, real group/proctor-session testing, reference-capture comparison, production deployment, and owner signoff.
 
