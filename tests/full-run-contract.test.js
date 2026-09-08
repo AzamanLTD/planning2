@@ -12,7 +12,7 @@ assert(smoke.includes('win.SAT_QUESTIONS.math1'), 'full-run smoke must load Math
 assert(smoke.includes('win.SAT_QUESTIONS.math2.hard'), 'full-run smoke must exercise hard Math Module 2');
 assert(smoke.includes("bank.length === 27"), 'full-run smoke must enforce the R&W module size');
 assert(smoke.includes('22, win.SAT_QUESTIONS.math1'), 'full-run smoke must enforce the Math module size');
-assert(smoke.includes("state.screen = 'break'"), 'full-run smoke must exercise the required break');
+assert(smoke.includes("next.screen === 'break' && next.mi === 2 && Number.isFinite(next.breakEndAt)"), 'full-run smoke must exercise the required break');
 assert(smoke.includes("next.screen === 'finish' && next.submitted === true"), 'full-run smoke must reach terminal submission');
 assert(smoke.includes('Object.keys(next.answers).length === 98'), 'full-run smoke must persist 98 answers');
 assert(ci.includes('tests/full-run-smoke.html'), 'CI must execute the full-run browser smoke');
