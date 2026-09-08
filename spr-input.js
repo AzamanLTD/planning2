@@ -50,7 +50,7 @@
     if (commit && normalized !== field.value.trim()) {
       field.value = normalized;
       applyLengthLimit(field);
-      field.dispatchEvent(new Event('change', { bubbles: true }));
+      field.dispatchEvent(new Event('input', { bubbles: true }));
     }
   }
 
