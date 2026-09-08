@@ -23,13 +23,14 @@ const platformReadiness = read('docs/platform-readiness.md');
 const spec = read('docs/bluebook-spec.md');
 
 const requiredScripts = [
-  'data/questions.js', 'data/rw2-easy.js', 'data/rw-source-overrides.js', 'data/question-quality-overrides.js', 'session-guard.js', 'app.js', 'keyboard.js',
+  'data/questions.js', 'data/rw2-easy.js', 'data/rw-source-overrides.js', 'data/question-quality-overrides.js', 'session-guard.js', 'exam-ui-sanitizer.js', 'app.js', 'keyboard.js',
   'spr-input.js', 'tools-enhancement.js', 'note-enhancement.js', 'modal-enhancement.js', 'calculator-enhancement.js',
-  'code-input-enhancement.js', 'results-enhancement.js', 'exam-ui-sanitizer.js', 'ui-accessibility-enhancement.js'
+  'code-input-enhancement.js', 'results-enhancement.js', 'ui-accessibility-enhancement.js'
 ];
 for (const src of requiredScripts) assert(html.includes(`src=\"${src}\"`), `index.html missing ${src}`);
 assert(html.indexOf('data/rw-source-overrides.js') < html.indexOf('data/question-quality-overrides.js'), 'source overrides must load before quality overrides');
 assert(html.indexOf('data/question-quality-overrides.js') < html.indexOf('app.js'), 'quality overrides must load before app.js');
+assert(html.indexOf('exam-ui-sanitizer.js') < html.indexOf('app.js'), 'student UI sanitizer must load before app.js to avoid credential placeholder flashes');
 assert(!html.includes('shortcut-enhancement.js'), 'obsolete duplicate shortcut layer must not be loaded');
 assert(!html.includes('connectivity-enhancement.js'), 'non-authoritative connectivity UI must not be loaded');
 
@@ -53,11 +54,11 @@ for (const phrase of ['F1 (Windows/macOS/iPad)', 'Control + Search + S (ChromeOS
 for (const phrase of ['normalizeFraction', 'normalizeDecimal', 'blur', 'MAX_POSITIVE_CHARS', 'MAX_NEGATIVE_CHARS']) assert(spr.includes(phrase), `SPR normalization contract missing: ${phrase}`);
 for (const phrase of ['setAttribute(\'role\', \'dialog\')', 'aria-modal', 'Resize calculator', 'makeDraggable', 'makeResizable', 'restoreSavedHighlights']) assert(tools.includes(phrase), `tool enhancement contract missing: ${phrase}`);
 for (const phrase of ['STORAGE_KEY', 'questionKey', 'saveNote', 'azmNoteEditor', 'stopImmediatePropagation']) assert(notes.includes(phrase), `note enhancement contract missing: ${phrase}`);
-for (const phrase of ['FOCUSABLE', 'activeDialog', 'event.key !== \'Tab\'', 'aria-modal', 'focusFirst']) assert(modal.includes(phrase), `modal focus contract missing: ${phrase}`);
+for (const phrase of ['FOCUSABLE', 'activeDialog', 'event.key !== \'Tab\'', 'aria-modal', 'focusFirst', 'removeOrphanedWarning']) assert(modal.includes(phrase), `modal focus contract missing: ${phrase}`);
 for (const phrase of ['tokenize(input)', 'sin', 'cos', 'tan', 'sqrt', 'log10', 'Graph', 'azmGraphExpr', 'azmXMin', 'azmXMax', 'getContext(\'2d\')', 'aria-controls="azmCalcCalculate"', 'aria-controls="azmCalcGraph"', 'Object.entries(views)', 'view.hidden = name !== mode']) assert(calculator.includes(phrase), `calculator enhancement contract missing: ${phrase}`);
 for (const phrase of ['start-digit', 'paste', 'Backspace', 'ArrowLeft', 'ArrowRight', 'codeReady']) assert(codeInput.includes(phrase), `code-input enhancement contract missing: ${phrase}`);
-for (const phrase of ['Practice report', 'Reading and Writing', 'Math', 'raw practice-test results', 'not an official SAT scaled score', 'results-section-grid', 'results-module-row']) assert(results.includes(phrase), `results enhancement contract missing: ${phrase}`);
-for (const phrase of ['q-meta', 'source-label', 'hidden = true', 'aria-hidden', "textContent = 'Source'", 'MutationObserver', 'sanitize']) assert(sanitizer.includes(phrase), `student UI sanitizer contract missing: ${phrase}`);
+for (const phrase of ['Practice report', 'Reading and Writing', 'Math', 'raw practice-test results', 'not an official SAT scaled score', 'results-section-grid', 'results-module-row', 'sameAnswer']) assert(results.includes(phrase), `results enhancement contract missing: ${phrase}`);
+for (const phrase of ['q-meta', 'source-label', 'hidden = true', 'aria-hidden', "textContent = 'Source'", 'MutationObserver', 'sanitize', 'Enter access code', 'Enter room code']) assert(sanitizer.includes(phrase), `student UI sanitizer contract missing: ${phrase}`);
 for (const phrase of ['aria-live', 'aria-pressed', 'aria-modal', 'FOCUSABLE', 'aria-selected', 'aria-controls', 'Start code digit']) assert(accessibility.includes(phrase), `accessibility contract missing: ${phrase}`);
 for (const phrase of ["setAttribute('role', 'radio')", "setAttribute('aria-checked'", "setAttribute('role', 'menu')", 'a11yReady', 'prefers-reduced-motion: reduce']) assert(uiA11y.includes(phrase) || accessibility.includes(phrase), `semantic accessibility contract missing: ${phrase}`);
 assert(helpSmoke.includes("key: 'h', ctrlKey: true, altKey: true"), 'Help smoke must exercise Windows/ChromeOS Help');
