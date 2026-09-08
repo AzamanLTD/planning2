@@ -16,11 +16,13 @@
     Object.entries(normalizeObject(value)).filter(([, enabled]) => enabled === true).map(([key]) => [key, true])
   );
   const normalizeAnswerMap = (value) => Object.fromEntries(
-    Object.entries(normalizeObject(value)).flatMap(([key, entry]) => {
-      if (typeof entry === 'string' && entry.trim() !== '') return [[key, entry]];
-      if (typeof entry === 'number' && Number.isFinite(entry)) return [[key, String(entry)]];
-      return [];
-    })
+    Object.entries(normalizeObject(value))
+      .map(([key, entry]) => {
+        if (typeof entry === 'string') return [key, entry];
+        if (typeof entry === 'number' && Number.isFinite(entry)) return [key, String(entry)];
+        return null;
+      })
+      .filter(Boolean)
   );
   const normalizeStringMap = (value) => Object.fromEntries(
     Object.entries(normalizeObject(value)).filter(([, entry]) => typeof entry === 'string')
