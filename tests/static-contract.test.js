@@ -6,6 +6,7 @@ const html = read('index.html');
 const app = read('app.js');
 const keyboard = read('keyboard.js');
 const spr = read('spr-input.js');
+const tools = read('tools-enhancement.js');
 const tokens = read('styles.css');
 
 const requiredScripts = [
@@ -13,12 +14,13 @@ const requiredScripts = [
   'data/rw2-easy.js',
   'app.js',
   'keyboard.js',
-  'spr-input.js'
+  'spr-input.js',
+  'tools-enhancement.js'
 ];
 for (const src of requiredScripts) assert(html.includes(`src="${src}"`), `index.html missing ${src}`);
 
 for (const phrase of [
-  'screen:"access"', 'screen:"break"', 'screen:"finish"',
+  'screen:"access"', 'show("break")', 's.screen="finish"',
   'breakSec:600', 'warnSec:300', 'minutes:32,count:27', 'minutes:35,count:22',
   'completed[m().id]=true', 'routeNext()', 's.submitted=true',
   'Review questions', 'Mark for review', 'Reference sheet', 'Calculator',
@@ -33,6 +35,10 @@ for (const phrase of [
 
 for (const phrase of ['normalizeFraction', 'normalizeDecimal', 'keydown', 'blur']) {
   assert(spr.includes(phrase), `SPR normalization contract missing: ${phrase}`);
+}
+
+for (const phrase of ['role="dialog"', 'aria-modal', 'Resize calculator', 'makeDraggable', 'makeResizable']) {
+  assert(tools.includes(phrase), `tool enhancement contract missing: ${phrase}`);
 }
 
 for (const token of [
