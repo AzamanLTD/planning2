@@ -4,7 +4,7 @@ const assert = require('assert');
 
 const sourceFiles = ['data/questions.js', 'data/rw2-easy.js', 'data/rw-source-overrides.js'];
 const qualitySource = fs.readFileSync('data/question-quality-overrides.js', 'utf8');
-const REAUTHORED = new Set(['MM2HQ14', 'MM2HQ20', 'MM2HQ21', 'MM2HQ22']);
+const REAUTHORED = new Set(Array.from({ length: 22 }, (_, index) => `MM2HQ${index + 1}`));
 
 function load(withQuality, runQualityTwice = false) {
   const sandbox = { window: {} };
@@ -36,4 +36,4 @@ for (const question of groups(effective)) {
 }
 
 assert.deepEqual(effectiveTwice, effective, 'question quality layer is not idempotent');
-console.log('Answer-position integrity checks passed; intentional re-authored items excluded from baseline-text comparison.');
+console.log('Answer-position integrity checks passed; intentional hard Math reauthoring excluded from baseline-text comparison.');
