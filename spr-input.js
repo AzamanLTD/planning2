@@ -1,18 +1,27 @@
 (() => {
   'use strict';
 
+  function normalizeFraction(value) {
+    const raw = String(value || '').trim().replace(/\s+/g, '');
+    if (!raw.includes('/')) return null;
+    if (!/^\d+\/\d+$/.test(raw)) return null;
+    const [n, d] = raw.split('/').map(Number);
+    if (!Number.isFinite(n) || !Number.isFinite(d) || d === 0) return null;
+    return String(Number((n / d).toPrecision(12)));
+  }
+
+  function normalizeDecimal(value) {
+    const raw = String(value || '').trim().replace(/\s+/g, '');
+    if (!raw) return '';
+    if (!/^\d+(?:\.\d+)?$/.test(raw)) return null;
+    return String(Number(Number(raw).toPrecision(12)));
+  }
+
   function normalize(value) {
     const raw = String(value || '').trim().replace(/\s+/g, '');
     if (!raw) return '';
-    if (!/^\d+(?:\.\d+)?(?:\/\d+(?:\.\d+)?)?$/.test(raw)) return null;
-
-    if (raw.includes('/')) {
-      const [n, d] = raw.split('/').map(Number);
-      if (!Number.isFinite(n) || !Number.isFinite(d) || d === 0) return null;
-      return String(Number((n / d).toPrecision(12)));
-    }
-
-    return String(Number(Number(raw).toPrecision(12)));
+    if (raw.includes('/')) return normalizeFraction(raw);
+    return normalizeDecimal(raw);
   }
 
   document.addEventListener('input', (event) => {
