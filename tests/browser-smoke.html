@@ -205,7 +205,20 @@
           check('start-code fields are individually labelled', fields.every((x, i) => x.getAttribute('aria-label') === `Start code digit ${i + 1} of 6`));
           const event = new Event('paste', { bubbles:true, cancelable:true }); Object.defineProperty(event, 'clipboardData', { value: { getData: () => '492776' } });
           fields[0].dispatchEvent(event); check('paste fills start code', fields.map((x) => x.value).join('') === '492776'); check('start code state persists', readState().startCode === '492776');
-          out.textContent = checks.join('\n') + '\nSMOKE COMPLETE';
+          const st = readState(); st.screen = 'test'; st.mi = 0; st.qi = 0; st.endAt = Date.now() + 300250; st.warning = {}; st.completed = {}; st.timerHidden = true; writeState(st);
+          phase = 8; frame.contentWindow.location.reload();
+        }
+        if (phase === 8) {
+          setTimeout(() => {
+            const timer = doc.getElementById('timer');
+            check('timer enters warning state at 5 minutes', !!timer && timer.classList.contains('warning'));
+            check('hidden timer reappears inside the 5-minute window', !!timer && !timer.classList.contains('hidden'));
+            check('five-minute warning modal appears', !!doc.querySelector('.warning-modal'));
+            check('warning fires once per module', readState().warning.rw1 === true && doc.querySelectorAll('.warning-modal').length === 1);
+            doc.querySelector('#dismissWarn')?.click();
+            check('warning modal dismisses', !doc.querySelector('.warning-modal'));
+            out.textContent = checks.join('\n') + '\nSMOKE COMPLETE';
+          }, 900); return;
         }
       }
       frame.addEventListener('load', afterLoad);
