@@ -84,6 +84,8 @@ jobs:
         run: node tests/content-diversity-audit.test.js
       - name: Validate adaptive Module 2 variants
         run: node tests/adaptive-integrity.test.js
+      - name: Validate curated hard Math SPR variants
+        run: node tests/math-hard-override.test.js
       - name: Audit MCQ answer-position balance
         run: node tests/answer-distribution-audit.test.js
       - name: Verify MCQ answer mapping integrity
