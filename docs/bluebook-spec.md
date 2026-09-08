@@ -49,40 +49,39 @@ These must all exist, with the real app's icons, placements, and interactions:
 
 ### Keyboard shortcuts [VERIFIED — operating-system-specific official pages]
 
-The current official Windows/ChromeOS pages document F1 for the shortcut list,
-F6/Shift+F6 region navigation, zoom, Back, Next, Question Menu, Help,
-Directions, Line Reader, timer, Mark for Review, Highlights & Notes, Calculator,
-Reference Sheet, option selection/elimination, and Option Eliminator Mode.
-Windows/ChromeOS use Control-based combinations. macOS uses Command/Control or
-Command/Option combinations depending on the action. iPad follows the
-Command/Control and Command/Option patterns but uses **Command + Control + P**
-for Help. The official pages also document E as an available fifth response
-position in interfaces that support it; this SAT replica exposes only the four
+The current official Windows and macOS pages, and the current Bluebook
+accessibility page, document operating-system-specific shortcut variants.
+Windows uses Control-based combinations; macOS uses Command/Control or
+Command/Option combinations depending on the action. ChromeOS uses a distinct
+Control + Search + S command to open the shortcut list, while retaining the
+same Control-based exam actions. iPad follows the Apple shortcut families and
+has its own Help command. The official pages also document E in interfaces
+that support a fifth response option; this SAT replica exposes only the four
 answer choices present in its current question bank.
 
 For the browser simulator, the implemented verified subset is:
 
-| Function | Windows/ChromeOS | macOS | iPad |
-|---|---|---|---|
-| Keyboard shortcuts | F1 | F1 | F1 |
-| Exam region forward/back | F6 / Shift+F6 | F6 / Shift+F6 | F6 / Shift+F6 |
-| Zoom in/out/reset | Ctrl + + / Ctrl + - / Ctrl + 0 | Command + + / Command + - / Command + 0 | Command + + / Command + - / Command + 0 |
-| Back | Ctrl + Alt + B | Command + Control + B | Command + Control + B |
-| Next / review module | Ctrl + Alt + X | Command + Control + X | Command + Control + X |
-| Question menu | Ctrl + Alt + G | Command + Control + G | Command + Control + G |
-| Help | Ctrl + Alt + H | Command + Control + H | Command + Control + P |
-| Directions | Ctrl + Alt + Shift + D | Command + Control + Shift + D | Command + Control + Shift + D |
-| Line reader | Ctrl + L | Command + L | Command + L |
-| Timer | Ctrl + Alt + T | Command + Option + T | Command + Option + T |
-| Mark for Review | Ctrl + Alt + V | Command + Shift + V | Command + Shift + V |
-| Highlights & Notes | Ctrl + H | Control + H | Control + H |
-| Calculator | Ctrl + Alt + C | Command + Option + C | Command + Option + C |
-| Reference sheet | Ctrl + Alt + R | Command + Option + R | Command + Option + R |
-| Option eliminator mode | Ctrl + Alt + O | Command + Control + O | Command + Control + O |
-| Eliminate A–D | Ctrl + Alt + 1–4 | Command + Option + 1–4 | Command + Option + 1–4 |
-| Select A–D | Ctrl + Shift + 1–4 | Command + Control + 1–4 | Command + Control + 1–4 |
+| Function | Windows | ChromeOS | macOS | iPad |
+|---|---|---|---|---|
+| Keyboard shortcuts | F1 | Control + Search + S | F1 | F1 |
+| Exam region forward/back | F6 / Shift+F6 | F6 / Shift+F6 | F6 / Shift+F6 | F6 / Shift+F6 |
+| Zoom in/out/reset | Ctrl + + / Ctrl + - / Ctrl + 0 | Ctrl + + / Ctrl + - / Ctrl + 0 | Command + + / Command + - / Command + 0 | Command + + / Command + - / Command + 0 |
+| Back | Ctrl + Alt + B | Ctrl + Alt + B | Command + Control + B | Command + Control + B |
+| Next / review module | Ctrl + Alt + X | Ctrl + Alt + X | Command + Control + X | Command + Control + X |
+| Question menu | Ctrl + Alt + G | Ctrl + Alt + G | Command + Control + G | Command + Control + G |
+| Help | Ctrl + Alt + H | Ctrl + Alt + H | Command + Control + H | Command + Control + P |
+| Directions | Ctrl + Alt + Shift + D | Ctrl + Alt + Shift + D | Command + Control + Shift + D | Command + Control + Shift + D |
+| Line reader | Ctrl + L | Ctrl + L | Command + L | Command + L |
+| Timer | Ctrl + Alt + T | Ctrl + Alt + T | Command + Option + T | Command + Option + T |
+| Mark for Review | Ctrl + Alt + V | Ctrl + Alt + V | Command + Shift + V | Command + Shift + V |
+| Highlights & Notes | Ctrl + H | Ctrl + H | Control + H | Control + H |
+| Calculator | Ctrl + Alt + C | Ctrl + Alt + C | Command + Option + C | Command + Option + C |
+| Reference sheet | Ctrl + Alt + R | Ctrl + Alt + R | Command + Option + R | Command + Option + R |
+| Option eliminator mode | Ctrl + Alt + O | Ctrl + Alt + O | Command + Control + O | Command + Control + O |
+| Eliminate A–D | Ctrl + Alt + 1–4 | Ctrl + Alt + 1–4 | Command + Option + 1–4 | Command + Option + 1–4 |
+| Select A–D | Ctrl + Shift + 1–4 | Ctrl + Shift + 1–4 | Command + Control + 1–4 | Command + Control + 1–4 |
 
-The exact official pages should remain the authority for additional platform-specific
+The exact official pages remain the authority for additional platform-specific
 shortcut differences and assistive-technology commands. Pause Timer is an
 accommodation-dependent Bluebook command and is not exposed as a normal practice
 control in this simulator.
@@ -177,6 +176,6 @@ not guessed Bluebook behavior.
 ## 8. Official verification links
 
 - Windows shortcuts: https://bluebook.collegeboard.org/help-center/windows-keyboard-shortcuts
-- ChromeOS shortcuts: https://bluebook.collegeboard.org/help-center/chromebook-keyboard-shortcuts
+- Chromebook shortcuts: https://bluebook.collegeboard.org/help-center/chromebook-keyboard-shortcuts
 - macOS shortcuts: https://bluebook.collegeboard.org/help-center/macos-keyboard-shortcuts
 - Accessibility / platform shortcuts: https://bluebook.collegeboard.org/students/accommodations-assistive-technology/accessing-bluebook-features-content
