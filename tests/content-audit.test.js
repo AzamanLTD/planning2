@@ -20,8 +20,8 @@ const groups = [
 const seenIds = new Set();
 const exactSignatures = new Set();
 const issues = [];
-let shortPassages = 0;
-let syntheticSources = 0;
+const shortPassageIds = [];
+const syntheticSourceIds = [];
 
 for (const [group, items] of groups) {
   assert(Array.isArray(items), `${group} is not an array`);
@@ -35,8 +35,8 @@ for (const [group, items] of groups) {
     if (question.section === 'Reading and Writing') {
       const paragraphs = question.source?.paragraphs || [];
       const words = paragraphs.join(' ').trim().split(/\s+/).filter(Boolean).length;
-      if (words < 25) shortPassages += 1;
-      if (paragraphs.some((paragraph) => /the passage presents a situation that illustrates the relationship described in the question/i.test(paragraph))) syntheticSources += 1;
+      if (words < 25) shortPassageIds.push(question.id);
+      if (paragraphs.some((paragraph) => /the passage presents a situation that illustrates the relationship described in the question/i.test(paragraph))) syntheticSourceIds.push(question.id);
       if (!Array.isArray(question.options) || question.options.length !== 4) issues.push(`${location}: expected 4 R&W options`);
     }
     if (question.section === 'Math' && question.type === 'mcq' && (!Array.isArray(question.options) || question.options.length !== 4)) issues.push(`${location}: expected 4 Math options`);
@@ -51,6 +51,6 @@ assert.equal(issues.length, 0, `content integrity issues:\n${issues.join('\n')}`
 assert.equal(exactSignatures.size, 147, 'expected 147 unique full-item signatures');
 
 console.log(`Audited ${exactSignatures.size} unique items.`);
-console.log(`R&W items with source passages under 25 words: ${shortPassages}`);
-console.log(`R&W synthetic placeholder passages detected: ${syntheticSources}`);
-if (shortPassages || syntheticSources) console.warn('Content-quality follow-up remains open: strengthen short or synthetic passages before student launch.');
+console.log(`R&W items with source passages under 25 words (${shortPassageIds.length}): ${shortPassageIds.join(', ') || 'none'}`);
+console.log(`R&W synthetic placeholder passages (${syntheticSourceIds.length}): ${syntheticSourceIds.join(', ') || 'none'}`);
+if (shortPassageIds.length || syntheticSourceIds.length) console.warn('Content-quality follow-up remains open: strengthen listed passages before student launch.');
