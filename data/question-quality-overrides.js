@@ -11,10 +11,34 @@
     MM2EQ4: { options: ['1', '3', '5', '7'] },
     MM2HQ8: { options: ['2', '4', '7', '9'] },
     MM2HQ16: { options: ['1', '4', '5', '8'] },
-    MM2HQ14: { difficulty: 'hard', prompt: 'A solution is 18% salt by volume. How many milliliters of salt are in 250 mL of solution?' },
-    MM2HQ20: { difficulty: 'hard', prompt: 'For a positive value of x, the equation 7x - 9 = 26 is satisfied. What is x?' },
-    MM2HQ21: { difficulty: 'hard', prompt: 'For positive x, if x² = 121, what is the value of x?' },
-    MM2HQ22: { difficulty: 'hard', prompt: 'A class has 24 students. If 5/8 of the students submitted a project, how many students submitted it?' }
+    MM2HQ14: {
+      difficulty: 'hard',
+      prompt: 'A tank is 18% full. After 35 liters of water are added, the tank is 32% full. What is the capacity of the tank, in liters?',
+      options: ['175', '200', '250', '280'],
+      answer: 'C',
+      explanation: 'The 35 liters increase the fill level by 14% of the tank capacity, so 0.14C = 35 and C = 250.'
+    },
+    MM2HQ20: {
+      difficulty: 'hard',
+      prompt: 'The function f(x) = 3x² - 12x + 7 has its minimum value at which value of x?',
+      options: ['1', '2', '3', '4'],
+      answer: 'B',
+      explanation: 'For a quadratic ax² + bx + c, the x-coordinate of the vertex is -b/(2a). Here, -(-12)/(2·3) = 2.'
+    },
+    MM2HQ21: {
+      difficulty: 'hard',
+      prompt: 'For x ≥ 0, if √(x + 5) − √x = 1, what is the value of x?',
+      options: ['1', '2', '4', '9'],
+      answer: 'C',
+      explanation: 'Squaring gives x + 5 = x + 1 + 2√x, so 4 = 2√x and x = 4.'
+    },
+    MM2HQ22: {
+      difficulty: 'hard',
+      prompt: 'A box contains red and blue tiles in a ratio of 3 to 5. After 8 blue tiles are removed, the ratio of red to blue tiles is 3 to 4. How many tiles were in the box originally?',
+      options: ['48', '56', '64', '72'],
+      answer: 'C',
+      explanation: 'Let the numbers be 3k and 5k. Then 3k/(5k − 8) = 3/4, which gives 12k = 15k − 24 and k = 8. The original total was 8k = 64.'
+    }
   };
 
   const groups = [
@@ -42,12 +66,20 @@
   }
   groups.flat().forEach((question) => {
     if (question.type === 'spr' || !Array.isArray(question.options) || question.options.length !== 4) return;
+    if (question.__azmAnswerPositionBalanced === true) return;
     const originalIndex = letters.indexOf(String(question.answer).toUpperCase());
     if (originalIndex < 0) return;
     const shift = hash(question.id) % 4;
-    if (!shift) return;
-    const original = question.options.slice();
-    question.options = original.map((_, nextIndex) => original[(nextIndex - shift + 4) % 4]);
-    question.answer = letters[(originalIndex + shift) % 4];
+    if (shift) {
+      const original = question.options.slice();
+      question.options = original.map((_, nextIndex) => original[(nextIndex - shift + 4) % 4]);
+      question.answer = letters[(originalIndex + shift) % 4];
+    }
+    Object.defineProperty(question, '__azmAnswerPositionBalanced', {
+      value: true,
+      enumerable: false,
+      configurable: false,
+      writable: false
+    });
   });
 })();
