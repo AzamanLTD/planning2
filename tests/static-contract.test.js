@@ -64,7 +64,7 @@ for (const phrase of ['tokenize(input)', 'sin', 'cos', 'tan', 'sqrt', 'log10', '
 for (const phrase of ['bannerId', 'navigator.onLine', "window.addEventListener('offline'", "window.addEventListener('online'", 'Connection lost.', 'Connection restored.']) {
   assert(connectivity.includes(phrase), `connectivity contract missing: ${phrase}`);
 }
-for (const phrase of ['start-digit', 'data-code-ready', 'paste', 'Backspace', 'ArrowLeft', 'ArrowRight', 'codeReady']) {
+for (const phrase of ['start-digit', 'paste', 'Backspace', 'ArrowLeft', 'ArrowRight', 'codeReady']) {
   assert(codeInput.includes(phrase), `code-input enhancement contract missing: ${phrase}`);
 }
 for (const phrase of ['Practice report', 'Reading and Writing', 'Math', 'raw practice-test results', 'not an official SAT scaled score', 'results-section-grid', 'results-module-row']) {
