@@ -86,6 +86,8 @@ jobs:
         run: node tests/adaptive-integrity.test.js
       - name: Audit MCQ answer-position balance
         run: node tests/answer-distribution-audit.test.js
+      - name: Verify MCQ answer mapping integrity
+        run: node tests/answer-position-integrity.test.js
       - name: Run static application contract checks
         run: node tests/static-contract.test.js
       - name: Run accessibility contract checks
