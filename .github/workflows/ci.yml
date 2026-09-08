@@ -127,3 +127,13 @@ jobs:
           chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=10000 --dump-dom http://127.0.0.1:8080/tests/browser-smoke.html > /tmp/azaman-smoke.html
           cat /tmp/azaman-smoke.html
           grep -q 'SMOKE COMPLETE' /tmp/azaman-smoke.html
+      - name: Run dedicated Help shortcut smoke test
+        run: |
+          set -eu
+          python3 -m http.server 8081 >/tmp/azaman-help-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          sleep 1
+          chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=5000 --dump-dom http://127.0.0.1:8081/tests/help-shortcut-smoke.html > /tmp/azaman-help-smoke.html
+          cat /tmp/azaman-help-smoke.html
+          grep -q 'HELP SMOKE COMPLETE' /tmp/azaman-help-smoke.html
