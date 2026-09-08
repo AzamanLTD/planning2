@@ -27,17 +27,27 @@
           adaptive: { rw: 'easy', math: 'easy' }, timerHidden: false, lineReader: false, rules: true, desk: true, warning: {}
         };
       }
-      function answerAll(state, id, bank) {
-        bank.forEach((q, i) => { state.answers[`${id}-${i}`] = q.answer; });
-      }
       function exerciseModule(doc, win, expectedTitle, count, bank, id, done) {
         check(`${id}: module renders`, doc.querySelector('.test-title')?.textContent.includes(expectedTitle));
         check(`${id}: question count is ${count}`, new RegExp(`Question 1 of ${count}`).test(doc.querySelector('.test-counter')?.textContent || ''));
         for (let i = 0; i < bank.length; i += 1) {
           const before = doc.querySelector('.test-counter')?.textContent || '';
           check(`${id}: question ${i + 1} renders`, before.includes(`Question ${i + 1} of ${count}`));
-          if (bank[i].type === 'spr') check(`${id}: SPR ${i + 1} renders`, !!doc.querySelector('.spr-input'));
-          else check(`${id}: MCQ ${i + 1} renders`, !!doc.querySelector('.choice'));
+          if (bank[i].type === 'spr') {
+            const input = doc.querySelector('.spr-input');
+            check(`${id}: SPR ${i + 1} renders`, !!input);
+            input.value = bank[i].answer;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.dispatchEvent(new Event('blur', { bubbles: true }));
+            check(`${id}: SPR ${i + 1} persists through UI`, read().answers[`${id}-${i}`] === String(bank[i].answer).trim());
+          } else {
+            const choices = [...doc.querySelectorAll('.choice')];
+            check(`${id}: MCQ ${i + 1} renders`, choices.length === 4);
+            const correct = choices.find((choice) => choice.dataset.answer === bank[i].answer) || choices[0];
+            check(`${id}: MCQ ${i + 1} has keyed choice`, !!correct);
+            correct.click();
+            check(`${id}: MCQ ${i + 1} persists through UI`, read().answers[`${id}-${i}`] === correct.dataset.answer);
+          }
           if (i < bank.length - 1) doc.querySelector('#nextBtn')?.click();
         }
         check(`${id}: final question reached`, doc.querySelector('.test-counter')?.textContent.includes(`Question ${count} of ${count}`));
@@ -57,7 +67,6 @@
             const state = baseState();
             const bank = win.SAT_QUESTIONS.rw1;
             check('effective R&W M1 bank has 27 questions', bank.length === 27);
-            answerAll(state, 'rw1', bank);
             state.endAt = Date.now() + 120000;
             write(state);
             phase = 1;
@@ -65,28 +74,25 @@
             return;
           }
           if (phase === 1) {
-            const state = read();
-            exerciseModule(doc, win, 'Reading and Writing', 27, win.SAT_QUESTIONS.rw1, 'R&W M1', () => {
+            exerciseModule(doc, win, 'Reading and Writing', 27, win.SAT_QUESTIONS.rw1, 'rw1', () => {
               const next = read();
               check('R&W M1 locks after submission', next.completed.rw1 === true);
               check('R&W M1 perfect score routes hard M2', next.adaptive.rw === 'hard');
               check('R&W M1 advances to M2 directions', next.screen === 'directions' && next.mi === 1);
               const s = next;
               s.screen = 'test'; s.mi = 1; s.qi = 0; s.endAt = Date.now() + 120000; s.completed.rw1 = true;
-              answerAll(s, 'rw2', win.SAT_QUESTIONS.rw2.hard); write(s);
-              phase = 2; frame.contentWindow.location.reload();
+              phase = 2; write(s); frame.contentWindow.location.reload();
             });
             return;
           }
           if (phase === 2) {
             const bank = win.SAT_QUESTIONS.rw2.hard;
             check('hard R&W M2 is selected', read().adaptive.rw === 'hard');
-            exerciseModule(doc, win, 'Reading and Writing', 27, bank, 'R&W M2', () => {
+            exerciseModule(doc, win, 'Reading and Writing', 27, bank, 'rw2', () => {
               const next = read();
               check('R&W M2 locks after submission', next.completed.rw2 === true);
               check('R&W submission starts required break', next.screen === 'break' && next.mi === 2 && Number.isFinite(next.breakEndAt));
-              const s = next; s.submitted = false; s.screen = 'break'; s.mi = 2; s.breakEndAt = Date.now() - 1; write(s);
-              phase = 3; frame.contentWindow.location.reload();
+              const s = next; s.submitted = false; s.screen = 'break'; s.mi = 2; s.breakEndAt = Date.now() - 1; phase = 3; write(s); frame.contentWindow.location.reload();
             });
             return;
           }
@@ -94,26 +100,24 @@
             const state = read();
             check('expired break advances to Math directions', state.screen === 'directions' && state.mi === 2 && state.breakEndAt === null);
             state.screen = 'test'; state.mi = 2; state.qi = 0; state.endAt = Date.now() + 120000; state.completed.rw1 = true; state.completed.rw2 = true; state.completed.math1 = false; state.completed.math2 = false;
-            answerAll(state, 'math1', win.SAT_QUESTIONS.math1); write(state);
-            phase = 4; frame.contentWindow.location.reload();
+            phase = 4; write(state); frame.contentWindow.location.reload();
             return;
           }
           if (phase === 4) {
-            exerciseModule(doc, win, 'Math', 22, win.SAT_QUESTIONS.math1, 'Math M1', () => {
+            exerciseModule(doc, win, 'Math', 22, win.SAT_QUESTIONS.math1, 'math1', () => {
               const next = read();
               check('Math M1 locks after submission', next.completed.math1 === true);
               check('Math M1 perfect score routes hard M2', next.adaptive.math === 'hard');
               check('Math M1 advances to M2 directions', next.screen === 'directions' && next.mi === 3);
               const s = next; s.screen = 'test'; s.mi = 3; s.qi = 0; s.endAt = Date.now() + 120000; s.completed.math1 = true;
-              answerAll(s, 'math2', win.SAT_QUESTIONS.math2.hard); write(s);
-              phase = 5; frame.contentWindow.location.reload();
+              phase = 5; write(s); frame.contentWindow.location.reload();
             });
             return;
           }
           if (phase === 5) {
             const bank = win.SAT_QUESTIONS.math2.hard;
             check('hard Math M2 is selected', read().adaptive.math === 'hard');
-            exerciseModule(doc, win, 'Math', 22, bank, 'Math M2', () => {
+            exerciseModule(doc, win, 'Math', 22, bank, 'math2', () => {
               const next = read();
               check('Math M2 locks after submission', next.completed.math2 === true);
               check('full run reaches finish screen', next.screen === 'finish' && next.submitted === true);
