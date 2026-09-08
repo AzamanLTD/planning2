@@ -3,13 +3,10 @@ const vm = require('vm');
 const assert = require('assert');
 
 function loadBank() {
-  const source = fs.readFileSync('data/questions.js', 'utf8');
-  const easy = fs.readFileSync('data/rw2-easy.js', 'utf8');
-  const overrides = fs.readFileSync('data/rw-source-overrides.js', 'utf8');
   const sandbox = { window: {} };
-  vm.runInNewContext(source, sandbox);
-  vm.runInNewContext(easy, sandbox);
-  vm.runInNewContext(overrides, sandbox);
+  for (const path of ['data/questions.js', 'data/rw2-easy.js', 'data/rw-source-overrides.js', 'data/question-quality-overrides.js']) {
+    vm.runInNewContext(fs.readFileSync(path, 'utf8'), sandbox);
+  }
   return sandbox.window.SAT_QUESTIONS;
 }
 
@@ -37,6 +34,7 @@ for (const [group, items] of groups) {
       const paragraphs = question.source?.paragraphs || [];
       const words = paragraphs.join(' ').trim().split(/\s+/).filter(Boolean).length;
       if (words < 25) shortPassageIds.push(question.id);
+      if (words > 150) issues.push(`${location}: source exceeds 150 words`);
       if (!paragraphs.length) issues.push(`${location}: missing source passage`);
       if (!Array.isArray(question.options) || question.options.length !== 4) issues.push(`${location}: expected 4 R&W options`);
     }
