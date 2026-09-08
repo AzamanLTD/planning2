@@ -6,6 +6,11 @@
     if (fields.length !== 6 || fields.some((field) => field.dataset.codeReady === '1')) return;
     fields.forEach((field, index) => {
       field.dataset.codeReady = '1';
+      field.setAttribute('aria-label', `Start code digit ${index + 1} of 6`);
+      field.setAttribute('inputmode', 'numeric');
+      field.setAttribute('autocomplete', index === 0 ? 'one-time-code' : 'off');
+      field.setAttribute('aria-posinset', String(index + 1));
+      field.setAttribute('aria-setsize', '6');
       field.addEventListener('keydown', (event) => {
         if (event.key === 'Backspace' && !field.value && fields[index - 1]) {
           event.preventDefault();
