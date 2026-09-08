@@ -58,7 +58,9 @@ jobs:
             }
           }
           const spr = all.filter(q => q.section === 'Math' && q.type === 'spr').length;
-          if (spr < 10 || spr > 20) throw new Error(`unexpected SPR volume: ${spr}`);
+          if (spr !== 11) throw new Error(`SAT Math SPR mix should be 11/44 (25%), got ${spr}`);
+          const mcq = all.filter(q => q.section === 'Math' && q.type === 'mcq').length;
+          if (mcq !== 33) throw new Error(`SAT Math MCQ mix should be 33/44 (75%), got ${mcq}`);
           const rw2Hard = b.rw2.hard.filter(q => q.difficulty === 'hard').length;
           if (rw2Hard !== 27) throw new Error(`R&W hard Module 2 should be fully hard-tagged: ${rw2Hard}/27`);
           const math2Hard = b.math2.hard.filter(q => q.difficulty === 'hard').length;
