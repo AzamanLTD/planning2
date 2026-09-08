@@ -9,7 +9,6 @@ const spr = read('spr-input.js');
 const tools = read('tools-enhancement.js');
 const notes = read('note-enhancement.js');
 const modal = read('modal-enhancement.js');
-const shortcuts = read('shortcut-enhancement.js');
 const tokens = read('styles.css');
 
 const requiredScripts = [
@@ -20,10 +19,10 @@ const requiredScripts = [
   'spr-input.js',
   'tools-enhancement.js',
   'note-enhancement.js',
-  'modal-enhancement.js',
-  'shortcut-enhancement.js'
+  'modal-enhancement.js'
 ];
 for (const src of requiredScripts) assert(html.includes(`src=\"${src}\"`), `index.html missing ${src}`);
+assert(!html.includes('shortcut-enhancement.js'), 'obsolete duplicate shortcut layer must not be loaded');
 
 for (const phrase of [
   'screen:\"access\"', 'show(\"break\")', 's.screen=\"finish\"',
@@ -44,7 +43,7 @@ for (const phrase of ['normalizeFraction', 'normalizeDecimal', 'blur', 'MAX_POSI
   assert(spr.includes(phrase), `SPR normalization contract missing: ${phrase}`);
 }
 
-for (const phrase of ['role=\"dialog\"', 'aria-modal', 'Resize calculator', 'makeDraggable', 'makeResizable', 'restoreSavedHighlights']) {
+for (const phrase of ['setAttribute(\'role\', \'dialog\')', 'aria-modal', 'Resize calculator', 'makeDraggable', 'makeResizable', 'restoreSavedHighlights']) {
   assert(tools.includes(phrase), `tool enhancement contract missing: ${phrase}`);
 }
 
@@ -54,10 +53,6 @@ for (const phrase of ['STORAGE_KEY', 'questionKey', 'saveNote', 'azmNoteEditor',
 
 for (const phrase of ['FOCUSABLE', 'activeDialog', 'event.key !== \'Tab\'', 'aria-modal', 'focusFirst']) {
   assert(modal.includes(phrase), `modal focus contract missing: ${phrase}`);
-}
-
-for (const phrase of ["key.toLowerCase() === 'p'", "key.toLowerCase() === 'c'", "key.toLowerCase() === 'h'"]) {
-  assert(shortcuts.includes(phrase), `shortcut alias missing: ${phrase}`);
 }
 
 for (const token of [
