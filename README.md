@@ -16,12 +16,16 @@ An independent browser-based SAT practice experience for Azaman students. The pr
 - Scientific calculator with safe expression evaluation and an independent lightweight graphing mode
 - Formula reference sheet and draggable/resizable tool panels
 - Pre-boot recovery guard that repairs stale/corrupt timed-session state and prevents reopening completed modules
-- Automated question-bank validation, static contract tests, recovery edge-case tests, and Chromium browser smoke coverage
+- Non-blocking connectivity status reporting; the browser simulator does not fake a testing-center SSID lock
+- Robust six-digit start-code entry with paste, arrow-key, and backspace behavior
+- Student-facing UI hides internal domain/skill/difficulty metadata
+- Practice completion report with Reading and Writing / Math and per-module raw accuracy
+- Automated question-bank validation, content audit, static contract tests, recovery edge-case tests, and Chromium browser smoke coverage
 - Responsive static frontend with no runtime service dependency
 
 ## Practice bank
 
-The repository contains 147 structured original question records across the launch modules and adaptive variants. CI validates counts, unique IDs, required metadata, question-type shape, Math SPR volume, hard-module tagging, and domain coverage. Editorial review remains a release requirement; passing CI is not a substitute for human review of question quality.
+The repository contains 147 structured original question records across the launch modules and adaptive variants. CI validates counts, unique IDs, required metadata, question-type shape, Math SPR volume, hard-module tagging, domain coverage, and exact full-item uniqueness. The content audit also reports R&W passages below the 25-word guideline and synthetic placeholder phrasing so those editorial issues remain visible. Editorial review remains a release requirement; passing CI is not a substitute for human review of question quality.
 
 ## Demo credentials
 
@@ -39,9 +43,9 @@ The repository contains 147 structured original question records across the laun
 
 ## Verification status
 
-The implementation has automated CI coverage for syntax, content contracts, recovery edge cases, and a real Chromium smoke run. The real Bluebook application remains the visual reference authority. The repository intentionally uses Azaman-owned provisional design tokens until the permitted reference-capture pass is completed, so the product is not described as pixel-perfect.
+The implementation has automated CI coverage for syntax, content contracts, content-audit checks, recovery edge cases, and a real Chromium smoke run. The real Bluebook application remains the visual reference authority. The repository intentionally uses Azaman-owned provisional design tokens until the permitted reference-capture pass is completed, so the product is not described as pixel-perfect.
 
-Known release work includes human editorial review, deeper accessibility/device review, richer image/chart interactions, calculator parity decisions, extended recovery testing, real group/proctor-session testing, and owner signoff.
+Known release work includes human editorial review, deeper accessibility/device review, richer image/chart interactions, calculator parity decisions, extended recovery testing, real group/proctor-session testing, reference-capture comparison, and owner signoff.
 
 ## Run locally
 
