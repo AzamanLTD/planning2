@@ -70,12 +70,21 @@
                 const display = calc?.querySelector('#calcDisplay'); check('calculator accepts expression input', !!display && !display.readOnly);
                 if (display) { display.value = '2+3'; display.dispatchEvent(new KeyboardEvent('keydown', { key:'Enter', bubbles:true })); }
                 check('calculator evaluates expression', display?.value === '5');
+                if (display) { display.value = '2π'; display.dispatchEvent(new KeyboardEvent('keydown', { key:'Enter', bubbles:true })); }
+                check('calculator supports implicit constant multiplication', display?.value && Math.abs(Number(display.value) - 2 * Math.PI) < 1e-9);
+                if (display) { display.value = 'sin(30)'; display.dispatchEvent(new KeyboardEvent('keydown', { key:'Enter', bubbles:true })); }
+                check('calculator supports degree trig', display?.value && Math.abs(Number(display.value) - 0.5) < 1e-9);
+                if (display) { display.value = '2(3+4)'; display.dispatchEvent(new KeyboardEvent('keydown', { key:'Enter', bubbles:true })); }
+                check('calculator supports implicit parenthesis multiplication', display?.value === '14');
                 const graphTab = calc?.querySelector('[data-mode="graph"]'), calculateTab = calc?.querySelector('[data-mode="calculate"]');
                 check('calculate view initially visible', !!calc?.querySelector('#azmCalcCalculate') && !calc?.querySelector('#azmCalcCalculate').hidden);
                 graphTab?.click(); check('graph tab activates', graphTab?.getAttribute('aria-selected') === 'true');
                 check('calculate view hides after graph switch', !!calc?.querySelector('#azmCalcCalculate')?.hidden);
                 check('graph view shows after graph switch', calc?.querySelector('#azmCalcGraph')?.hidden === false);
-                check('graph controls render', !!calc?.querySelector('#azmGraph') && !!calc?.querySelector('#azmPlot')); calc?.querySelector('#azmPlot')?.click();
+                check('graph controls render', !!calc?.querySelector('#azmGraph') && !!calc?.querySelector('#azmPlot'));
+                const graphExpr = calc?.querySelector('#azmGraphExpr'); if (graphExpr) graphExpr.value = '2x+1';
+                calc?.querySelector('#azmPlot')?.click();
+                check('graph plots implicit multiplication function', (calc?.querySelector('#azmGraphStatus')?.textContent || '').includes('Plotted 2x+1'));
                 check('graph canvas is drawable', !!calc?.querySelector('#azmGraph')?.getContext('2d')); calculateTab?.click();
                 check('calculate tab returns', calculateTab?.getAttribute('aria-selected') === 'true' && calc?.querySelector('#azmCalcCalculate')?.hidden === false);
                 const sprIndex = win.SAT_QUESTIONS.math1.findIndex(q => q.type === 'spr'); check('Math SPR exists', sprIndex >= 0);
@@ -111,6 +120,7 @@
         }
         if (phase === 7) {
           const fields = [...doc.querySelectorAll('.start-digit')]; check('six start-code inputs render', fields.length === 6);
+          check('start-code fields are individually labelled', fields.every((x, i) => x.getAttribute('aria-label') === `Start code digit ${i + 1} of 6`));
           const event = new Event('paste', { bubbles:true, cancelable:true }); Object.defineProperty(event, 'clipboardData', { value: { getData: () => '492776' } });
           fields[0].dispatchEvent(event); check('paste fills start code', fields.map((x) => x.value).join('') === '492776'); check('start code state persists', readState().startCode === '492776');
           out.textContent = checks.join('\n') + '\nSMOKE COMPLETE';
