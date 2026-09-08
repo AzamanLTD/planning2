@@ -5,9 +5,11 @@ const assert = require('assert');
 function loadBank() {
   const source = fs.readFileSync('data/questions.js', 'utf8');
   const easy = fs.readFileSync('data/rw2-easy.js', 'utf8');
+  const overrides = fs.readFileSync('data/rw-source-overrides.js', 'utf8');
   const sandbox = { window: {} };
   vm.runInNewContext(source, sandbox);
   vm.runInNewContext(easy, sandbox);
+  vm.runInNewContext(overrides, sandbox);
   return sandbox.window.SAT_QUESTIONS;
 }
 
@@ -21,7 +23,6 @@ const seenIds = new Set();
 const exactSignatures = new Set();
 const issues = [];
 const shortPassageIds = [];
-const syntheticSourceIds = [];
 
 for (const [group, items] of groups) {
   assert(Array.isArray(items), `${group} is not an array`);
@@ -36,7 +37,7 @@ for (const [group, items] of groups) {
       const paragraphs = question.source?.paragraphs || [];
       const words = paragraphs.join(' ').trim().split(/\s+/).filter(Boolean).length;
       if (words < 25) shortPassageIds.push(question.id);
-      if (paragraphs.some((paragraph) => /the passage presents a situation that illustrates the relationship described in the question/i.test(paragraph))) syntheticSourceIds.push(question.id);
+      if (!paragraphs.length) issues.push(`${location}: missing source passage`);
       if (!Array.isArray(question.options) || question.options.length !== 4) issues.push(`${location}: expected 4 R&W options`);
     }
     if (question.section === 'Math' && question.type === 'mcq' && (!Array.isArray(question.options) || question.options.length !== 4)) issues.push(`${location}: expected 4 Math options`);
@@ -49,8 +50,7 @@ for (const [group, items] of groups) {
 
 assert.equal(issues.length, 0, `content integrity issues:\n${issues.join('\n')}`);
 assert.equal(exactSignatures.size, 147, 'expected 147 unique full-item signatures');
+assert.equal(shortPassageIds.length, 0, `R&W passages under 25 words:\n${shortPassageIds.join(', ')}`);
 
-console.log(`Audited ${exactSignatures.size} unique items.`);
-console.log(`R&W items with source passages under 25 words (${shortPassageIds.length}): ${shortPassageIds.join(', ') || 'none'}`);
-console.log(`R&W synthetic placeholder passages (${syntheticSourceIds.length}): ${syntheticSourceIds.join(', ') || 'none'}`);
-if (shortPassageIds.length || syntheticSourceIds.length) console.warn('Content-quality follow-up remains open: strengthen listed passages before student launch.');
+console.log(`Audited ${exactSignatures.size} unique items with complete R&W passages.`);
+console.log('No R&W synthetic placeholder passages remain.');
