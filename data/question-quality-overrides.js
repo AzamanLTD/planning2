@@ -72,7 +72,7 @@
     MM2HQ9: {
       difficulty: 'hard',
       prompt: 'The polynomial x³ + ax² − 5x − 6 is divisible by x − 2. What is the sum of the coefficients of the quotient?',
-      options: ['6', '7', '8', '9'],
+      options: ['5', '7', '8', '10'],
       answer: 'C',
       explanation: 'Because x − 2 is a factor, substituting x = 2 gives 8 + 4a − 10 − 6 = 0, so a = 2. Dividing x³ + 2x² − 5x − 6 by x − 2 gives x² + 4x + 3, whose coefficients sum to 8.'
     },
