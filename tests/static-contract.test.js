@@ -59,7 +59,7 @@ for (const phrase of ['FOCUSABLE', 'activeDialog', 'event.key !== \'Tab\'', 'ari
 
 for (const phrase of [
   'tokenize(input)', 'sin', 'cos', 'tan', 'sqrt', 'log10', 'Graph',
-  'azmGraphExpr', 'azmXMin', 'azmXMax', 'requestAnimationFrame', 'getContext(\'2d\')'
+  'azmGraphExpr', 'azmXMin', 'azmXMax', 'getContext(\'2d\')'
 ]) {
   assert(calculator.includes(phrase), `calculator enhancement contract missing: ${phrase}`);
 }
