@@ -68,7 +68,7 @@ jobs:
               'Expression of Ideas': [4, 6]
             },
             Math: {
-              Algebra: [7, 9],
+              Algebra: [6, 9],
               'Advanced Math': [6, 8],
               'Problem Solving and Data Analysis': [3, 5],
               'Geometry and Trigonometry': [3, 5]
