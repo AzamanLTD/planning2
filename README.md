@@ -16,7 +16,6 @@ An independent browser-based SAT practice experience for Azaman students. The pr
 - Scientific calculator with safe expression evaluation and an independent lightweight graphing mode
 - Formula reference sheet and draggable/resizable tool panels
 - Pre-boot recovery guard that repairs stale/corrupt timed-session state and prevents reopening completed modules
-- Non-blocking connectivity status reporting; the browser simulator does not fake a testing-center SSID lock
 - Robust six-digit start-code entry with paste, arrow-key, and backspace behavior
 - Student-facing UI hides internal domain/skill/difficulty metadata
 - Practice completion report with Reading and Writing / Math and per-module raw accuracy
