@@ -13,10 +13,9 @@
     MM2HQ16: { options: ['1', '4', '5', '8'] },
     MM2HQ14: {
       difficulty: 'hard',
-      prompt: 'A tank is 18% full. After 35 liters of water are added, the tank is 32% full. What is the capacity of the tank, in liters?',
-      options: ['175', '200', '250', '280'],
-      answer: 'C',
-      explanation: 'The 35 liters increase the fill level by 14% of the tank capacity, so 0.14C = 35 and C = 250.'
+      prompt: 'A container holds a solution that is 20% acid by volume. After 15 milliliters of water are added, the solution is 16% acid by volume. How many milliliters of solution were in the container originally?',
+      answer: '60',
+      explanation: 'Let the original volume be V. The amount of acid is 0.20V, so 0.20V/(V + 15) = 0.16. Solving gives 0.20V = 0.16V + 2.4, so V = 60.'
     },
     MM2HQ20: {
       difficulty: 'hard',
