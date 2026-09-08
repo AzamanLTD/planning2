@@ -17,10 +17,10 @@ const requiredScripts = [
   'spr-input.js',
   'tools-enhancement.js'
 ];
-for (const src of requiredScripts) assert(html.includes(`src="${src}"`), `index.html missing ${src}`);
+for (const src of requiredScripts) assert(html.includes(`src=\"${src}\"`), `index.html missing ${src}`);
 
 for (const phrase of [
-  'screen:"access"', 'show("break")', 's.screen="finish"',
+  'screen:\"access\"', 'show(\"break\")', 's.screen=\"finish\"',
   'breakSec:600', 'warnSec:300', 'minutes:32,count:27', 'minutes:35,count:22',
   'completed[m().id]=true', 'routeNext()', 's.submitted=true',
   'Review questions', 'Mark for review', 'Reference sheet', 'Calculator',
@@ -33,11 +33,11 @@ for (const phrase of [
   'Ctrl + Alt + R', 'Ctrl + Alt + O', 'Ctrl + Alt + 1–4', 'Ctrl + Shift + 1–4'
 ]) assert(keyboard.includes(phrase), `keyboard shortcut missing: ${phrase}`);
 
-for (const phrase of ['normalizeFraction', 'normalizeDecimal', 'keydown', 'blur']) {
+for (const phrase of ['normalizeFraction', 'normalizeDecimal', 'blur', 'MAX_POSITIVE_CHARS', 'MAX_NEGATIVE_CHARS']) {
   assert(spr.includes(phrase), `SPR normalization contract missing: ${phrase}`);
 }
 
-for (const phrase of ['role="dialog"', 'aria-modal', 'Resize calculator', 'makeDraggable', 'makeResizable']) {
+for (const phrase of ['role=\"dialog\"', 'aria-modal', 'Resize calculator', 'makeDraggable', 'makeResizable']) {
   assert(tools.includes(phrase), `tool enhancement contract missing: ${phrase}`);
 }
 
