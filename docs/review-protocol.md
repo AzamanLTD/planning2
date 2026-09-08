@@ -17,6 +17,7 @@ Applies on top of the standing AZM-Planning engineering discipline that governs 
 5. State integrity: navigation between questions, review screen, timer, break, and tools never loses answers, marks, eliminations, highlights, or notes within a module.
 6. Recovery integrity: refreshing during a timed module or scheduled break must preserve the correct absolute deadline and must not reopen a completed module.
 7. Content integrity: the question bank must remain original, structurally valid, uniquely identified, correctly keyed, and represented in the required domain/difficulty distribution.
+8. Student UI integrity: internal curriculum metadata must not be exposed in the test-taking surface; content records may retain domain, skill, and difficulty tags for QA and routing.
 
 ## Review flow
 
@@ -27,9 +28,11 @@ Applies on top of the standing AZM-Planning engineering discipline that governs 
 
 ## Current verification notes
 
-The real Bluebook application itself remains the visual reference authority. The repository currently uses provisional independent design tokens until the capture pack is available; no release claim may call the UI pixel-perfect before that pass is complete.
+The real Bluebook application remains the visual reference authority. The repository currently uses provisional independent design tokens until the capture pack is available; no release claim may call the UI pixel-perfect before that pass is complete.
 
-The current simulator implements the documented 4-module timing model, locked module transitions, a mandatory 10-minute inter-section break, score-based M2 routing, structured original question data, Math SPR input normalization, verified Windows keyboard shortcuts, and static-friendly local persistence.
+The current simulator implements the documented 4-module timing model, locked module transitions, a mandatory 10-minute inter-section break, score-based M2 routing, structured original question data, Math SPR input normalization, keyboard shortcuts, static local persistence, calculator and reference tools, a non-blocking connectivity status indicator, start-code input handling, session recovery checks, and raw practice results reporting.
+
+The simulator intentionally does not pretend to enforce a testing-center Wi-Fi SSID in browser code. Network policy and proctor operations remain distinct from local exam-state behavior.
 
 ## Launch checklist (before first student session)
 
@@ -37,5 +40,6 @@ The current simulator implements the documented 4-module timing model, locked mo
 - [ ] Every screen in the inventory matches its capture, signed off in review
 - [ ] Question bank complete per volume table and human-reviewed
 - [ ] Session/proctor flow tested with a real room-sized group
-- [ ] Results placeholder and post-exam summary accurate
+- [ ] Results summary accurate and clearly labeled as practice-only
 - [ ] Recovery tested across refresh/device interruption scenarios
+- [ ] Production calculator path selected and verified (approved external integration or independent fallback)
