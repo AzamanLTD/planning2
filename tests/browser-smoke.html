@@ -10,6 +10,7 @@
       const frame = document.getElementById('app');
       const KEY = 'azaman-sat-practice-v3';
       let phase = 0;
+      let preflight = true;
       const checks = [];
       function check(name, value) { checks.push(`${value ? 'PASS' : 'FAIL'} ${name}`); if (!value) throw new Error(name); }
       function writeState(data) { localStorage.setItem(KEY, JSON.stringify(data)); }
@@ -19,8 +20,42 @@
           endAt:Date.now()+600000, breakEndAt:null, answers:{}, marked:{}, eliminated:{}, notes:{}, highlights:{}, completed:{}, submitted:false,
           adaptive:{rw:'easy',math:'easy'}, timerHidden:false, lineReader:false, rules:true, desk:true, warning:{} };
       }
+      function preflightFlow(doc) {
+        check('sign-in screen renders', !!doc.querySelector('#access') && !!doc.querySelector('#student'));
+        doc.querySelector('#access').value = 'sat26'; doc.querySelector('#access').dispatchEvent(new Event('input', { bubbles:true }));
+        doc.querySelector('#student').value = 'Smoke Student'; doc.querySelector('#student').dispatchEvent(new Event('input', { bubbles:true }));
+        doc.querySelector('#accessBtn').click();
+        setTimeout(() => {
+          const d1 = frame.contentDocument; check('test-day setup screen renders', !!d1.querySelector('#rulesAck') && !!d1.querySelector('#deskAck'));
+          d1.querySelector('#rulesAck').click();
+          setTimeout(() => {
+            const d2 = frame.contentDocument; d2.querySelector('#deskAck').click();
+            setTimeout(() => {
+              const d3 = frame.contentDocument; check('setup enables continuation', !d3.querySelector('#checkinBtn')?.disabled); d3.querySelector('#checkinBtn').click();
+              setTimeout(() => {
+                const d4 = frame.contentDocument; check('room-code screen renders', !!d4.querySelector('#room'));
+                d4.querySelector('#room').value = 'azm24'; d4.querySelector('#room').dispatchEvent(new Event('input', { bubbles:true })); d4.querySelector('#roomBtn').click();
+                setTimeout(() => {
+                  const d5 = frame.contentDocument, codeFields = [...d5.querySelectorAll('.start-digit')];
+                  check('start-code screen renders', codeFields.length === 6);
+                  const paste = new Event('paste', { bubbles:true, cancelable:true }); Object.defineProperty(paste, 'clipboardData', { value: { getData: () => '492776' } }); codeFields[0].dispatchEvent(paste);
+                  check('start-code paste accepted', codeFields.map((x) => x.value).join('') === '492776'); d5.querySelector('#startTestBtn').click();
+                  setTimeout(() => {
+                    const d6 = frame.contentDocument; check('directions screen follows start code', !!d6.querySelector('#beginModuleBtn'));
+                    d6.querySelector('#beginModuleBtn').click();
+                    setTimeout(() => {
+                      preflight = false; phase = 0; writeState(baseState()); frame.contentWindow.location.reload();
+                    }, 50);
+                  }, 50);
+                }, 50);
+              }, 50);
+            }, 50);
+          }, 50);
+        }, 50);
+      }
       function afterLoad() {
         const win = frame.contentWindow, doc = frame.contentDocument;
+        if (preflight) { preflightFlow(doc); return; }
         if (phase === 0) {
           check('module 1 renders', !!doc.querySelector('.test-title') && doc.querySelector('.test-title').textContent.includes('Reading and Writing'));
           check('27-question module', /Question 1 of 27/.test(doc.querySelector('.test-counter')?.textContent || ''));
@@ -129,8 +164,9 @@
           out.textContent = checks.join('\n') + '\nSMOKE COMPLETE';
         }
       }
-      function qText(q) { return q.source?.paragraphs?.[0]?.split(' ').slice(0, 3).join(' ') || ''; }
-      writeState(baseState()); frame.addEventListener('load', afterLoad); frame.src = '../index.html?browser-smoke=1';
+      frame.addEventListener('load', afterLoad);
+      try { localStorage.removeItem(KEY); } catch (_) {}
+      frame.src = '../index.html?browser-smoke=1';
     })();
   </script>
 </body>
