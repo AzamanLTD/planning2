@@ -45,33 +45,35 @@
     window.SAT_QUESTIONS?.math2?.easy || [],
     window.SAT_QUESTIONS?.math2?.hard || []
   ];
-  const byId = new Map(groups.flat().map((question) => [question.id, question]));
-  Object.entries(overrides).forEach(([id, patch]) => {
-    const question = byId.get(id);
-    if (question) Object.assign(question, patch);
-  });
 
-  // Avoid a predictable “correct answer is usually A” pattern while preserving
-  // the underlying question, distractors, and correct answer text. The mapping is
-  // deterministic so the same item has the same answer position on every run.
   const letters = ['A', 'B', 'C', 'D'];
   function hash(value) {
     let h = 2166136261;
     for (const ch of value) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
     return h >>> 0;
   }
+
   groups.flat().forEach((question) => {
-    if (question.type === 'spr' || !Array.isArray(question.options) || question.options.length !== 4) return;
-    if (question.__azmAnswerPositionBalanced === true) return;
-    const originalIndex = letters.indexOf(String(question.answer).toUpperCase());
-    if (originalIndex < 0) return;
-    const shift = hash(question.id) % 4;
-    if (shift) {
-      const original = question.options.slice();
-      question.options = original.map((_, nextIndex) => original[(nextIndex - shift + 4) % 4]);
-      question.answer = letters[(originalIndex + shift) % 4];
+    if (question.__azmQualityOverridesApplied === true) return;
+
+    const patch = overrides[question.id];
+    if (patch) Object.assign(question, patch);
+
+    // Avoid a predictable “correct answer is usually A” pattern while preserving
+    // the question, distractors, and correct answer text. The mapping is deterministic.
+    if (question.type !== 'spr' && Array.isArray(question.options) && question.options.length === 4) {
+      const originalIndex = letters.indexOf(String(question.answer).toUpperCase());
+      if (originalIndex >= 0) {
+        const shift = hash(question.id) % 4;
+        if (shift) {
+          const original = question.options.slice();
+          question.options = original.map((_, nextIndex) => original[(nextIndex - shift + 4) % 4]);
+          question.answer = letters[(originalIndex + shift) % 4];
+        }
+      }
     }
-    Object.defineProperty(question, '__azmAnswerPositionBalanced', {
+
+    Object.defineProperty(question, '__azmQualityOverridesApplied', {
       value: true,
       enumerable: false,
       configurable: false,
