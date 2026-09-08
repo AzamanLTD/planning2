@@ -94,10 +94,21 @@
         if (phase === 3) {
           check('Math module renders', doc.querySelector('.test-title')?.textContent.includes('Math'));
           check('Math choices expose radio semantics', doc.querySelector('.choice')?.getAttribute('role') === 'radio');
-          doc.dispatchEvent(new KeyboardEvent('keydown', { key:'g', ctrlKey:true, altKey:true, bubbles:true, cancelable:true }));
+          doc.dispatchEvent(new KeyboardEvent('keydown', { key:'F1', bubbles:true, cancelable:true }));
           setTimeout(() => {
-            check('keyboard question menu opens', !!frame.contentDocument.getElementById('reviewModal'));
+            check('F1 opens keyboard shortcut help', !!frame.contentDocument.getElementById('shortcutHelp'));
             frame.contentDocument.dispatchEvent(new KeyboardEvent('keydown', { key:'Escape', bubbles:true, cancelable:true }));
+            check('Escape closes shortcut help', !frame.contentDocument.getElementById('shortcutHelp'));
+            doc.dispatchEvent(new KeyboardEvent('keydown', { key:'d', ctrlKey:true, altKey:true, shiftKey:true, bubbles:true, cancelable:true }));
+            check('directions shortcut opens directions dialog', !!frame.contentDocument.getElementById('directionHelp'));
+            frame.contentDocument.dispatchEvent(new KeyboardEvent('keydown', { key:'Escape', bubbles:true, cancelable:true }));
+            check('Escape closes directions dialog', !frame.contentDocument.getElementById('directionHelp'));
+            const questionPanel = doc.querySelector('.question-panel'), footer = doc.querySelector('.test-footer'), choice = doc.querySelector('.choice');
+            choice?.focus(); check('answer choice can receive focus', doc.activeElement === choice);
+            doc.dispatchEvent(new KeyboardEvent('keydown', { key:'F6', bubbles:true, cancelable:true }));
+            check('F6 moves from focused question descendant to next region', doc.activeElement === footer);
+            doc.dispatchEvent(new KeyboardEvent('keydown', { key:'F6', shiftKey:true, bubbles:true, cancelable:true }));
+            check('Shift+F6 returns to previous region', doc.activeElement === questionPanel);
             doc.querySelector('#toolsBtn')?.click();
             setTimeout(() => {
               check('test tools expose menu semantics', doc.querySelector('#toolPopover')?.getAttribute('role') === 'menu');
