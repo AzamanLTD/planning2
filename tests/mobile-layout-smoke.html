@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Azaman mobile layout smoke</title></head>
+<body>
+  <pre id="result">running</pre>
+  <iframe id="app" title="Azaman simulator" style="width:100%;height:800px;border:0"></iframe>
+  <script>
+    (() => {
+      const out = document.getElementById('result');
+      const frame = document.getElementById('app');
+      const KEY = 'azaman-sat-practice-v3';
+      function write(state) { localStorage.setItem(KEY, JSON.stringify(state)); }
+      function assertInViewport(el, label) {
+        const r = el.getBoundingClientRect();
+        if (r.left < -1 || r.top < -1 || r.right > innerWidth + 1 || r.bottom > innerHeight + 1) throw new Error(`${label} escapes viewport`);
+      }
+      write({
+        v:3, screen:'test', student:'Mobile Smoke', accessCode:'', roomCode:'', startCode:'', mi:0, qi:0,
+        endAt:Date.now()+600000, breakEndAt:null, answers:{}, marked:{}, eliminated:{}, notes:{}, highlights:{}, completed:{}, submitted:false,
+        adaptive:{rw:'easy',math:'easy'}, timerHidden:false, lineReader:false, rules:true, desk:true, warning:{}
+      });
+      frame.addEventListener('load', () => {
+        try {
+          const doc = frame.contentDocument;
+          if (doc.documentElement.scrollWidth > innerWidth + 1) throw new Error(`horizontal overflow: ${doc.documentElement.scrollWidth}px > ${innerWidth}px`);
+          const top = doc.querySelector('.test-top');
+          const footer = doc.querySelector('.test-footer');
+          if (!top || !footer) throw new Error('test chrome missing');
+          assertInViewport(top, 'test header');
+          assertInViewport(footer, 'test footer');
+          const tools = doc.querySelector('#toolsBtn');
+          tools?.click();
+          const pop = doc.querySelector('#toolPopover');
+          if (!pop) throw new Error('test tools did not open');
+          assertInViewport(pop, 'test tools menu');
+          doc.querySelector('#calcTool')?.click();
+          const calc = doc.querySelector('#calculatorPanel');
+          if (!calc) throw new Error('calculator did not open');
+          assertInViewport(calc, 'calculator panel');
+          if (doc.documentElement.scrollWidth > innerWidth + 1) throw new Error('calculator causes horizontal overflow');
+          const choices = [...doc.querySelectorAll('.choice')];
+          if (!choices.length) throw new Error('answer choices missing');
+          choices.forEach((choice, i) => assertInViewport(choice, `answer choice ${i + 1}`));
+          out.textContent = `PASS mobile viewport ${innerWidth}x${innerHeight}\nMOBILE LAYOUT SMOKE COMPLETE`;
+        } catch (error) {
+          out.textContent = `FAIL ${error.message}`;
+          throw error;
+        }
+      });
+      frame.src = '../index.html?mobile-layout-smoke=1';
+    })();
+  </script>
+</body>
+</html>
