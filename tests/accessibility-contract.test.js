@@ -21,6 +21,7 @@ assert(modal.includes('FOCUSABLE'), 'dialogs must define keyboard focusable cont
 assert(calculator.includes('aria-controls="azmCalcCalculate"'), 'calculator tabs must expose tabpanel relationship');
 assert(calculator.includes('aria-controls="azmCalcGraph"'), 'graph tab must expose tabpanel relationship');
 assert(calculator.includes('aria-selected'), 'calculator tabs must expose selection state');
-assert(codeInput.includes('aria-label="Start code digit'), 'start-code fields must be individually labelled');
+assert(codeInput.includes('setAttribute(\'aria-label\''), 'start-code fields must receive individual accessible labels');
+assert(codeInput.includes('Start code digit ${index + 1} of 6'), 'start-code labels must identify each digit position');
 
 console.log('Accessibility contract checks passed.');
