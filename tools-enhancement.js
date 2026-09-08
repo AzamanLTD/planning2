@@ -76,6 +76,14 @@
     handle.addEventListener('pointercancel', () => { drag = null; });
   }
 
+  function installHighlightStyle() {
+    if (document.getElementById('azmHighlightStyle')) return;
+    const style = document.createElement('style');
+    style.id = 'azmHighlightStyle';
+    style.textContent = '.azm-saved-highlight{background:var(--color-warning);color:var(--color-text);padding:0 .04em}';
+    document.head.appendChild(style);
+  }
+
   function wrapHighlightInTextNode(node, text) {
     if (!text || !node.nodeValue) return false;
     const source = node.nodeValue;
@@ -97,6 +105,7 @@
   }
 
   function restoreSavedHighlights() {
+    installHighlightStyle();
     document.querySelectorAll('.source-panel .passage').forEach((passage) => {
       if (passage.dataset.highlightsRestored === '1') return;
       const saved = [...document.querySelectorAll('.annotation-list span')]
