@@ -47,6 +47,10 @@
     }
   }
 
+  function allModulesComplete(state) {
+    return MODULES.every((module) => state.completed[module.id] === true);
+  }
+
   function firstIncompleteModuleIndex(state) {
     const index = MODULES.findIndex((module) => state.completed[module.id] !== true);
     return index >= 0 ? index : MODULES.length - 1;
@@ -124,6 +128,16 @@
     state.qi = Number.isInteger(state.qi) ? state.qi : 0;
     state.qi = Math.max(0, Math.min(count - 1, state.qi));
 
+    if (allModulesComplete(state)) {
+      state.submitted = true;
+      state.screen = 'finish';
+      state.mi = 3;
+      state.qi = 0;
+      state.endAt = null;
+      state.breakEndAt = null;
+      return;
+    }
+
     if (state.submitted) {
       state.screen = 'finish';
       state.mi = 3;
@@ -144,6 +158,10 @@
         state.screen = 'directions';
         return;
       }
+      // The break can only precede Math Module 1. Any later completion flags are
+      // impossible here and would otherwise create a resume state that cannot start.
+      state.completed.math1 = false;
+      state.completed.math2 = false;
       state.mi = 2;
       state.qi = 0;
       if (!Number.isFinite(state.breakEndAt) || state.breakEndAt <= Date.now()) {
