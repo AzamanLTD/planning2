@@ -15,7 +15,9 @@ assert(sanitizer.includes("meta.hidden = true"), 'question metadata must be hidd
 assert(sanitizer.includes("aria-hidden") && sanitizer.includes("'true'"), 'hidden metadata must be marked aria-hidden');
 assert(sanitizer.includes("label.textContent = 'Source'"), 'student-facing passage labels must not expose internal metadata');
 assert(sanitizer.includes("access.setAttribute('placeholder', 'Enter access code')"), 'sign-in must not expose a valid demo access code as the placeholder');
+assert(sanitizer.includes("room.setAttribute('placeholder', 'Enter room code')"), 'room entry must not expose a valid demo room code as the placeholder');
 assert(!/placeholder\s*=\s*["']SAT26["']/.test(sanitizer), 'sanitizer must not restore the old demo-code placeholder');
+assert(!/placeholder\s*=\s*["']AZM24["']/.test(sanitizer), 'sanitizer must not restore the old demo-room-code placeholder');
 assert(sanitizer.includes('MutationObserver'), 'sanitizer must cover re-rendered DOM');
 
 console.log('Note editor and student-facing sanitization contracts passed.');
