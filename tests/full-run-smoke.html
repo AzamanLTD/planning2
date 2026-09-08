@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Azaman full-run smoke</title></head>
+<body>
+  <pre id="result">running</pre>
+  <iframe id="app" title="Azaman simulator" style="width:100%;height:800px;border:0"></iframe>
+  <script>
+    (() => {
+      const out = document.getElementById('result');
+      const frame = document.getElementById('app');
+      const KEY = 'azaman-sat-practice-v3';
+      const checks = [];
+      let phase = 0;
+
+      function check(name, value) {
+        checks.push(`${value ? 'PASS' : 'FAIL'} ${name}`);
+        if (!value) throw new Error(name);
+      }
+      function read() { return JSON.parse(localStorage.getItem(KEY)); }
+      function write(s) { localStorage.setItem(KEY, JSON.stringify(s)); }
+      function wait(fn, ms = 50) { setTimeout(fn, ms); }
+      function baseState() {
+        return {
+          v: 3, screen: 'test', student: 'Full Run Smoke', accessCode: '', roomCode: 'AZM24', startCode: '492776',
+          mi: 0, qi: 0, endAt: Date.now() + 120000, breakEndAt: null,
+          answers: {}, marked: {}, eliminated: {}, notes: {}, highlights: {}, completed: {}, submitted: false,
+          adaptive: { rw: 'easy', math: 'easy' }, timerHidden: false, lineReader: false, rules: true, desk: true, warning: {}
+        };
+      }
+      function answerAll(state, id, bank) {
+        bank.forEach((q, i) => { state.answers[`${id}-${i}`] = q.answer; });
+      }
+      function exerciseModule(doc, win, expectedTitle, count, bank, id, done) {
+        check(`${id}: module renders`, doc.querySelector('.test-title')?.textContent.includes(expectedTitle));
+        check(`${id}: question count is ${count}`, new RegExp(`Question 1 of ${count}`).test(doc.querySelector('.test-counter')?.textContent || ''));
+        for (let i = 0; i < bank.length; i += 1) {
+          const before = doc.querySelector('.test-counter')?.textContent || '';
+          check(`${id}: question ${i + 1} renders`, before.includes(`Question ${i + 1} of ${count}`));
+          if (bank[i].type === 'spr') check(`${id}: SPR ${i + 1} renders`, !!doc.querySelector('.spr-input'));
+          else check(`${id}: MCQ ${i + 1} renders`, !!doc.querySelector('.choice'));
+          if (i < bank.length - 1) doc.querySelector('#nextBtn')?.click();
+        }
+        check(`${id}: final question reached`, doc.querySelector('.test-counter')?.textContent.includes(`Question ${count} of ${count}`));
+        doc.querySelector('#nextBtn')?.click();
+        wait(() => {
+          check(`${id}: review opens`, !!frame.contentDocument?.getElementById('reviewModal'));
+          check(`${id}: review exposes ${count} question buttons`, frame.contentDocument?.querySelectorAll('#reviewModal [data-q]').length === count);
+          frame.contentDocument?.querySelector('#submitModule')?.click();
+          wait(done, 50);
+        });
+      }
+
+      frame.addEventListener('load', () => {
+        const win = frame.contentWindow, doc = frame.contentDocument;
+        try {
+          if (phase === 0) {
+            const state = baseState();
+            const bank = win.SAT_QUESTIONS.rw1;
+            check('effective R&W M1 bank has 27 questions', bank.length === 27);
+            answerAll(state, 'rw1', bank);
+            state.endAt = Date.now() + 120000;
+            write(state);
+            phase = 1;
+            frame.contentWindow.location.reload();
+            return;
+          }
+          if (phase === 1) {
+            const state = read();
+            exerciseModule(doc, win, 'Reading and Writing', 27, win.SAT_QUESTIONS.rw1, 'R&W M1', () => {
+              const next = read();
+              check('R&W M1 locks after submission', next.completed.rw1 === true);
+              check('R&W M1 perfect score routes hard M2', next.adaptive.rw === 'hard');
+              check('R&W M1 advances to M2 directions', next.screen === 'directions' && next.mi === 1);
+              const s = next;
+              s.screen = 'test'; s.mi = 1; s.qi = 0; s.endAt = Date.now() + 120000; s.completed.rw1 = true;
+              answerAll(s, 'rw2', win.SAT_QUESTIONS.rw2.hard); write(s);
+              phase = 2; frame.contentWindow.location.reload();
+            });
+            return;
+          }
+          if (phase === 2) {
+            const bank = win.SAT_QUESTIONS.rw2.hard;
+            check('hard R&W M2 is selected', read().adaptive.rw === 'hard');
+            exerciseModule(doc, win, 'Reading and Writing', 27, bank, 'R&W M2', () => {
+              const next = read();
+              check('R&W M2 locks after submission', next.completed.rw2 === true);
+              check('R&W submission starts required break', next.screen === 'break' && next.mi === 2 && Number.isFinite(next.breakEndAt));
+              const s = next; s.submitted = false; s.screen = 'break'; s.mi = 2; s.breakEndAt = Date.now() - 1; write(s);
+              phase = 3; frame.contentWindow.location.reload();
+            });
+            return;
+          }
+          if (phase === 3) {
+            const state = read();
+            check('expired break advances to Math directions', state.screen === 'directions' && state.mi === 2 && state.breakEndAt === null);
+            state.screen = 'test'; state.mi = 2; state.qi = 0; state.endAt = Date.now() + 120000; state.completed.rw1 = true; state.completed.rw2 = true; state.completed.math1 = false; state.completed.math2 = false;
+            answerAll(state, 'math1', win.SAT_QUESTIONS.math1); write(state);
+            phase = 4; frame.contentWindow.location.reload();
+            return;
+          }
+          if (phase === 4) {
+            exerciseModule(doc, win, 'Math', 22, win.SAT_QUESTIONS.math1, 'Math M1', () => {
+              const next = read();
+              check('Math M1 locks after submission', next.completed.math1 === true);
+              check('Math M1 perfect score routes hard M2', next.adaptive.math === 'hard');
+              check('Math M1 advances to M2 directions', next.screen === 'directions' && next.mi === 3);
+              const s = next; s.screen = 'test'; s.mi = 3; s.qi = 0; s.endAt = Date.now() + 120000; s.completed.math1 = true;
+              answerAll(s, 'math2', win.SAT_QUESTIONS.math2.hard); write(s);
+              phase = 5; frame.contentWindow.location.reload();
+            });
+            return;
+          }
+          if (phase === 5) {
+            const bank = win.SAT_QUESTIONS.math2.hard;
+            check('hard Math M2 is selected', read().adaptive.math === 'hard');
+            exerciseModule(doc, win, 'Math', 22, bank, 'Math M2', () => {
+              const next = read();
+              check('Math M2 locks after submission', next.completed.math2 === true);
+              check('full run reaches finish screen', next.screen === 'finish' && next.submitted === true);
+              check('all four modules are completed', ['rw1','rw2','math1','math2'].every((id) => next.completed[id] === true));
+              check('98 responses are persisted', Object.keys(next.answers).length === 98);
+              check('practice results render', !!frame.contentDocument?.querySelector('.results-detail'));
+              out.textContent = checks.join('\n') + '\nFULL RUN SMOKE COMPLETE';
+            });
+          }
+        } catch (error) {
+          out.textContent = checks.join('\n') + `\nFAIL ${error.message}`;
+          throw error;
+        }
+      });
+      write(baseState());
+      frame.src = '../index.html?full-run-smoke=1';
+    })();
+  </script>
+</body>
+</html>
