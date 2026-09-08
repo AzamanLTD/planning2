@@ -55,6 +55,22 @@ assert.equal(state.screen, 'directions');
 assert.equal(state.mi, 3);
 assert.equal(state.qi, 0);
 
+state = run({ ...base(), screen: 'access', completed: { rw1: true }, mi: 0 });
+assert.equal(state.screen, 'directions');
+assert.equal(state.mi, 1);
+assert.equal(state.qi, 0);
+assert.equal(state.endAt, null);
+
+state = run({ ...base(), screen: 'setup', completed: { rw1: true, rw2: true }, mi: 1 });
+assert.equal(state.screen, 'break');
+assert.equal(state.mi, 2);
+assert.ok(state.breakEndAt > NOW);
+
+state = run({ ...base(), screen: 'room', completed: { rw1: true, rw2: true, math1: true }, mi: 2 });
+assert.equal(state.screen, 'directions');
+assert.equal(state.mi, 3);
+assert.equal(state.qi, 0);
+
 state = run({ ...base(), mi: 2, endAt: null });
 assert.equal(state.screen, 'directions');
 assert.equal(state.mi, 0);
