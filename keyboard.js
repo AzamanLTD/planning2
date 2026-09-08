@@ -2,10 +2,12 @@
   'use strict';
 
   const platform = `${navigator.platform || ''} ${navigator.userAgent || ''}`;
+  const isChromeOS = /CrOS/i.test(platform);
   const isMac = /Mac|iPhone|iPad|iPod/i.test(platform);
   const isIPad = /iPad/i.test(platform) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   const shortcuts = [
-    ['F1', 'Keyboard shortcuts'],
+    ['F1 (Windows/macOS/iPad)', 'Keyboard shortcuts'],
+    ['Control + Search + S (ChromeOS)', 'Keyboard shortcuts'],
     ['F6 / Shift+F6', 'Move between exam regions'],
     ['Ctrl + + / Ctrl + - / Ctrl + 0 or Command equivalents', 'Zoom in / out / reset'],
     ['Ctrl + Alt + B / Command + Control + B', 'Back'],
@@ -121,7 +123,8 @@
     const command = event.metaKey;
     const alt = event.altKey;
     if (key === 'Escape' && closeModal()) { event.preventDefault(); return; }
-    if (key === 'F1') { event.preventDefault(); openShortcuts(); return; }
+    if (key === 'F1' && !isChromeOS) { event.preventDefault(); openShortcuts(); return; }
+    if (isChromeOS && ctrl && command && lower === 's') { event.preventDefault(); openShortcuts(); return; }
     if (!document.querySelector('.test-shell')) return;
     if (key === 'F6') { event.preventDefault(); focusRegion(event.shiftKey ? -1 : 1); return; }
 
