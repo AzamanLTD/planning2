@@ -9,7 +9,10 @@ This checklist is intentionally explicit about what automated CI proves and what
 - R&W and Math answer-choice / SPR structures are valid.
 - Domain coverage and hard-module tagging remain within the configured QA ranges.
 - Full-item signatures are unique.
-- Session recovery edge cases pass.
+- Exact repeated prompts, sources, and option sets are blocked.
+- Multiple-choice answer-position distribution stays within the configured balance band.
+- Adaptive Module 2 pairs are substantively different and hard variants are fully hard-tagged.
+- Session recovery edge cases pass, including non-contiguous completion repair.
 - Accessibility contract checks pass.
 - Chromium browser smoke passes the end-to-end simulator path.
 
@@ -17,6 +20,7 @@ This checklist is intentionally explicit about what automated CI proves and what
 
 - Human editorial review of all 147 questions is complete.
 - R&W source passages flagged by the content audit are rewritten and reviewed.
+- Answer choices and rationales are checked for correctness, plausibility, and unintended clues.
 - Real Bluebook reference captures are available and visual comparisons are complete.
 - Accessibility is checked on the actual supported desktop/tablet devices.
 - The production calculator path is selected and tested.
