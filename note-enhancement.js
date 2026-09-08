@@ -17,6 +17,10 @@
     return `${module}-${Math.max(0, index)}`;
   }
 
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>\"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  }
+
   function saveNote(text) {
     const data = state();
     if (!data || data.v !== 3) return false;
@@ -44,18 +48,18 @@
     backdrop.innerHTML = `<div class="modal note-editor" role="dialog" aria-modal="true" aria-labelledby="noteEditorTitle">
       <div class="modal-head"><h3 id="noteEditorTitle">Notes</h3><button class="icon-btn" id="noteEditorClose" aria-label="Close notes">×</button></div>
       <p class="small">Write a private note for this question. Your note is saved with this practice run.</p>
-      <textarea id="noteEditorText" rows="8" maxlength="1000" aria-label="Question note" style="width:100%;resize:vertical;padding:12px;border:1px solid var(--color-border-strong);border-radius:6px;background:var(--color-surface);color:var(--color-text)">${String(existing).replace(/[&<>\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\\"':'&quot;'}[c] || c))}</textarea>
+      <textarea id="noteEditorText" rows="8" maxlength="1000" aria-label="Question note" style="width:100%;resize:vertical;padding:12px;border:1px solid var(--color-border-strong);border-radius:6px;background:var(--color-surface);color:var(--color-text)">${escapeHtml(existing)}</textarea>
       <div class="modal-actions"><button class="btn" id="noteEditorCancel">Cancel</button><button class="btn primary-action" id="noteEditorSave">Save note</button></div>
     </div>`;
     document.body.appendChild(backdrop);
     const close = () => closeModal(backdrop);
     const save = () => {
-      const ok = saveNote(backdrop.querySelector('#noteEditorText').value);
-      if (!ok) return;
+      const value = backdrop.querySelector('#noteEditorText').value;
+      if (!saveNote(value)) return;
       close();
       const marker = document.createElement('span');
       marker.className = 'annotation-chip';
-      marker.textContent = backdrop.querySelector('#noteEditorText').value.trim() ? 'Note saved' : 'Note removed';
+      marker.textContent = value.trim() ? 'Note saved' : 'Note removed';
       document.querySelector('.footer-left')?.append(marker);
       setTimeout(() => marker.remove(), 1600);
     };
