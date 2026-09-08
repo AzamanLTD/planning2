@@ -112,33 +112,49 @@
             doc.querySelector('#toolsBtn')?.click();
             setTimeout(() => {
               check('test tools expose menu semantics', doc.querySelector('#toolPopover')?.getAttribute('role') === 'menu');
-              doc.querySelector('#calcTool')?.click();
+              doc.querySelector('#noteTool')?.click();
               setTimeout(() => {
-                const calc = frame.contentDocument.getElementById('calculatorPanel');
-                check('calculator opens', !!calc);
-                check('scientific controls render', !!calc?.querySelector('[data-insert="sin("]') && !!calc?.querySelector('[data-insert="sqrt("]'));
-                const display = calc?.querySelector('#calcDisplay'); check('calculator accepts expression input', !!display && !display.readOnly);
-                const evaluate = (expr, expected, label) => { display.value = expr; display.dispatchEvent(new Event('input', { bubbles:true })); display.dispatchEvent(new KeyboardEvent('keydown', { key:'Enter', bubbles:true })); check(label, Number.isFinite(Number(display.value)) && Math.abs(Number(display.value) - expected) < 1e-9); };
-                evaluate('2+3', 5, 'calculator evaluates expression');
-                evaluate('2π', 2 * Math.PI, 'calculator supports implicit constant multiplication');
-                evaluate('sin(30)', 0.5, 'calculator supports degree trig');
-                evaluate('2(3+4)', 14, 'calculator supports implicit parenthesis multiplication');
-                evaluate('-2^2', -4, 'calculator uses exponent precedence over unary minus');
-                evaluate('2^-2', 0.25, 'calculator supports negative exponents');
-                const graphTab = calc?.querySelector('[data-mode="graph"]'), calculateTab = calc?.querySelector('[data-mode="calculate"]');
-                check('calculate view initially visible', !!calc?.querySelector('#azmCalcCalculate') && !calc?.querySelector('#azmCalcCalculate').hidden);
-                graphTab?.click(); check('graph tab activates', graphTab?.getAttribute('aria-selected') === 'true');
-                check('calculate view hides after graph switch', !!calc?.querySelector('#azmCalcCalculate')?.hidden);
-                check('graph view shows after graph switch', calc?.querySelector('#azmCalcGraph')?.hidden === false);
-                check('graph controls render', !!calc?.querySelector('#azmGraph') && !!calc?.querySelector('#azmPlot'));
-                const graphExpr = calc?.querySelector('#azmGraphExpr'); if (graphExpr) graphExpr.value = '2x+1';
-                calc?.querySelector('#azmPlot')?.click();
-                check('graph plots implicit multiplication function', (calc?.querySelector('#azmGraphStatus')?.textContent || '').includes('Plotted 2x+1'));
-                check('graph canvas is drawable', !!calc?.querySelector('#azmGraph')?.getContext('2d')); calculateTab?.click();
-                check('calculate tab returns', calculateTab?.getAttribute('aria-selected') === 'true' && calc?.querySelector('#azmCalcCalculate')?.hidden === false);
-                const sprIndex = win.SAT_QUESTIONS.math1.findIndex(q => q.type === 'spr'); check('Math SPR exists', sprIndex >= 0);
-                const state = readState(); state.qi = sprIndex; writeState(state); phase = 4; frame.contentWindow.location.reload();
-              }, 100);
+                const note = frame.contentDocument.getElementById('azmNoteEditor');
+                check('notes editor opens', !!note);
+                check('notes editor has dialog semantics', note?.querySelector('[role="dialog"]')?.getAttribute('aria-labelledby') === 'noteEditorTitle');
+                const noteField = note?.querySelector('#noteEditorText');
+                check('notes editor field is editable', !!noteField && !noteField.readOnly);
+                noteField.value = 'UI note smoke'; noteField.dispatchEvent(new Event('input', { bubbles:true }));
+                note.querySelector('#noteEditorSave')?.click();
+                setTimeout(() => {
+                  check('notes editor saves through UI', readState().notes['math1-0'] === 'UI note smoke');
+                  doc.querySelector('#toolsBtn')?.click();
+                  setTimeout(() => {
+                    doc.querySelector('#calcTool')?.click();
+                    setTimeout(() => {
+                      const calc = frame.contentDocument.getElementById('calculatorPanel');
+                      check('calculator opens', !!calc);
+                      check('scientific controls render', !!calc?.querySelector('[data-insert="sin("]') && !!calc?.querySelector('[data-insert="sqrt("]'));
+                      const display = calc?.querySelector('#calcDisplay'); check('calculator accepts expression input', !!display && !display.readOnly);
+                      const evaluate = (expr, expected, label) => { display.value = expr; display.dispatchEvent(new Event('input', { bubbles:true })); display.dispatchEvent(new KeyboardEvent('keydown', { key:'Enter', bubbles:true })); check(label, Number.isFinite(Number(display.value)) && Math.abs(Number(display.value) - expected) < 1e-9); };
+                      evaluate('2+3', 5, 'calculator evaluates expression');
+                      evaluate('2π', 2 * Math.PI, 'calculator supports implicit constant multiplication');
+                      evaluate('sin(30)', 0.5, 'calculator supports degree trig');
+                      evaluate('2(3+4)', 14, 'calculator supports implicit parenthesis multiplication');
+                      evaluate('-2^2', -4, 'calculator uses exponent precedence over unary minus');
+                      evaluate('2^-2', 0.25, 'calculator supports negative exponents');
+                      const graphTab = calc?.querySelector('[data-mode="graph"]'), calculateTab = calc?.querySelector('[data-mode="calculate"]');
+                      check('calculate view initially visible', !!calc?.querySelector('#azmCalcCalculate') && !calc?.querySelector('#azmCalcCalculate').hidden);
+                      graphTab?.click(); check('graph tab activates', graphTab?.getAttribute('aria-selected') === 'true');
+                      check('calculate view hides after graph switch', !!calc?.querySelector('#azmCalcCalculate')?.hidden);
+                      check('graph view shows after graph switch', calc?.querySelector('#azmCalcGraph')?.hidden === false);
+                      check('graph controls render', !!calc?.querySelector('#azmGraph') && !!calc?.querySelector('#azmPlot'));
+                      const graphExpr = calc?.querySelector('#azmGraphExpr'); if (graphExpr) graphExpr.value = '2x+1';
+                      calc?.querySelector('#azmPlot')?.click();
+                      check('graph plots implicit multiplication function', (calc?.querySelector('#azmGraphStatus')?.textContent || '').includes('Plotted 2x+1'));
+                      check('graph canvas is drawable', !!calc?.querySelector('#azmGraph')?.getContext('2d')); calculateTab?.click();
+                      check('calculate tab returns', calculateTab?.getAttribute('aria-selected') === 'true' && calc?.querySelector('#azmCalcCalculate')?.hidden === false);
+                      const sprIndex = win.SAT_QUESTIONS.math1.findIndex(q => q.type === 'spr'); check('Math SPR exists', sprIndex >= 0);
+                      const state = readState(); state.qi = sprIndex; writeState(state); phase = 4; frame.contentWindow.location.reload();
+                    }, 100);
+                  }, 50);
+                }, 50);
+              }, 50);
             }, 50);
           }, 50); return;
         }
