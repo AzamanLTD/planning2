@@ -56,6 +56,11 @@ assert.equal(state.mi, 2);
 
 state = run({ ...base(), screen: 'break', mi: 1, breakEndAt: NOW - 1 });
 assert.equal(state.screen, 'directions');
+assert.equal(state.mi, 0);
+assert.equal(state.breakEndAt, null);
+
+state = run({ ...base(), screen: 'break', mi: 1, breakEndAt: NOW - 1, completed: { rw1: true, rw2: true } });
+assert.equal(state.screen, 'directions');
 assert.equal(state.mi, 2);
 assert.equal(state.breakEndAt, null);
 
@@ -85,7 +90,7 @@ assert.deepEqual(state.warning, {});
 assert.equal(state.timerHidden, false);
 assert.equal(state.rules, false);
 
-state = run({ ...base(), submitted: false, screen: 'break', mi: 0, breakEndAt: NOW + 10_000, adaptive: { rw: 'garbage', math: 'hard' } });
+state = run({ ...base(), submitted: false, screen: 'break', mi: 0, breakEndAt: NOW + 10_000, completed: { rw1: true, rw2: true }, adaptive: { rw: 'garbage', math: 'hard' } });
 assert.equal(state.screen, 'break');
 assert.equal(state.mi, 2);
 assert.equal(state.adaptive.rw, 'easy');
