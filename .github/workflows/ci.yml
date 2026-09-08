@@ -57,10 +57,12 @@ jobs:
               if (words > 150 || words < 25) throw new Error(`R&W source outside 25-150 word window: ${q.id} (${words})`);
             }
           }
-          const spr = all.filter(q => q.section === 'Math' && q.type === 'spr').length;
-          if (spr !== 11) throw new Error(`SAT Math SPR mix should be 11/44 (25%), got ${spr}`);
-          const mcq = all.filter(q => q.section === 'Math' && q.type === 'mcq').length;
-          if (mcq !== 33) throw new Error(`SAT Math MCQ mix should be 33/44 (75%), got ${mcq}`);
+          for (const [name, items] of [['math1', b.math1], ['math2.easy', b.math2.easy], ['math2.hard', b.math2.hard]]) {
+            const sprCount = items.filter(q => q.section === 'Math' && q.type === 'spr').length;
+            if (sprCount !== 5) throw new Error(`${name} should contain 5 Math SPR items, got ${sprCount}`);
+            const mcqCount = items.filter(q => q.section === 'Math' && q.type === 'mcq').length;
+            if (mcqCount !== 17) throw new Error(`${name} should contain 17 Math MCQ items, got ${mcqCount}`);
+          }
           const rw2Hard = b.rw2.hard.filter(q => q.difficulty === 'hard').length;
           if (rw2Hard !== 27) throw new Error(`R&W hard Module 2 should be fully hard-tagged: ${rw2Hard}/27`);
           const math2Hard = b.math2.hard.filter(q => q.difficulty === 'hard').length;
@@ -81,7 +83,7 @@ jobs:
             return counts;
           };
           for (const [name, items] of groups) console.log(`${name} domain coverage: ${JSON.stringify(moduleDomainCounts(items, items[0].section))}`);
-          console.log(`Validated ${all.length} effective records, ${spr} Math SPR items, unique IDs.`);
+          console.log(`Validated ${all.length} effective records, Math route groups each contain 5 SPR + 17 MCQ.`);
           NODE
       - name: Validate CI trigger and concurrency contract
         run: node tests/ci-contract.test.js
