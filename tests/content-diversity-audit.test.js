@@ -31,3 +31,4 @@ for (const [kind, duplicateGroups] of Object.entries(repeats)) {
 }
 if (repeats.prompt.length !== 0) throw new Error(`R&W prompt diversity gate found ${repeats.prompt.length} exact repeats`);
 if (repeats.source.length !== 0) throw new Error(`source diversity gate found ${repeats.source.length} exact repeats`);
+if (repeats.options.length !== 0) throw new Error(`option-set diversity gate found ${repeats.options.length} exact repeats`);
