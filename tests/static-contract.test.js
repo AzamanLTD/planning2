@@ -39,7 +39,7 @@ for (const phrase of [
   'Highlight selection', 'Hide timer'
 ]) assert(app.includes(phrase), `app.js missing contract: ${phrase}`);
 for (const phrase of ['STORAGE_KEY', 'MODULES', 'state.submitted', 'state.completed', 'state.endAt <= Date.now()',
-  'state.breakEndAt <= Date.now()', "state.screen = 'directions'", 'state.adaptive.rw', 'state.adaptive.math']) {
+  'state.breakEndAt <= Date.now()', "state.screen = 'directions'", 'state.adaptive.rw', 'state.adaptive.math', "'checkin'"]) {
   assert(guard.includes(phrase), `session recovery contract missing: ${phrase}`);
 }
 for (const phrase of ['F1', 'F6', 'Ctrl + Alt + B', 'Ctrl + Alt + X', 'Ctrl + Alt + G', 'Ctrl + Alt + H', 'Command + Control + H',
@@ -58,7 +58,7 @@ for (const phrase of ['start-digit', 'paste', 'Backspace', 'ArrowLeft', 'ArrowRi
 for (const phrase of ['Practice report', 'Reading and Writing', 'Math', 'raw practice-test results', 'not an official SAT scaled score', 'results-section-grid', 'results-module-row']) assert(results.includes(phrase), `results enhancement contract missing: ${phrase}`);
 for (const phrase of ['q-meta', 'source-label', 'hidden = true', 'aria-hidden', "textContent = 'Source'", 'MutationObserver', 'sanitize']) assert(sanitizer.includes(phrase), `student UI sanitizer contract missing: ${phrase}`);
 for (const phrase of ['aria-live', 'aria-pressed', 'aria-modal', 'FOCUSABLE', 'aria-selected', 'aria-controls', 'Start code digit']) assert(accessibility.includes(phrase), `accessibility contract missing: ${phrase}`);
-for (const phrase of ["setAttribute('role', 'radio')", "setAttribute('aria-checked'", "setAttribute('role', 'menu')", 'a11yReady']) assert(uiA11y.includes(phrase), `semantic UI accessibility contract missing: ${phrase}`);
+for (const phrase of ["setAttribute('role', 'radio')", "setAttribute('aria-checked'", "setAttribute('role', 'menu')", 'a11yReady', 'prefers-reduced-motion: reduce']) assert(uiA11y.includes(phrase) || accessibility.includes(phrase), `semantic accessibility contract missing: ${phrase}`);
 assert(helpSmoke.includes("key: 'h', ctrlKey: true, altKey: true"), 'Help smoke must exercise Windows/ChromeOS Help');
 assert(helpSmoke.includes('Command + Control + H'), 'Help smoke must verify the documented macOS Help shortcut');
 assert(helpSmoke.includes('HELP SMOKE COMPLETE'), 'Help smoke must expose a machine-checkable completion marker');
