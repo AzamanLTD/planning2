@@ -11,6 +11,8 @@ assert(source.includes("['asin',"), 'calculator must support inverse sine');
 assert(source.includes("['sqrt',"), 'calculator must support square roots');
 assert(source.includes("['log', Math.log10]"), 'calculator must support common logarithms');
 assert(source.includes("['ln', Math.log]"), 'calculator must support natural logarithms');
+assert(source.includes("['tan', tanDegrees]"), 'calculator must use a guarded tangent implementation');
+assert(source.includes("tan undefined"), 'calculator must reject undefined tangent values');
 assert(source.includes('Implicit multiplication'), 'calculator must document implicit multiplication');
 assert(source.includes('const unary = ()'), 'calculator must parse unary signs');
 assert(source.includes('return power();'), 'calculator must give exponentiation a dedicated precedence layer');
