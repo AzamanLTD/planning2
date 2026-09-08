@@ -16,6 +16,8 @@ assert(app.includes('aria-label="Answer choices"'), 'answer-choice group must be
 assert(app.includes('aria-pressed'), 'selected choices must expose pressed state');
 assert(app.includes('aria-labelledby="warnTitle"'), 'timer warning must have an accessible name');
 assert(keyboard.includes('role="dialog"'), 'shortcut dialog must expose dialog role');
+assert(keyboard.includes('openHelp'), 'help shortcut must have a dedicated help dialog');
+assert(keyboard.includes('Ctrl + Alt + H'), 'help shortcut must be exposed');
 assert(modal.includes('role="dialog"'), 'modal focus layer must target dialog semantics');
 assert(modal.includes('aria-modal="true"'), 'dialogs must be modal to assistive technology');
 assert(modal.includes('FOCUSABLE'), 'dialogs must define keyboard focusable controls');
