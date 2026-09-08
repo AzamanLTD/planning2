@@ -40,12 +40,12 @@ assert.equal(state.screen, 'directions');
 assert.equal(state.mi, 1);
 assert.equal(state.qi, 0);
 
-state = run({ ...base(), screen: 'directions', completed: { rw2: true }, mi: 1 });
+state = run({ ...base(), screen: 'directions', completed: { rw1: true, rw2: true }, mi: 1 });
 assert.equal(state.screen, 'break');
 assert.equal(state.mi, 2);
 assert.ok(state.breakEndAt > NOW);
 
-state = run({ ...base(), screen: 'directions', completed: { math1: true }, mi: 2 });
+state = run({ ...base(), screen: 'directions', completed: { rw1: true, rw2: true, math1: true }, mi: 2 });
 assert.equal(state.screen, 'directions');
 assert.equal(state.mi, 3);
 assert.equal(state.qi, 0);
