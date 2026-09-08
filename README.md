@@ -13,14 +13,14 @@ An independent browser-based SAT practice experience for Azaman students. The pr
 - Back/Next navigation, question menu/review grid, and Mark for Review
 - Highlights, notes, line reader, option elimination, zoom, timer hide/show, and keyboard shortcuts
 - Math multiple-choice and student-produced-response input with normalization/persistence
-- Scientific calculator with safe expression evaluation and an independent lightweight graphing mode
+- Scientific calculator with safe expression evaluation, degree trig, implicit multiplication, and an independent lightweight graphing mode
 - Formula reference sheet and draggable/resizable tool panels
 - Pre-boot recovery guard that repairs stale/corrupt timed-session state and prevents reopening completed modules
-- Robust six-digit start-code entry with paste, arrow-key, and backspace behavior
+- Robust six-digit start-code entry with paste, arrow-key, backspace, and assistive labels
 - Student-facing UI hides internal domain/skill/difficulty metadata
 - Practice completion report with Reading and Writing / Math and per-module raw accuracy
-- Accessibility contract checks for labels, dialog semantics, tabs, focus behavior, and answer controls
-- Automated question-bank validation, content audit, static contract tests, recovery edge-case tests, and Chromium browser smoke coverage
+- Accessibility semantics for answer controls, test tools, review dialogs, calculator tabs, and start-code fields
+- Automated question-bank validation, authored-source content audit, source-override coverage, static contracts, recovery edge-case tests, accessibility contracts, and Chromium browser smoke coverage
 - Responsive static frontend with no runtime service dependency
 
 ## Network boundary
@@ -29,7 +29,7 @@ This simulator does not fabricate a testing-center SSID lock. A browser applicat
 
 ## Practice bank
 
-The repository contains 147 structured original question records across the launch modules and adaptive variants. CI validates counts, unique IDs, required metadata, question-type shape, Math SPR volume, hard-module tagging, domain coverage, and exact full-item uniqueness. The content audit also reports R&W passages below the 25-word guideline and synthetic placeholder phrasing so those editorial issues remain visible. Editorial review remains a release requirement; passing CI is not a substitute for human review of question quality.
+The repository contains 147 structured original question records across the launch modules and adaptive variants. CI validates counts, unique IDs, required metadata, question-type shape, Math SPR volume, hard-module tagging, domain coverage, and exact full-item uniqueness. The content audit loads the same authored R&W source overrides used at runtime and now requires every R&W source to meet the 25-word minimum while the override contract protects the authored source manifest from silent drift. Editorial review remains a release requirement; passing CI is not a substitute for human review of question quality.
 
 ## Demo credentials
 
@@ -43,13 +43,15 @@ The repository contains 147 structured original question records across the laun
 - `docs/bluebook-spec.md` — verified exam facts and behavioral requirements
 - `docs/question-set-guidelines.md` — question-bank coverage and quality bar
 - `docs/review-protocol.md` — branch, review, QA and launch discipline
+- `docs/content-quality.md` — automated/editorial content-quality gate
+- `docs/launch-checklist.md` — release acceptance checklist
 - `docs/captures/INDEX.md` — reference-capture requirements and evidence map
 
 ## Verification status
 
-The implementation has automated CI coverage for syntax, content contracts, content-audit checks, accessibility contracts, recovery edge cases, and a real Chromium smoke run. The real Bluebook application remains the visual reference authority. The repository intentionally uses Azaman-owned provisional design tokens until the permitted reference-capture pass is completed, so the product is not described as pixel-perfect.
+Automated CI covers JavaScript syntax, question-bank shape/coverage, effective runtime content integrity, authored-source override coverage, static simulator contracts, accessibility contracts, session recovery edge cases, and a Chromium browser smoke test that exercises the sign-in/setup/check-in flow plus the timed exam path. The real Bluebook application remains the visual reference authority. The repository intentionally uses Azaman-owned provisional design tokens until the permitted reference-capture pass is completed, so the product is not described as pixel-perfect.
 
-Known release work includes human editorial review, deeper accessibility/device review, richer image/chart interactions, calculator parity decisions, extended recovery testing, real group/proctor-session testing, reference-capture comparison, and owner signoff.
+Known release work includes human editorial review of every item, deeper accessibility/device review, richer image/chart interactions, calculator parity decisions, extended recovery testing, real group/proctor-session testing, reference-capture comparison, and owner signoff.
 
 ## Run locally
 
