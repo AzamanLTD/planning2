@@ -9,7 +9,7 @@
     { id: 'math1', count: 22 },
     { id: 'math2', count: 22 },
   ];
-  const SCREENS = new Set(['access', 'setup', 'room', 'startcode', 'directions', 'test', 'break', 'finish']);
+  const SCREENS = new Set(['access', 'setup', 'checkin', 'room', 'startcode', 'directions', 'test', 'break', 'finish']);
 
   const normalizeObject = (value) => (value && typeof value === 'object' && !Array.isArray(value) ? value : {});
   const normalizeBooleanMap = (value) => Object.fromEntries(
@@ -48,12 +48,37 @@
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
   }
 
+  function numericAnswer(value) {
+    const raw = String(value ?? '').trim().replace(/\s+/g, '');
+    if (!raw) return null;
+    if (/^-?\d+\/\d+$/.test(raw)) {
+      const [numerator, denominator] = raw.split('/').map(Number);
+      if (!Number.isFinite(numerator) || !Number.isFinite(denominator) || denominator === 0) return null;
+      const result = numerator / denominator;
+      return Number.isFinite(result) ? result : null;
+    }
+    if (/^-?(?:\d+(?:\.\d*)?|\.\d+)$/.test(raw)) {
+      const result = Number(raw);
+      return Number.isFinite(result) ? result : null;
+    }
+    return null;
+  }
+
+  function equivalentAnswer(left, right) {
+    const a = String(left ?? '').trim().toLowerCase();
+    const b = String(right ?? '').trim().toLowerCase();
+    if (a === b) return true;
+    const an = numericAnswer(a);
+    const bn = numericAnswer(b);
+    return an !== null && bn !== null && Math.abs(an - bn) <= 1e-9;
+  }
+
   function score(moduleId, state) {
     const bank = window.SAT_QUESTIONS?.[moduleId] || [];
     let correct = 0;
     bank.forEach((question, index) => {
       const answer = state.answers[`${moduleId}-${index}`];
-      if (answer !== undefined && String(answer).trim() !== '' && String(answer).trim().toLowerCase() === String(question.answer).trim().toLowerCase()) correct += 1;
+      if (answer !== undefined && String(answer).trim() !== '' && equivalentAnswer(answer, question.answer)) correct += 1;
     });
     return bank.length ? correct / bank.length : 0;
   }
