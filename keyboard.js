@@ -138,7 +138,7 @@
 
     if (mod && alt && lower === 'b') { event.preventDefault(); clickText('Back'); return; }
     if (mod && alt && lower === 'x') { event.preventDefault(); clickText('Next'); return; }
-    if (mod && alt && lower === 'g') { event.preventDefault(); clickText('Review'); return; }
+    if (mod && alt && lower === 'g') { event.preventDefault(); clickText('Question menu'); return; }
     if (mod && alt && lower === 'v') { event.preventDefault(); clickText('Mark for review'); return; }
     if (mod && alt && lower === 'c') { event.preventDefault(); openToolByText('Calculator'); return; }
     if (mod && alt && lower === 'r') { event.preventDefault(); openToolByText('Reference sheet'); return; }
