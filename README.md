@@ -12,8 +12,9 @@ An independent browser-based SAT practice experience for Azaman students. The pr
 - Locked module transitions with score-based easy/hard Module 2 routing
 - Back/Next navigation, question menu/review grid, and Mark for Review
 - Highlights, notes, line reader, option elimination, zoom, timer hide/show, and keyboard shortcuts
+- Help dialog plus keyboard-shortcut reference
 - Math multiple-choice and student-produced-response input with normalization/persistence
-- Scientific calculator with safe expression evaluation, degree trig, implicit multiplication, and an independent lightweight graphing mode
+- Scientific calculator with safe expression evaluation, degree trig, implicit multiplication, guarded tangent singularities, and an independent lightweight graphing mode
 - Formula reference sheet and draggable/resizable tool panels
 - Pre-boot recovery guard that repairs stale/corrupt timed-session state, prevents reopening completed modules, and clears non-contiguous completion flags created by malformed state
 - Robust six-digit start-code entry with paste, arrow-key, backspace, and assistive labels
@@ -21,7 +22,7 @@ An independent browser-based SAT practice experience for Azaman students. The pr
 - Practice completion report with Reading and Writing / Math and per-module raw accuracy
 - Accessibility semantics for answer controls, test tools, review dialogs, calculator tabs, and start-code fields
 - Deterministic MCQ answer-position balancing so the correct choice is not predictably concentrated in one option position
-- Automated question-bank validation, authored-source content audit, source-override coverage, diversity audit, adaptive-variant integrity checks, answer-position balance, static contracts, recovery edge-case tests, accessibility contracts, and Chromium browser smoke coverage
+- Automated question-bank validation, authored-source content audit, source-override coverage, diversity audit, adaptive-variant integrity checks, answer-position balance, static contracts, recovery edge-case tests, SPR normalization contracts, accessibility contracts, and Chromium browser smoke coverage
 - Responsive static frontend with no runtime service dependency
 
 ## Network boundary
@@ -50,7 +51,7 @@ The repository contains 147 structured original question records across the laun
 
 ## Verification status
 
-Automated CI covers JavaScript syntax, effective question-bank shape/coverage, content integrity, authored-source override coverage, diversity, adaptive-variant integrity, answer-position balance, static simulator contracts, accessibility contracts, session recovery edge cases, and a Chromium browser smoke test that exercises the sign-in/setup/check-in flow plus the timed exam path. The real Bluebook application remains the visual reference authority. The repository intentionally uses Azaman-owned provisional design tokens until the permitted reference-capture pass is completed, so the product is not described as pixel-perfect.
+Automated CI covers JavaScript syntax, effective question-bank shape/coverage, content integrity, authored-source override coverage, diversity, adaptive-variant integrity, answer-position balance, calculator safety, static simulator contracts, accessibility contracts, session recovery edge cases, SPR normalization behavior, and a Chromium browser smoke test that exercises the sign-in/setup/check-in flow plus the timed exam path. The real Bluebook application remains the visual reference authority. The repository intentionally uses Azaman-owned provisional design tokens until the permitted reference-capture pass is completed, so the product is not described as pixel-perfect.
 
 Known release work includes human editorial review of every item, deeper accessibility/device review, richer image/chart interactions, calculator parity decisions, extended recovery testing, real group/proctor-session testing, reference-capture comparison, production deployment, and owner signoff.
 
