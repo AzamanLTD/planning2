@@ -20,9 +20,10 @@
       frame.src = '../index.html?results-report-smoke=' + now;
       function run() {
         clearInterval(waiter);
-        setTimeout(() => {
+        setTimeout(async () => {
           try {
             const doc = frame.contentDocument;
+            const win = doc.defaultView;
             const report = doc.querySelector('.results-detail');
             const domains = doc.querySelectorAll('.results-domain-breakdown');
             const bars = doc.querySelectorAll('.results-domain-track[role="progressbar"]');
@@ -43,15 +44,27 @@
             filter.dispatchEvent(new Event('change', { bubbles: true }));
             const visible = [...items].filter((item) => !item.hidden);
             if (visible.length !== incorrect.length) throw new Error('incorrect filter did not isolate incorrect rows');
+
+            const OriginalBlob = win.Blob;
+            let capturedBlob = null;
+            win.Blob = function (parts, options) { capturedBlob = new OriginalBlob(parts, options); return capturedBlob; };
+            win.Blob.prototype = OriginalBlob.prototype;
             let clicked = null;
-            const originalClick = doc.defaultView.HTMLAnchorElement.prototype.click;
-            doc.defaultView.HTMLAnchorElement.prototype.click = function () { clicked = { download: this.download, href: this.href }; };
+            const originalClick = win.HTMLAnchorElement.prototype.click;
+            win.HTMLAnchorElement.prototype.click = function () { clicked = { download: this.download, href: this.href }; };
             download.click();
-            doc.defaultView.HTMLAnchorElement.prototype.click = originalClick;
+            win.HTMLAnchorElement.prototype.click = originalClick;
+            win.Blob = OriginalBlob;
             if (!clicked?.download?.startsWith('azaman-sat-practice-report-results-report-smoke')) {
               throw new Error(`download filename missing or unexpected: ${clicked?.download || ''}`);
             }
-            out.textContent = 'PASS results report, 8 domain bars, 98-question review, filtering, downloadable report\nRESULTS REPORT SMOKE COMPLETE';
+            if (!capturedBlob) throw new Error('download did not create a Blob');
+            const exported = await capturedBlob.text();
+            if (!exported.includes('Domain performance')) throw new Error('download missing domain performance section');
+            if (!exported.includes('Question review')) throw new Error('download missing question review section');
+            if ((exported.match(/<tr>/g) || []).length < 100) throw new Error('download report does not contain the full question table');
+            if (exported.includes('<script')) throw new Error('download report unexpectedly contains script markup');
+            out.textContent = 'PASS results report, 8 domain bars, 98-question review, filtering, complete downloadable report\nRESULTS REPORT SMOKE COMPLETE';
           } catch (error) {
             out.textContent = `FAIL ${error.message || error}`;
           } finally {
