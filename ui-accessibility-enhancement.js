@@ -78,6 +78,22 @@
     document.getElementById('nextBtn')?.setAttribute('aria-label', /Review module/i.test(document.getElementById('nextBtn')?.textContent || '') ? 'Review module' : 'Next question');
   }
 
+  function enhanceSourceTables() {
+    document.querySelectorAll('.source-panel .data-table table').forEach((table, index) => {
+      const heading = table.closest('.data-table')?.previousElementSibling;
+      const titleText = heading?.classList?.contains('source-title') ? heading.textContent.trim() : '';
+      if (!table.querySelector('caption')) {
+        const caption = document.createElement('caption');
+        caption.className = 'visually-hidden';
+        caption.textContent = titleText || `Source data table ${index + 1}`;
+        table.insertBefore(caption, table.firstChild);
+      }
+      table.querySelectorAll('thead th').forEach((th) => th.setAttribute('scope', 'col'));
+      table.querySelectorAll('tbody th').forEach((th) => th.setAttribute('scope', 'row'));
+      table.setAttribute('aria-label', table.querySelector('caption')?.textContent || `Source data table ${index + 1}`);
+    });
+  }
+
   function enhanceStartCode(root = document) {
     const fields = [...root.querySelectorAll('.start-digit')];
     fields.forEach((field, index) => {
@@ -101,6 +117,7 @@
     enhanceReview(document.getElementById('reviewModal'));
     enhanceTools(document.getElementById('toolPopover'));
     enhanceNavigation();
+    enhanceSourceTables();
     enhanceStartCode();
     installReducedMotionSupport();
   }

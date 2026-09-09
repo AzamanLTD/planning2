@@ -112,7 +112,7 @@ jobs:
         run: node tests/note-and-sanitizer-contract.test.js
       - name: Validate reference sheet and exam-tool contracts
         run: node tests/tools-contract.test.js
-      - name: Validate media, tool-movement, calculator, Line Reader, reference keyboard, highlight/notes, and navigation accessibility contracts
+      - name: Validate media, tool-movement, calculator, Line Reader, reference keyboard, highlight/notes, navigation accessibility, and source table contracts
         run: |
           node tests/media-schema-contract.test.js
           node tests/media-touch-contract.test.js
@@ -121,6 +121,7 @@ jobs:
           node tests/reference-keyboard-contract.test.js
           node tests/highlight-notes-parity.test.js
           node tests/navigation-a11y-contract.test.js
+          node tests/source-table-a11y-contract.test.js
       - name: Validate GitHub Pages deployment contract
         run: node tests/pages-deploy-contract.test.js
       - name: Prevent obsolete enhancement layers
