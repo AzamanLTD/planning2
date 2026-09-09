@@ -57,6 +57,9 @@
       }
     }
 
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') bridge(event);
+    }, true);
     button.addEventListener('click', bridge, true);
     form?.addEventListener('submit', bridge, true);
   }
