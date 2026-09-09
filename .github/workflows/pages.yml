@@ -25,6 +25,19 @@ jobs:
         uses: actions/checkout@v5
       - name: Configure Pages
         uses: actions/configure-pages@v5
+      - name: Smoke test exact published root
+        run: |
+          set -eu
+          test -f index.html
+          test ! -d app
+          python3 -m http.server 8080 >/tmp/azaman-pages-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          sleep 1
+          chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=10000 --dump-dom http://127.0.0.1:8080/tests/browser-smoke.html > /tmp/azaman-pages-smoke.html
+          grep -q 'SMOKE COMPLETE' /tmp/azaman-pages-smoke.html
+          chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=15000 --dump-dom http://127.0.0.1:8080/tests/full-run-smoke.html > /tmp/azaman-pages-full-run.html
+          grep -q 'FULL RUN SMOKE COMPLETE' /tmp/azaman-pages-full-run.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
