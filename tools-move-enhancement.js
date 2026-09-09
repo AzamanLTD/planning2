@@ -34,6 +34,13 @@
     setPosition(panel, rect.left, rect.top);
   }
 
+  function togglePressed(move, panel) {
+    ensurePosition(panel);
+    const next = move.getAttribute('aria-pressed') !== 'true';
+    move.setAttribute('aria-pressed', String(next));
+    if (next) move.focus();
+  }
+
   function addMoveControl(panel) {
     if (panel.dataset.azmMoveReady === '1') return;
     const head = panel.querySelector('.panel-head');
@@ -48,21 +55,17 @@
     move.textContent = '↕';
     if (close) head.insertBefore(move, close); else head.appendChild(move);
 
-    move.addEventListener('click', () => {
-      ensurePosition(panel);
-      const pressed = move.getAttribute('aria-pressed') === 'true';
-      move.setAttribute('aria-pressed', String(!pressed));
-      if (!pressed) move.focus();
-    });
+    // Space/Enter use native button activation, which dispatches this click handler.
+    move.addEventListener('click', () => togglePressed(move, panel));
 
     move.addEventListener('keydown', (event) => {
-      if (move.getAttribute('aria-pressed') !== 'true') return;
-      if (event.key === 'Escape' || event.key === 'Enter' || event.key === ' ') {
+      if (event.key === 'Escape' && move.getAttribute('aria-pressed') === 'true') {
         event.preventDefault();
         move.setAttribute('aria-pressed', 'false');
-        if (event.key !== 'Escape') move.focus();
+        move.focus();
         return;
       }
+      if (move.getAttribute('aria-pressed') !== 'true') return;
       const deltas = {
         ArrowLeft: [-STEP, 0],
         ArrowRight: [STEP, 0],
