@@ -14,11 +14,13 @@
         if (text.includes('/')) {
           const [a, b] = text.replace(/\s+/g, '').split('/');
           const value = Number(a) / Number(b);
-          return String(value);
+          if (!Number.isFinite(value)) throw new Error('fixture fraction is not finite');
+          return value === 0 ? '0.0' : String(value);
         }
         const numeric = Number(text);
         if (!Number.isFinite(numeric)) throw new Error('fixture answer is not numeric');
-        return numeric === 0 ? '0.0' : String(numeric);
+        if (text.includes('.')) return `${text}0`;
+        return `${numeric}.0`;
       }
       frame.addEventListener('load', () => {
         const win = frame.contentWindow;
@@ -29,8 +31,8 @@
           const question = bank[index];
           const equivalent = equivalentForm(question.answer);
           if (String(question.answer).trim() === equivalent) throw new Error('fixture did not produce an equivalent non-identical form');
+          if (Number(equivalent) !== Number(question.answer)) throw new Error(`fixture form is not numerically equivalent: ${equivalent} vs ${question.answer}`);
           const answers = {}; answers[`math1-${index}`] = equivalent;
-          answers['rw1-0'] = bank[0].type === 'spr' ? '' : undefined;
           localStorage.setItem(KEY, JSON.stringify({
             v:3, screen:'finish', student:'Results Smoke', accessCode:'', roomCode:'', startCode:'', mi:3, qi:0,
             endAt:null, breakEndAt:null, answers, marked:{}, eliminated:{}, notes:{}, highlights:{},
