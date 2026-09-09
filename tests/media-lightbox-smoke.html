@@ -52,8 +52,10 @@
       doc.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
       check('Escape closes lightbox', !doc.getElementById('azmMediaLightbox'));
       out.textContent = checks.join('\n') + '\nMEDIA LIGHTBOX SMOKE COMPLETE';
+      frame.remove();
     } catch (error) {
       out.textContent = checks.join('\n') + `\nFAIL ${error.message}`;
+      frame.remove();
     }
   }, 250));
 })();
