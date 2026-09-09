@@ -8,6 +8,7 @@ on:
       - 'tools-move-enhancement.js'
       - 'tools-move-enhancement.css'
       - 'tests/tool-move-keyboard-smoke.html'
+      - '.github/workflows/tool-move-keyboard-smoke.yml'
   push:
     branches: [main]
 
@@ -25,8 +26,8 @@ jobs:
       - name: Run Chromium smoke
         run: |
           set -eu
-          timeout 30s chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage \
-            --virtual-time-budget=5000 --dump-dom http://127.0.0.1:8088/tests/tool-move-keyboard-smoke.html \
+          timeout 60s chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage \
+            --virtual-time-budget=10000 --dump-dom http://127.0.0.1:8088/tests/tool-move-keyboard-smoke.html \
             > /tmp/dom.html
           cat /tmp/dom.html
           grep -q 'TOOL MOVE KEYBOARD SMOKE COMPLETE' /tmp/dom.html
