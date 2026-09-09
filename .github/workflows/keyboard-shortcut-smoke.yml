@@ -1,0 +1,25 @@
+name: Keyboard shortcut smoke
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: keyboard-shortcuts-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Run keyboard shortcut browser smoke
+        run: |
+          set -eu
+          python3 -m http.server 8086 >/tmp/azaman-keyboard-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          sleep 1
+          chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=8000 --dump-dom http://127.0.0.1:8086/tests/keyboard-shortcut-smoke.html > /tmp/azaman-keyboard-smoke.html
+          cat /tmp/azaman-keyboard-smoke.html
+          grep -q 'KEYBOARD SHORTCUT SMOKE COMPLETE' /tmp/azaman-keyboard-smoke.html

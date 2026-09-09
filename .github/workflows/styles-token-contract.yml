@@ -1,0 +1,17 @@
+name: Stylesheet token contract
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: styles-token-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Validate stylesheet token contract
+        run: node tests/styles-token-contract.test.js
