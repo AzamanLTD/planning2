@@ -1,0 +1,99 @@
+name: Tokenize CSS color literals
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - chore/tokenize-css-colors
+
+permissions:
+  contents: write
+
+jobs:
+  tokenize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Replace raw CSS color literals with design tokens
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('styles.css')
+          css = path.read_text(encoding='utf-8')
+          marker = css.index('}')
+          root = css[:marker + 1]
+          body = css[marker + 1:]
+
+          additions = (
+              '--color-border-light:#e1e4e7;'
+              '--color-surface-soft:#fafbfc;'
+              '--color-warning-surface:#fff6d9;'
+              '--color-warning-border:#d39b00;'
+              '--color-text-on-primary-muted:#e0e5e9;'
+              '--color-primary-border:#87919a;'
+              '--color-text-muted-strong:#9aa4ad;'
+              '--color-highlight:#fff7a8;'
+              '--color-choice-border:#b9c1c8;'
+              '--color-overlay-border:#cfd5da;'
+              '--color-calc-border:#c4cbd1;'
+              '--shadow-soft:rgba(0,0,0,.05);'
+              '--shadow-modal:rgba(0,0,0,.25);'
+              '--shadow-popover:rgba(0,0,0,.2);'
+              '--line-reader-mask:rgba(255,255,255,.82);'
+              '--line-reader-shadow:rgba(0,0,0,.08);'
+              '--surface-shadow:rgba(0,0,0,.12);'
+              '--connectivity-shadow:rgba(0,0,0,.18);'
+          )
+          anchor = '--color-overlay:rgba(0,0,0,.45);'
+          if additions not in root:
+              root = root.replace(anchor, anchor + additions)
+
+          replacements = {
+              '#e1e4e7': 'var(--color-border-light)',
+              '#fafbfc': 'var(--color-surface-soft)',
+              '#fff6d9': 'var(--color-warning-surface)',
+              '#d39b00': 'var(--color-warning-border)',
+              '#e0e5e9': 'var(--color-text-on-primary-muted)',
+              '#87919a': 'var(--color-primary-border)',
+              '#9aa4ad': 'var(--color-text-muted-strong)',
+              '#fff7a8': 'var(--color-highlight)',
+              '#b9c1c8': 'var(--color-choice-border)',
+              '#cfd5da': 'var(--color-overlay-border)',
+              '#c4cbd1': 'var(--color-calc-border)',
+              'rgba(0,0,0,.05)': 'var(--shadow-soft)',
+              'rgba(0,0,0,.25)': 'var(--shadow-modal)',
+              'rgba(0,0,0,.2)': 'var(--shadow-popover)',
+              'rgba(255,255,255,.82)': 'var(--line-reader-mask)',
+              'rgba(0,0,0,.08)': 'var(--line-reader-shadow)',
+              'rgba(0,0,0,.12)': 'var(--surface-shadow)',
+              'rgba(0,0,0,.18)': 'var(--connectivity-shadow)',
+          }
+          for old, new in replacements.items():
+              body = body.replace(old, new)
+
+          path.write_text(root + body, encoding='utf-8')
+      - name: Enforce token-only non-root CSS colors
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+          css = Path('styles.css').read_text(encoding='utf-8')
+          body = css[css.index('}') + 1:]
+          raw = re.findall(r'#[0-9a-fA-F]{3,8}\b|rgba?\([^)]*\)', body)
+          if raw:
+              raise SystemExit(f'raw color literals remain outside :root: {raw}')
+          print('CSS token contract passed')
+          PY
+      - name: Commit tokenized stylesheet
+        run: |
+          set -eu
+          if git diff --quiet -- styles.css; then
+            echo 'No stylesheet changes required.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add styles.css
+          git commit -m 'refactor: move stylesheet colors into design tokens'
+          git push
