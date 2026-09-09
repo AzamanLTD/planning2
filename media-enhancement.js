@@ -51,13 +51,9 @@
     wrap.innerHTML = `<button type="button" class="azm-media-trigger" aria-label="Enlarge image: ${esc(media.alt)}"><img class="azm-media-image" src="${esc(media.src)}" alt="${esc(media.alt)}" loading="eager"><span class="azm-media-hint">Open image</span></button>${media.caption ? `<figcaption>${esc(media.caption)}</figcaption>` : ''}`;
     const prompt = document.getElementById('questionPrompt');
     const choices = card.querySelector('.choices, .spr-wrap');
-    if (prompt?.parentNode === card) {
-      prompt.insertAdjacentElement('afterend', wrap);
-    } else if (choices) {
-      card.insertBefore(wrap, choices);
-    } else {
-      card.appendChild(wrap);
-    }
+    if (prompt?.parentNode === card) prompt.insertAdjacentElement('afterend', wrap);
+    else if (choices) card.insertBefore(wrap, choices);
+    else card.appendChild(wrap);
     wrap.querySelector('.azm-media-trigger').addEventListener('click', () => openLightbox(media));
   }
 
@@ -69,7 +65,8 @@
     overlay.setAttribute('role', 'dialog');
     overlay.setAttribute('aria-modal', 'true');
     overlay.setAttribute('aria-label', 'Image viewer');
-    overlay.innerHTML = `<div class="azm-media-dialog"><div class="azm-media-toolbar" role="toolbar" aria-label="Image controls"><button type="button" class="btn" data-media-action="zoom-out" aria-label="Zoom out">−</button><span class="azm-media-zoom" aria-live="polite">100%</span><button type="button" class="btn" data-media-action="zoom-in" aria-label="Zoom in">+</button><button type="button" class="btn" data-media-action="reset">Reset</button><button type="button" class="icon-btn" data-media-action="close" aria-label="Close image">×</button></div><div class="azm-media-viewport" tabindex="0" aria-label="Image viewport"><img class="azm-media-lightbox-image" src="${esc(media.src)}" alt="${esc(media.alt)}"></div>${media.caption ? `<p class="small azm-media-caption">${esc(media.caption)}</p>` : ''}</div>`;
+    const captionId = media.caption ? 'azmMediaCaption' : '';
+    overlay.innerHTML = `<div class="azm-media-dialog"><div class="azm-media-toolbar" role="toolbar" aria-label="Image controls"><button type="button" class="btn" data-media-action="zoom-out" aria-label="Zoom out">−</button><span class="azm-media-zoom" aria-live="polite">100%</span><button type="button" class="btn" data-media-action="zoom-in" aria-label="Zoom in">+</button><button type="button" class="btn" data-media-action="reset" aria-label="Reset image view">Reset</button><button type="button" class="icon-btn" data-media-action="close" aria-label="Close image">×</button></div><div class="azm-media-viewport" tabindex="0" aria-label="Image viewport"${captionId ? ` aria-describedby="${captionId}"` : ''}><img class="azm-media-lightbox-image" src="${esc(media.src)}" alt="${esc(media.alt)}"></div>${media.caption ? `<p id="${captionId}" class="small azm-media-caption">${esc(media.caption)}</p>` : ''}</div>`;
     document.body.appendChild(overlay);
 
     const viewport = overlay.querySelector('.azm-media-viewport');
