@@ -47,14 +47,15 @@
   }
 
   function domainAccuracy(current, modules) {
-    const groups = Object.fromEntries(Object.entries(DOMAINS).map(([section, domains]) => [section, Object.fromEntries(domains.map((domain) => [domain, { answered: 0, correct: 0 }]))]));
+    const groups = Object.fromEntries(Object.entries(DOMAINS).map(([section, domains]) => [section, Object.fromEntries(domains.map((domain) => [domain, { answered: 0, correct: 0, total: 0 }]))]));
     modules.forEach((module) => {
       const bank = bankFor(module, current);
       bank.forEach((question, index) => {
-        const value = current.answers?.[`${module.id}-${index}`];
-        if (value === undefined || String(value).trim() === '') return;
         const bucket = groups[question.section]?.[question.domain];
         if (!bucket) return;
+        bucket.total += 1;
+        const value = current.answers?.[`${module.id}-${index}`];
+        if (value === undefined || String(value).trim() === '') return;
         bucket.answered += 1;
         if (sameAnswer(value, question.answer)) bucket.correct += 1;
       });
@@ -65,7 +66,9 @@
   function renderDomainBreakdown(section, values) {
     return `<section class="results-domain-breakdown" aria-labelledby="${section.replace(/\W+/g, '').toLowerCase()}DomainTitle"><h3 id="${section.replace(/\W+/g, '').toLowerCase()}DomainTitle">${section} domains</h3><div class="results-domain-list">${Object.entries(values).map(([domain, result]) => {
       const percent = result.answered ? Math.round(result.correct / result.answered * 100) : 0;
-      return `<div class="results-domain-row"><span class="results-domain-name">${domain}</span><div class="results-domain-track" role="progressbar" aria-label="${domain} accuracy" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}"><div class="results-domain-bar" style="width:${percent}%"></div></div><span class="results-domain-score">${result.answered ? `${percent}%` : 'No responses'}</span></div>`;
+      const weight = result.total ? Math.round(result.total / (section === 'Reading and Writing' ? 54 : 44) * 100) : 0;
+      const detail = result.answered ? `${result.correct}/${result.answered} correct` : 'No responses';
+      return `<div class="results-domain-row"><div><span class="results-domain-name">${domain}</span><span class="results-domain-weight">${weight}% of section · ${detail}</span></div><div class="results-domain-track" role="progressbar" aria-label="${domain} accuracy" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}"><div class="results-domain-bar" style="width:${percent}%"></div></div><span class="results-domain-score">${result.answered ? `${percent}%` : '—'}</span></div>`;
     }).join('')}</div></section>`;
   }
 
@@ -92,7 +95,7 @@
       </div>
       <div class="results-module-list">${rows.map((row) => `<div class="results-module-row"><span>${row.label}</span><strong>${row.result.correct}/${row.result.total}</strong><span>${row.result.accuracy}%</span></div>`).join('')}</div>
       <div class="results-domain-report" aria-label="Domain performance">${renderDomainBreakdown('Reading and Writing', domains['Reading and Writing'])}${renderDomainBreakdown('Math', domains.Math)}</div>
-      <p class="small results-note">These are raw practice-test results only. They are not an official SAT scaled score, percentile, or College Board result.</p>`;
+      <p class="small results-note">These are raw practice-test results only. The domain bars are a practice accuracy view, not an official SAT scaled score, percentile, or College Board result.</p>`;
     const actions = card.querySelector('.btn-row');
     card.insertBefore(section, actions || null);
   }
