@@ -9,14 +9,14 @@ for (const phrase of [
   "button.textContent = 'Unscheduled break'",
   "The module timer continues while you are away.",
   "id = 'unscheduledBreakModal'",
-  "role=\"dialog\"",
+  'role="dialog"',
   'function openBreak()',
-  "id=\"returnFromUnscheduledBreak\"",
+  'id="returnFromUnscheduledBreak"',
   "event.key !== 'Escape'",
-  "new MutationObserver(install)"
+  'new MutationObserver(install)'
 ]) assert(source.includes(phrase), `unscheduled-break contract missing: ${phrase}`);
 assert(index.includes('src="unscheduled-break-enhancement.js"'), 'unscheduled break enhancement must be loaded');
-assert(!source.includes('endAt ='), 'unscheduled break must not alter the module deadline');
-assert(!source.includes('breakEndAt ='), 'unscheduled break must not alter the scheduled 10-minute break deadline');
+assert(!source.includes('state.endAt ='), 'unscheduled break must not mutate the module deadline');
+assert(!source.includes('state.breakEndAt ='), 'unscheduled break must not mutate the scheduled break deadline');
 
 console.log('UNSCHEDULED BREAK CONTRACT PASSED');
