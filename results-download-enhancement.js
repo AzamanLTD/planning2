@@ -61,9 +61,12 @@
       const status = correct ? 'Correct' : hasAnswer ? 'Incorrect' : 'Unanswered';
       const optionIndex = ['A', 'B', 'C', 'D'].indexOf(question.answer);
       const correctAnswer = question.type === 'spr' ? String(question.answer) : `${question.answer}. ${question.options?.[optionIndex] ?? question.answer}`;
-      return `<tr><td>${esc(module.label)} · Q${index + 1}</td><td>${esc(status)}</td><td>${esc(hasAnswer ? answer : 'No answer')}</td><td>${esc(correctAnswer)}</td><td>${esc(question.explanation)}</td></tr>`;
+      const choices = question.type === 'spr'
+        ? `Enter your answer (e.g. ${esc(String(question.answer))})`
+        : (question.options?.slice(0, 4) || []).map((text, i) => `${String.fromCharCode(65 + i)}. ${text}`).join('<br>');
+      return `<tr><td>${esc(module.label)} · Q${index + 1}</td><td>${esc(status)}</td><td>${esc(hasAnswer ? answer : 'No answer')}</td><td>${esc(choices)}</td><td>${esc(correctAnswer)}</td><td>${esc(question.explanation)}</td></tr>`;
     })).join('');
-    return `<h2>Question review</h2><p class="meta">Every question from the completed practice run is included below.</p><table><thead><tr><th>Question</th><th>Result</th><th>Your answer</th><th>Correct answer</th><th>Explanation</th></tr></thead><tbody>${rows}</tbody></table>`;
+    return `<h2>Question review</h2><p class="meta">Every question from the completed practice run is included below.</p><table><thead><tr><th>Question</th><th>Result</th><th>Your answer</th><th>Choices</th><th>Correct answer</th><th>Explanation</th></tr></thead><tbody>${rows}</tbody></table>`;
   }
   function buildReport(current) {
     const results = MODULES.map((module) => ({ ...module, result: score(module, current) }));
