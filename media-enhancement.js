@@ -4,6 +4,7 @@
   const STORAGE_KEY = 'azaman-sat-practice-v3';
   const MAX_ZOOM = 3;
   const MIN_ZOOM = 1;
+  let renderedMediaKey = null;
 
   const esc = (value) => String(value ?? '').replace(/[&<>'\"]/g, (c) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '\"': '&quot;'
@@ -37,13 +38,21 @@
     } catch (_) { return false; }
   }
 
+  function mediaKey(media) {
+    if (!media || media.type !== 'image' || !isSafeSrc(media.src) || !media.alt) return 'none';
+    return [media.type, media.src, media.alt, media.caption || ''].join('|');
+  }
+
   function renderMedia() {
     const card = document.querySelector('.question-card');
-    const marker = document.getElementById('azm-question-media');
     if (!card) return;
-    marker?.remove();
     const media = currentQuestion()?.media;
-    if (!media || media.type !== 'image' || !isSafeSrc(media.src) || !media.alt) return;
+    const key = mediaKey(media);
+    const marker = document.getElementById('azm-question-media');
+    if (key === renderedMediaKey && ((key === 'none' && !marker) || marker)) return;
+    marker?.remove();
+    renderedMediaKey = key;
+    if (key === 'none') return;
 
     const wrap = document.createElement('figure');
     wrap.id = 'azm-question-media';
