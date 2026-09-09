@@ -44,6 +44,17 @@
   }
 
   function enhanceNavigation() {
+    const top = document.querySelector('.test-top');
+    top?.setAttribute('role', 'banner');
+    const source = document.querySelector('.source-panel');
+    source?.setAttribute('role', 'region');
+    source?.setAttribute('aria-label', 'Source');
+    const question = document.querySelector('.question-panel');
+    question?.setAttribute('role', 'region');
+    question?.setAttribute('aria-label', 'Question');
+    const footer = document.querySelector('.test-footer');
+    footer?.setAttribute('role', 'contentinfo');
+
     const mark = document.getElementById('markBtn');
     if (mark) {
       const marked = /^Unmark\b/i.test(mark.textContent.trim());
