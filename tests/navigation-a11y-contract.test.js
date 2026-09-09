@@ -19,6 +19,7 @@ for (const phrase of [
   "footer?.setAttribute('role', 'contentinfo')"
 ]) assert(source.includes(phrase), `navigation accessibility contract missing: ${phrase}`);
 
-assert(source.includes("attributeFilter: ['class', 'aria-pressed']"), 'navigation observer must react to mark-state changes');
+assert(source.includes('childList: true, subtree: true'), 'navigation observer must react to rendered state changes');
+assert(!source.includes("attributeFilter: ['class', 'aria-pressed']"), 'navigation observer must not observe its own state attributes');
 
 console.log('NAVIGATION A11Y CONTRACT PASSED');
