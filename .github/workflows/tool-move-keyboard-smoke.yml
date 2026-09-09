@@ -1,0 +1,29 @@
+name: tool move keyboard smoke
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'tools-enhancement.js'
+      - 'tools-move-enhancement.js'
+      - 'tools-move-enhancement.css'
+      - 'tests/tool-move-keyboard-smoke.html'
+      - 'tests/media-lightbox-smoke.html'
+      - 'media-enhancement.js'
+      - 'media-enhancement.css'
+  push:
+    branches: [main]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start static server
+        run: python3 -m http.server 8088 --bind 127.0.0.1 >/tmp/server.log 2>&1 &
+      - name: Run Chromium smoke
+        run: |
+          timeout 30s chromium --headless --no-sandbox --disable-gpu --disable-dev-shm-usage \
+            --virtual-time-budget=5000 --dump-dom http://127.0.0.1:8088/tests/tool-move-keyboard-smoke.html \
+            > /tmp/dom.html
+          grep -q 'TOOL MOVE KEYBOARD SMOKE COMPLETE' /tmp/dom.html
