@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Tool move keyboard smoke</title></head>
+<body>
+  <main><p>Tool move keyboard smoke</p></main>
+  <script>
+    localStorage.setItem('azaman-sat-practice-v3', JSON.stringify({
+      version: 3, moduleIndex: 0, questionIndex: 0, answers: {}, marked: {}, eliminated: {},
+      startedAt: Date.now(), moduleStartedAt: Date.now(), completed: false
+    }));
+  </script>
+  <script src="../data/questions.js"></script>
+  <script src="../data/rw2-easy.js"></script>
+  <script src="../data/rw-source-overrides.js"></script>
+  <script src="../data/question-quality-overrides.js"></script>
+  <script src="../data/media-overrides.js"></script>
+  <script src="../session-guard.js"></script>
+  <script src="../exam-ui-sanitizer.js"></script>
+  <script src="../app.js"></script>
+  <script src="../keyboard.js"></script>
+  <script src="../spr-input.js"></script>
+  <script src="../tools-enhancement.js"></script>
+  <script src="../note-enhancement.js"></script>
+  <script src="../modal-enhancement.js"></script>
+  <script src="../calculator-enhancement.js"></script>
+  <script src="../code-input-enhancement.js"></script>
+  <script src="../results-enhancement.js"></script>
+  <script src="../ui-accessibility-enhancement.js"></script>
+  <script src="../media-enhancement.js"></script>
+  <script src="../tools-move-enhancement.js"></script>
+  <script>
+    setTimeout(() => {
+      const open = [...document.querySelectorAll('button')].find((button) => /calculator/i.test(button.textContent || button.getAttribute('aria-label') || ''));
+      if (!open) throw new Error('calculator opener missing');
+      open.click();
+      setTimeout(() => {
+        const panel = document.getElementById('calculatorPanel');
+        const move = panel?.querySelector('.azm-move-button');
+        if (!move) throw new Error('move button missing');
+        if (move.getAttribute('aria-pressed') !== 'false') throw new Error('move button initial state incorrect');
+        const before = panel.getBoundingClientRect().left;
+        move.click();
+        if (move.getAttribute('aria-pressed') !== 'true') throw new Error('move button did not enter pressed state');
+        move.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+        const after = panel.getBoundingClientRect().left;
+        if (after <= before) throw new Error(`calculator did not move right: ${before} -> ${after}`);
+        move.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        if (move.getAttribute('aria-pressed') !== 'false') throw new Error('Escape did not leave move mode');
+        document.body.insertAdjacentHTML('beforeend', '<p id="move-pass">TOOL MOVE KEYBOARD SMOKE COMPLETE</p>');
+      }, 150);
+    }, 250);
+  </script>
+</body>
+</html>
