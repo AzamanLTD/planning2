@@ -7,14 +7,12 @@
     if (!overlay || installed.has(overlay)) return;
     const viewport = overlay.querySelector('.azm-media-viewport');
     const image = overlay.querySelector('.azm-media-lightbox-image');
-    const zoomIn = overlay.querySelector('[data-media-action="zoom-in"]');
-    if (!viewport || !image || !zoomIn) return;
+    if (!viewport || !image) return;
     installed.add(overlay);
 
     const pointers = new Map();
     let pinch = null;
     const clampZoom = (value) => Math.max(1, Math.min(3, value));
-    const zoomFromUi = (delta) => zoomIn.dispatchEvent(new MouseEvent('click', { bubbles: true, detail: delta }));
 
     viewport.addEventListener('pointerdown', (event) => {
       pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
@@ -34,8 +32,7 @@
       if (!Number.isFinite(distance) || pinch.distance <= 0) return;
       const overlayState = overlay.__azmMediaGestureState;
       if (!overlayState) return;
-      const next = clampZoom(overlayState.scale * (distance / pinch.distance));
-      overlayState.scale = next;
+      overlayState.scale = clampZoom(overlayState.scale * (distance / pinch.distance));
       pinch.distance = distance;
       overlayState.render();
       event.preventDefault();
