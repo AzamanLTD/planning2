@@ -2,6 +2,13 @@ name: Media lightbox smoke
 
 on:
   pull_request:
+    paths:
+      - 'index.html'
+      - 'media-enhancement.js'
+      - 'media-enhancement.css'
+      - 'assets/media/**'
+      - 'tests/media-lightbox-smoke.html'
+      - '.github/workflows/media-lightbox-smoke.yml'
   workflow_dispatch:
 
 concurrency:
@@ -21,6 +28,6 @@ jobs:
           server_pid=$!
           trap 'kill "$server_pid"' EXIT
           sleep 1
-          timeout 45s chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=20000 --dump-dom http://127.0.0.1:8087/tests/media-lightbox-smoke.html > /tmp/azaman-media-smoke.html
+          timeout 60s chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=15000 --dump-dom http://127.0.0.1:8087/tests/media-lightbox-smoke.html > /tmp/azaman-media-smoke.html
           cat /tmp/azaman-media-smoke.html
           grep -q 'MEDIA LIGHTBOX SMOKE COMPLETE' /tmp/azaman-media-smoke.html
