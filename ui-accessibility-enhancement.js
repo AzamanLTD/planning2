@@ -43,6 +43,30 @@
     popover.querySelectorAll('.tool-item').forEach((item) => item.setAttribute('role', 'menuitem'));
   }
 
+  function enhanceNavigation() {
+    const mark = document.getElementById('markBtn');
+    if (mark) {
+      const marked = /^Unmark\b/i.test(mark.textContent.trim());
+      mark.setAttribute('aria-pressed', String(marked));
+      mark.setAttribute('aria-label', marked ? 'Remove mark for review' : 'Mark for review');
+    }
+    const tools = document.getElementById('toolsBtn');
+    const popover = document.getElementById('toolPopover');
+    if (tools) {
+      tools.setAttribute('aria-haspopup', 'menu');
+      tools.setAttribute('aria-expanded', String(!!popover && popover.getClientRects().length > 0));
+    }
+    const review = document.getElementById('reviewBtn');
+    const modal = document.getElementById('reviewModal');
+    if (review) {
+      review.setAttribute('aria-haspopup', 'dialog');
+      review.setAttribute('aria-expanded', String(!!modal && modal.getClientRects().length > 0));
+      review.setAttribute('aria-label', 'Open question menu');
+    }
+    document.getElementById('prevBtn')?.setAttribute('aria-label', 'Previous question');
+    document.getElementById('nextBtn')?.setAttribute('aria-label', /Review module/i.test(document.getElementById('nextBtn')?.textContent || '') ? 'Review module' : 'Next question');
+  }
+
   function enhanceStartCode(root = document) {
     const fields = [...root.querySelectorAll('.start-digit')];
     fields.forEach((field, index) => {
@@ -65,11 +89,12 @@
     enhanceChoices();
     enhanceReview(document.getElementById('reviewModal'));
     enhanceTools(document.getElementById('toolPopover'));
+    enhanceNavigation();
     enhanceStartCode();
     installReducedMotionSupport();
   }
 
   const observer = new MutationObserver(enhance);
-  observer.observe(document.body, { childList: true, subtree: true });
+  observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'aria-pressed'] });
   enhance();
 })();
