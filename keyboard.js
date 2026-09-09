@@ -145,7 +145,7 @@
     if ((isMac ? command : ctrl) && !alt && lower === 'l') { event.preventDefault(); openToolByText('Line reader'); return; }
     if (comboAlt && lower === 't') { event.preventDefault(); openToolByText('Hide timer', () => openToolByText('Show timer')); return; }
     if (isMac ? command && event.shiftKey && lower === 'v' : ctrl && alt && lower === 'v') { event.preventDefault(); clickText('Mark for review'); return; }
-    if (ctrl && !alt && lower === 'h') { event.preventDefault(); openToolByText('Note'); return; }
+    if (ctrl && !alt && lower === 'h') { event.preventDefault(); openToolByText('Highlight selection', () => openToolByText('Note')); return; }
     if (comboAlt && lower === 'c') { event.preventDefault(); openToolByText('Calculator'); return; }
     if (comboAlt && lower === 'r') { event.preventDefault(); openToolByText('Reference sheet'); return; }
     if (triple && lower === 'o') { event.preventDefault(); document.body.classList.toggle('option-eliminator-mode'); return; }
