@@ -1,0 +1,33 @@
+name: Calculator resize smoke
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'calculator-enhancement.js'
+      - 'tools-enhancement.js'
+      - 'tests/calculator-resize-smoke.html'
+  workflow_dispatch:
+
+concurrency:
+  group: calculator-resize-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v5
+      - name: Run calculator resize browser smoke
+        run: |
+          set -eu
+          python3 -m http.server 8089 --bind 127.0.0.1 >/tmp/azaman-calculator-resize-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          sleep 1
+          timeout 45s chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage \
+            --virtual-time-budget=12000 --dump-dom http://127.0.0.1:8089/tests/calculator-resize-smoke.html \
+            > /tmp/azaman-calculator-resize-smoke.html
+          cat /tmp/azaman-calculator-resize-smoke.html
+          grep -q 'CALCULATOR RESIZE SMOKE COMPLETE' /tmp/azaman-calculator-resize-smoke.html
