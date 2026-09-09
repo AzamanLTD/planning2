@@ -16,9 +16,13 @@ for (const phrase of [
   "source?.setAttribute('aria-label', 'Source')",
   "question?.setAttribute('role', 'region')",
   "question?.setAttribute('aria-label', 'Question')",
-  "footer?.setAttribute('role', 'contentinfo')"
+  "footer?.setAttribute('role', 'contentinfo')",
+  "const marked = /^Unmark\\b/i.test(mark.textContent.trim())",
+  "mark.setAttribute('aria-pressed', String(marked))",
+  "mark.setAttribute('aria-label', marked ? 'Remove mark for review' : 'Mark for review')"
 ]) assert(source.includes(phrase), `navigation accessibility contract missing: ${phrase}`);
 
-assert(source.includes("attributeFilter: ['class', 'aria-pressed']"), 'navigation observer must react to mark-state changes');
+assert(source.includes('childList: true, subtree: true'), 'navigation observer must react to rendered state changes');
+assert(!source.includes("attributeFilter: ['class', 'aria-pressed']"), 'navigation observer must not observe its own state attributes');
 
 console.log('NAVIGATION A11Y CONTRACT PASSED');
