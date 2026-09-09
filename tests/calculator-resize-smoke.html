@@ -39,8 +39,10 @@
           const html = panel.querySelector('.calc-screen, #calcDisplay');
           if (!html) throw new Error('calculator controls disappeared after resize');
           out.textContent = `PASS calculator resized from ${Math.round(before.width)}px to ${Math.round(after.width)}px\nCALCULATOR RESIZE SMOKE COMPLETE`;
+          frame.remove();
         } catch (error) {
           out.textContent = `FAIL ${error.message || error}`;
+          frame.remove();
         }
       }, 200));
     })();
