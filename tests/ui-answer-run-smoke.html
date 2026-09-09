@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Azaman UI answer-run smoke</title></head>
+<body>
+  <pre id="result">running</pre>
+  <iframe id="app" title="Azaman simulator" style="width:100%;height:800px;border:0"></iframe>
+  <script>
+    (() => {
+      const out = document.getElementById('result');
+      const frame = document.getElementById('app');
+      const KEY = 'azaman-sat-practice-v3';
+      const checks = [];
+      let phase = 0;
+      function check(name, value) { checks.push(`${value ? 'PASS' : 'FAIL'} ${name}`); if (!value) throw new Error(name); }
+      function read() { return JSON.parse(localStorage.getItem(KEY)); }
+      function write(value) { localStorage.setItem(KEY, JSON.stringify(value)); }
+      function state() { return { v:3, screen:'test', student:'UI Answer Smoke', accessCode:'', roomCode:'', startCode:'', mi:0, qi:0, endAt:Date.now()+600000, breakEndAt:null, answers:{}, marked:{}, eliminated:{}, notes:{}, highlights:{}, completed:{}, submitted:false, adaptive:{rw:'easy',math:'easy'}, timerHidden:false, lineReader:false, rules:true, desk:true, warning:{} }; }
+      frame.addEventListener('load', () => {
+        const doc = frame.contentDocument, win = frame.contentWindow;
+        try {
+          if (phase === 0) {
+            const s = state(); write(s); phase = 1; frame.contentWindow.location.reload(); return;
+          }
+          if (phase === 1) {
+            check('module chrome renders', !!doc.querySelector('.test-title') && /Reading and Writing/.test(doc.querySelector('.test-title').textContent));
+            const bank = win.SAT_QUESTIONS.rw1; check('R&W bank is 27 questions', bank.length === 27);
+            check('first question counter renders', /Question 1 of 27/.test(doc.querySelector('.test-counter')?.textContent || ''));
+            const choices = [...doc.querySelectorAll('.choice')]; check('four answer choices render', choices.length === 4);
+            check('answer controls expose radio semantics', choices.every((x) => x.getAttribute('role') === 'radio'));
+            const target = choices.find((x) => x.dataset.answer === bank[0].answer) || choices[0];
+            target.click();
+            check('clicked answer persists', read().answers['rw1-0'] === target.dataset.answer);
+            check('clicked answer is selected', target.getAttribute('aria-pressed') === 'true');
+            const eliminate = doc.querySelector('.eliminate-btn'); check('option eliminator renders', !!eliminate);
+            eliminate.click();
+            const idx = Number(eliminate.dataset.eliminate);
+            check('elimination persists', (read().eliminated['rw1-0'] || []).includes(idx));
+            phase = 2; frame.contentWindow.location.reload(); return;
+          }
+          if (phase === 2) {
+            const choices = [...doc.querySelectorAll('.choice')];
+            check('answer remains selected after reload', choices.some((x) => x.getAttribute('aria-pressed') === 'true'));
+            check('elimination remains after reload', !!doc.querySelector('.choice-wrap.eliminated'));
+            doc.querySelector('#markBtn')?.click();
+            check('mark-for-review persists', read().marked['rw1-0'] === true);
+            doc.querySelector('#reviewBtn')?.click();
+            check('review dialog opens', !!doc.querySelector('#reviewModal'));
+            check('review dialog exposes 27 questions', doc.querySelectorAll('#reviewModal [data-q]').length === 27);
+            doc.querySelector('#closeReview2')?.click();
+            check('review dialog closes', !doc.querySelector('#reviewModal'));
+            out.textContent = checks.join('\n') + '\nUI ANSWER-RUN SMOKE COMPLETE';
+          }
+        } catch (error) {
+          out.textContent = checks.join('\n') + `\nFAIL ${error.message}`;
+          throw error;
+        }
+      });
+      write(state());
+      frame.src = '../index.html?ui-answer-run-smoke=1';
+    })();
+  </script>
+</body>
+</html>
