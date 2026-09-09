@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Azaman unscheduled break smoke</title></head>
+<body>
+  <pre id="result">running</pre>
+  <iframe id="app" title="Azaman simulator" style="width:100%;height:700px;border:0"></iframe>
+  <script>
+    (() => {
+      const out = document.getElementById('result');
+      const frame = document.getElementById('app');
+      const KEY = 'azaman-sat-practice-v3';
+      const deadline = Date.now() + 60000;
+      localStorage.setItem(KEY, JSON.stringify({
+        v: 3, screen: 'test', student: 'Unscheduled Break Smoke', accessCode: 'SAT26', roomCode: 'AZM24', startCode: '492776',
+        mi: 0, qi: 0, endAt: deadline, breakEndAt: null,
+        answers: {}, marked: {}, eliminated: {}, notes: {}, highlights: {}, completed: {}, submitted: false,
+        adaptive: { rw: 'easy', math: 'easy' }, timerHidden: false, lineReader: false, rules: true, desk: true, warning: {}
+      }));
+      frame.src = '../index.html?unscheduled-break-smoke=' + Date.now();
+
+      const waiter = setInterval(() => {
+        try {
+          const doc = frame.contentDocument;
+          if (doc?.readyState !== 'complete' || !doc.getElementById('toolsBtn')) return;
+          clearInterval(waiter);
+          doc.getElementById('toolsBtn').click();
+          setTimeout(() => {
+            try {
+              const tool = doc.getElementById('unscheduledBreakTool');
+              if (!tool) throw new Error('unscheduled break is missing from the test tools menu');
+              tool.click();
+              setTimeout(() => {
+                try {
+                  if (!doc.getElementById('unscheduledBreakModal')) throw new Error('unscheduled break dialog did not open');
+                  const state = JSON.parse(localStorage.getItem(KEY));
+                  if (state.endAt !== deadline) throw new Error('unscheduled break changed the module deadline');
+                  if (state.breakEndAt !== null) throw new Error('unscheduled break changed the scheduled break deadline');
+                  if (!doc.getElementById('returnFromUnscheduledBreak')) throw new Error('return control is missing');
+                  doc.getElementById('returnFromUnscheduledBreak').click();
+                  setTimeout(() => {
+                    try {
+                      if (doc.getElementById('unscheduledBreakModal')) throw new Error('return from unscheduled break did not close dialog');
+                      const after = JSON.parse(localStorage.getItem(KEY));
+                      if (after.screen !== 'test' || after.mi !== 0 || after.qi !== 0) throw new Error('test position changed during unscheduled break');
+                      if (after.endAt !== deadline) throw new Error('module deadline changed after return');
+                      out.textContent = 'PASS tool-menu entry, interrupting dialog, live module timer preservation, scheduled break preservation, return to test\nUNSCHEDULED BREAK SMOKE COMPLETE';
+                    } catch (error) { out.textContent = `FAIL ${error.message}`; }
+                    finally { frame.remove(); }
+                  }, 80);
+                } catch (error) { out.textContent = `FAIL ${error.message}`; frame.remove(); }
+              }, 80);
+            } catch (error) { out.textContent = `FAIL ${error.message}`; frame.remove(); }
+          }, 80);
+        } catch (_) {}
+      }, 50);
+    })();
+  </script>
+</body>
+</html>
