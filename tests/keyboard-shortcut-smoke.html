@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Azaman keyboard shortcut smoke</title></head>
+<body>
+  <pre id="result">running</pre>
+  <iframe id="app" title="Azaman simulator" style="width:100%;height:500px;border:0"></iframe>
+  <script>
+    (() => {
+      const out = document.getElementById('result');
+      const frame = document.getElementById('app');
+      const KEY = 'azaman-sat-practice-v3';
+      const now = Date.now();
+      const state = {
+        v: 3, screen: 'test', student: 'Keyboard Smoke', accessCode: 'SAT26', roomCode: 'AZM24', startCode: '492776',
+        mi: 2, qi: 1, endAt: now + 1200000, breakEndAt: null,
+        answers: {}, marked: {}, eliminated: {}, notes: {}, highlights: {},
+        completed: { rw1: true, rw2: true, math1: false, math2: false }, submitted: false,
+        adaptive: { rw: 'hard', math: 'easy' }, timerHidden: false, lineReader: false, rules: true, desk: true, warning: {}
+      };
+      localStorage.setItem(KEY, JSON.stringify(state));
+      frame.src = '../index.html?keyboard-smoke=' + now;
+      frame.addEventListener('load', () => {
+        const doc = frame.contentDocument;
+        const checks = [];
+        const check = (name, value) => { checks.push(`${value ? 'PASS' : 'FAIL'} ${name}`); if (!value) throw new Error(name); };
+        const key = (value, init = {}) => doc.dispatchEvent(new KeyboardEvent('keydown', { key: value, bubbles: true, cancelable: true, ...init }));
+        setTimeout(() => {
+          try {
+            check('Math test surface loads', !!doc.querySelector('.test-shell') && doc.querySelector('.test-title')?.textContent.includes('Math'));
+
+            key('F1');
+            check('F1 opens keyboard shortcuts', !!doc.getElementById('shortcutHelp'));
+            key('Escape');
+            check('Escape closes keyboard shortcuts', !doc.getElementById('shortcutHelp'));
+
+            check('Starts on question 2', /Question\s+2/i.test(doc.querySelector('.test-counter')?.textContent || ''));
+            key('b', { ctrlKey: true, altKey: true });
+            check('Ctrl+Alt+B moves back', /Question\s+1/i.test(doc.querySelector('.test-counter')?.textContent || ''));
+            key('x', { ctrlKey: true, altKey: true });
+            check('Ctrl+Alt+X moves next', /Question\s+2/i.test(doc.querySelector('.test-counter')?.textContent || ''));
+
+            key('g', { ctrlKey: true, altKey: true });
+            check('Ctrl+Alt+G opens question menu', !!doc.getElementById('reviewModal'));
+            doc.getElementById('closeReview')?.click();
+
+            key('v', { ctrlKey: true, altKey: true });
+            check('Ctrl+Alt+V marks for review', doc.querySelector('.review-q') === null && localStorage.getItem(KEY)?.includes('math1-1'));
+
+            key('o', { ctrlKey: true, altKey: true });
+            check('Ctrl+Alt+O toggles option eliminator mode', doc.body.classList.contains('option-eliminator-mode'));
+            key('o', { ctrlKey: true, altKey: true });
+            check('Ctrl+Alt+O toggles option eliminator mode off', !doc.body.classList.contains('option-eliminator-mode'));
+
+            key('1', { ctrlKey: true, shiftKey: true });
+            check('Ctrl+Shift+1 selects option A', doc.querySelector('[data-answer="A"]')?.getAttribute('aria-pressed') === 'true');
+            key('1', { ctrlKey: true, altKey: true });
+            check('Ctrl+Alt+1 eliminates option A', doc.querySelector('[data-eliminate="0"]')?.closest('.choice-wrap')?.classList.contains('eliminated'));
+
+            key('c', { ctrlKey: true, altKey: true });
+            check('Ctrl+Alt+C opens calculator', !!doc.getElementById('calculatorPanel'));
+            doc.getElementById('closeCalc')?.click();
+            key('r', { ctrlKey: true, altKey: true });
+            check('Ctrl+Alt+R opens reference sheet', !!doc.getElementById('referencePanel'));
+            doc.getElementById('closeRef')?.click();
+
+            key('l', { ctrlKey: true });
+            check('Ctrl+L opens line reader', !!doc.querySelector('.line-reader'));
+            key('l', { ctrlKey: true });
+            check('Ctrl+L closes line reader', !doc.querySelector('.line-reader'));
+
+            key('t', { ctrlKey: true, altKey: true });
+            check('Ctrl+Alt+T hides timer', doc.getElementById('timer')?.classList.contains('hidden'));
+            key('t', { ctrlKey: true, altKey: true });
+            check('Ctrl+Alt+T restores timer', !doc.getElementById('timer')?.classList.contains('hidden'));
+
+            key('h', { ctrlKey: true, altKey: true });
+            check('Ctrl+Alt+H opens Help', !!doc.getElementById('helpDialog'));
+            doc.getElementById('helpDone')?.click();
+            key('d', { ctrlKey: true, altKey: true, shiftKey: true });
+            check('Ctrl+Alt+Shift+D opens Directions', !!doc.getElementById('directionHelp'));
+            doc.getElementById('directionDone')?.click();
+
+            key('F6');
+            check('F6 advances through an exam region', ['.test-top', '.source-panel', '.question-panel', '.test-footer'].some((selector) => doc.activeElement === doc.querySelector(selector)));
+
+            out.textContent = checks.join('\n') + '\nKEYBOARD SHORTCUT SMOKE COMPLETE';
+          } catch (error) {
+            out.textContent = checks.join('\n') + `\nFAIL ${error.message}`;
+          }
+        }, 150);
+      });
+    })();
+  </script>
+</body>
+</html>
