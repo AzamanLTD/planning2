@@ -94,6 +94,14 @@
     });
   }
 
+  function enhanceBreakTimer() {
+    const clock = document.getElementById('breakClock');
+    if (!clock) return;
+    clock.setAttribute('role', 'timer');
+    clock.setAttribute('aria-label', 'Break time remaining');
+    clock.setAttribute('aria-atomic', 'true');
+  }
+
   function enhanceStartCode(root = document) {
     const fields = [...root.querySelectorAll('.start-digit')];
     fields.forEach((field, index) => {
@@ -118,6 +126,7 @@
     enhanceTools(document.getElementById('toolPopover'));
     enhanceNavigation();
     enhanceSourceTables();
+    enhanceBreakTimer();
     enhanceStartCode();
     installReducedMotionSupport();
   }
