@@ -4,26 +4,99 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
-permissions:
-  contents: read
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  contract-and-smoke:
+  validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-      - name: Verify canonical app entrypoint
+          package-manager-cache: false
+      - name: Validate canonical repository entrypoint
         run: node tests/entrypoint-contract.test.js
-      - name: Validate question-bank records and distribution
-        run: node tests/question-bank-contract.test.js
-      - name: Validate question content and provenance
-        run: node tests/question-content-contract.test.js
-      - name: Audit content diversity
+      - name: Check JavaScript syntax
+        run: |
+          set -eu
+          for file in $(find . -name '*.js' -not -path './node_modules/*' | sort); do
+            echo "Checking $file"
+            node --check "$file"
+          done
+      - name: Validate question-bank shape and coverage
+        run: |
+          set -eu
+          node - <<'NODE'
+          const fs = require('fs');
+          const files = ['data/questions.js', 'data/rw2-easy.js', 'data/rw-source-overrides.js', 'data/question-quality-overrides.js'];
+          const sandbox = {};
+          for (const path of files) new Function('window', fs.readFileSync(path, 'utf8'))(sandbox);
+          const b = sandbox.SAT_QUESTIONS;
+          const groups = [
+            ['rw1', b.rw1], ['rw2.easy', b.rw2.easy], ['rw2.hard', b.rw2.hard],
+            ['math1', b.math1], ['math2.easy', b.math2.easy], ['math2.hard', b.math2.hard]
+          ];
+          const expected = [27, 27, 27, 22, 22, 22];
+          groups.forEach(([name, items], i) => {
+            if (!Array.isArray(items) || items.length !== expected[i]) throw new Error(`${name} count mismatch`);
+          });
+          const all = groups.flatMap(([, items]) => items);
+          if (all.length !== 147) throw new Error(`expected 147 records, got ${all.length}`);
+          const ids = new Set();
+          for (const q of all) {
+            if (ids.has(q.id)) throw new Error(`duplicate question id: ${q.id}`);
+            ids.add(q.id);
+            if (!q.id || !q.prompt || !q.answer || !q.difficulty || !q.domain || !q.skill || !q.explanation) throw new Error(`missing metadata: ${q.id}`);
+            if (q.section === 'Reading and Writing' && (!Array.isArray(q.options) || q.options.length !== 4)) throw new Error(`R&W options mismatch: ${q.id}`);
+            if (q.section === 'Math' && q.type === 'mcq' && (!Array.isArray(q.options) || q.options.length !== 4)) throw new Error(`Math MCQ options mismatch: ${q.id}`);
+            if (q.section === 'Math' && q.type === 'spr' && q.options?.length) throw new Error(`SPR should not carry MCQ options: ${q.id}`);
+            if (q.section === 'Reading and Writing') {
+              const words = q.source?.paragraphs?.join(' ').trim().split(/\s+/).filter(Boolean).length || 0;
+              if (words > 150 || words < 25) throw new Error(`R&W source outside 25-150 word window: ${q.id} (${words})`);
+            }
+          }
+          for (const [name, items] of [['math1', b.math1], ['math2.easy', b.math2.easy], ['math2.hard', b.math2.hard]]) {
+            const sprCount = items.filter(q => q.section === 'Math' && q.type === 'spr').length;
+            if (sprCount !== 5) throw new Error(`${name} should contain 5 Math SPR items, got ${sprCount}`);
+            const mcqCount = items.filter(q => q.section === 'Math' && q.type === 'mcq').length;
+            if (mcqCount !== 17) throw new Error(`${name} should contain 17 Math MCQ items, got ${mcqCount}`);
+          }
+          const rw2Hard = b.rw2.hard.filter(q => q.difficulty === 'hard').length;
+          if (rw2Hard !== 27) throw new Error(`R&W hard Module 2 should be fully hard-tagged: ${rw2Hard}/27`);
+          const math2Hard = b.math2.hard.filter(q => q.difficulty === 'hard').length;
+          if (math2Hard !== 22) throw new Error(`Math hard Module 2 should be fully hard-tagged: ${math2Hard}/22`);
+          const ranges = {
+            'Reading and Writing': {
+              'Craft and Structure': [7, 9], 'Information and Ideas': [6, 8],
+              'Standard English Conventions': [6, 8], 'Expression of Ideas': [4, 6]
+            },
+            Math: { Algebra: [6, 9], 'Advanced Math': [6, 8], 'Problem Solving and Data Analysis': [3, 5], 'Geometry and Trigonometry': [3, 5] }
+          };
+          const moduleDomainCounts = (items, section) => {
+            const counts = Object.fromEntries(Object.keys(ranges[section]).map(k => [k, 0]));
+            for (const q of items) counts[q.domain] = (counts[q.domain] || 0) + 1;
+            for (const [domain, [min, max]] of Object.entries(ranges[section])) {
+              if (counts[domain] < min || counts[domain] > max) throw new Error(`${section} domain distribution out of range: ${domain}=${counts[domain]} (expected ${min}-${max})`);
+            }
+            return counts;
+          };
+          for (const [name, items] of groups) console.log(`${name} domain coverage: ${JSON.stringify(moduleDomainCounts(items, items[0].section))}`);
+          console.log(`Validated ${all.length} effective records, Math route groups each contain 5 SPR + 17 MCQ.`);
+          NODE
+      - name: Validate CI trigger and concurrency contract
+        run: node tests/ci-contract.test.js
+      - name: Validate effective question-answer integrity
+        run: node tests/question-integrity.test.js
+      - name: Run automated content audit
+        run: node tests/content-audit.test.js
+      - name: Verify authored R&W source override coverage
+        run: node tests/content-override-contract.test.js
+      - name: Audit question-bank diversity
         run: node tests/content-diversity-audit.test.js
       - name: Validate adaptive Module 2 variants
         run: node tests/adaptive-integrity.test.js
@@ -49,6 +122,8 @@ jobs:
           node tests/highlight-notes-parity.test.js
           node tests/navigation-a11y-contract.test.js
           node tests/source-table-a11y-contract.test.js
+          node tests/results-domain-report-contract.test.js
+          node tests/results-download-contract.test.js
       - name: Validate GitHub Pages deployment contract
         run: node tests/pages-deploy-contract.test.js
       - name: Prevent obsolete enhancement layers
@@ -61,15 +136,47 @@ jobs:
         run: node tests/qa-matrix-contract.test.js
       - name: Run accessibility contract checks
         run: node tests/accessibility-contract.test.js
-      - name: Run session SRP contract checks
-        run: node tests/session-srp-contract.test.js
-      - name: Run deployment smoke checks
-        run: node tests/deployment-contract.test.js
-      - name: Run UI smoke test
-        run: node tests/ui-answer-run.test.js
-      - name: Run Help smoke test
-        run: node tests/help-smoke.test.js
-      - name: Run complete 98-question Chromium smoke
-        run: node tests/full-run-browser-smoke.js
-      - name: Run 390px mobile smoke
-        run: node tests/mobile-390-smoke.js
+      - name: Run session recovery edge-case tests
+        run: node tests/session-guard.test.js
+      - name: Run SAT SPR normalization contract tests
+        run: node tests/spr-contract.test.js
+      - name: Run Chromium browser smoke test
+        run: |
+          set -eu
+          python3 -m http.server 8080 >/tmp/azaman-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          sleep 1
+          chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=10000 --dump-dom http://127.0.0.1:8080/tests/browser-smoke.html > /tmp/azaman-smoke.html
+          cat /tmp/azaman-smoke.html
+          grep -q 'SMOKE COMPLETE' /tmp/azaman-smoke.html
+      - name: Run dedicated Help shortcut smoke test
+        run: |
+          set -eu
+          python3 -m http.server 8081 >/tmp/azaman-help-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          sleep 1
+          chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=5000 --dump-dom http://127.0.0.1:8081/tests/help-shortcut-smoke.html > /tmp/azaman-help-smoke.html
+          cat /tmp/azaman-help-smoke.html
+          grep -q 'HELP SMOKE COMPLETE' /tmp/azaman-help-smoke.html
+      - name: Run complete 98-question browser smoke test
+        run: |
+          set -eu
+          python3 -m http.server 8082 >/tmp/azaman-full-run-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          sleep 1
+          chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=15000 --dump-dom http://127.0.0.1:8082/tests/full-run-smoke.html > /tmp/azaman-full-run-smoke.html
+          cat /tmp/azaman-full-run-smoke.html
+          grep -q 'FULL RUN SMOKE COMPLETE' /tmp/azaman-full-run-smoke.html
+      - name: Run mobile 390px layout smoke test
+        run: |
+          set -eu
+          python3 -m http.server 8085 >/tmp/azaman-mobile-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          sleep 1
+          chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --window-size=390,844 --virtual-time-budget=8000 --dump-dom http://127.0.0.1:8085/tests/mobile-layout-smoke.html > /tmp/azaman-mobile-smoke.html
+          cat /tmp/azaman-mobile-smoke.html
+          grep -q 'MOBILE LAYOUT SMOKE COMPLETE' /tmp/azaman-mobile-smoke.html
