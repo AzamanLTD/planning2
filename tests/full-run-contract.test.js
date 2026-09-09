@@ -4,6 +4,7 @@ const assert = require('assert');
 const smoke = fs.readFileSync('tests/full-run-smoke.html', 'utf8');
 const ci = fs.readFileSync('.github/workflows/ci.yml', 'utf8');
 const docs = fs.readFileSync('docs/full-run-verification.md', 'utf8');
+const index = fs.readFileSync('index.html', 'utf8');
 
 assert(smoke.includes('FULL RUN SMOKE COMPLETE'), 'full-run smoke must expose a completion marker');
 assert(smoke.includes("const bank = win.SAT_QUESTIONS.rw1"), 'full-run smoke must load effective R&W Module 1 questions');
@@ -18,5 +19,10 @@ assert(smoke.includes('Object.keys(next.answers).length === 98'), 'full-run smok
 assert(ci.includes('tests/full-run-smoke.html'), 'CI must execute the full-run browser smoke');
 assert(ci.includes('FULL RUN SMOKE COMPLETE'), 'CI must assert full-run browser completion');
 assert(docs.includes('98-question'), 'full-run documentation must state the complete exam scope');
+assert(index.includes('src="room-code-enhancement.js"'), 'canonical entrypoint must load room-code enhancement');
+assert(index.includes('src="results-enhancement.js"'), 'canonical entrypoint must load results enhancement');
+assert(index.includes('src="results-download-enhancement.js"'), 'canonical entrypoint must load results download enhancement');
+assert(index.includes('href="results-domain-report.css"'), 'canonical entrypoint must load domain-report styling');
+assert(index.includes('href="results-question-review.css"'), 'canonical entrypoint must load question-review styling');
 
 console.log('Full-run smoke contract passed.');
