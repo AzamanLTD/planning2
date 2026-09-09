@@ -17,27 +17,33 @@
         adaptive: { rw: 'hard', math: 'easy' }, timerHidden: false, lineReader: true, rules: true, desk: true, warning: {}
       }));
       frame.src = '../index.html?line-reader-smoke=' + now;
-      frame.addEventListener('load', () => setTimeout(() => {
+      function run() {
+        clearInterval(waiter);
+        setTimeout(() => {
+          try {
+            const doc = frame.contentDocument;
+            const reader = doc.querySelector('.line-reader');
+            const frameNode = reader?.querySelector('.line-reader-frame');
+            const prompt = doc.getElementById('questionPrompt');
+            if (!reader || !frameNode || !prompt) throw new Error('Line Reader enhancement did not initialize');
+            if (reader.getAttribute('aria-hidden') !== 'true') throw new Error('Line Reader overlay must remain decorative to assistive technology');
+            const top = Number.parseFloat(frameNode.style.top || 'NaN');
+            if (!Number.isFinite(top)) throw new Error('Line Reader focus band has no position');
+            if (Number.parseFloat(frameNode.style.height || '0') < 48) throw new Error('Line Reader focus band is too small');
+            out.textContent = `PASS Line Reader focus band initialized at ${Math.round(top)}px\nLINE READER SMOKE COMPLETE`;
+          } catch (error) {
+            out.textContent = `FAIL ${error.message || error}`;
+          } finally {
+            frame.remove();
+          }
+        }, 100);
+      }
+      const waiter = setInterval(() => {
         try {
           const doc = frame.contentDocument;
-          const reader = doc.querySelector('.line-reader');
-          const frameNode = reader?.querySelector('.line-reader-frame');
-          const prompt = doc.getElementById('questionPrompt');
-          if (!reader || !frameNode || !prompt) throw new Error('Line Reader enhancement did not initialize');
-          if (reader.getAttribute('aria-hidden') !== 'true') throw new Error('Line Reader overlay must remain decorative to assistive technology');
-          const top = Number.parseFloat(frameNode.style.top || 'NaN');
-          if (!Number.isFinite(top)) throw new Error('Line Reader focus band has no position');
-          if (Number.parseFloat(frameNode.style.height || '0') < 48) throw new Error('Line Reader focus band is too small');
-          const before = top;
-          doc.defaultView.scrollTo(0, 400);
-          frameNode._noop = before;
-          out.textContent = `PASS Line Reader focus band initialized at ${Math.round(top)}px\nLINE READER SMOKE COMPLETE`;
-          frame.remove();
-        } catch (error) {
-          out.textContent = `FAIL ${error.message || error}`;
-          frame.remove();
-        }
-      }, 250));
+          if (doc?.readyState === 'complete' && doc.getElementById('app')) run();
+        } catch (_) {}
+      }, 50);
     })();
   </script>
 </body>
