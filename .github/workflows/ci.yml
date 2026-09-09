@@ -122,6 +122,7 @@ jobs:
           node tests/highlight-notes-parity.test.js
           node tests/navigation-a11y-contract.test.js
           node tests/source-table-a11y-contract.test.js
+          node tests/room-code-contract.test.js
       - name: Validate GitHub Pages deployment contract
         run: node tests/pages-deploy-contract.test.js
       - name: Prevent obsolete enhancement layers
