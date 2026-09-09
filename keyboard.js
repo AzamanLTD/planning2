@@ -33,7 +33,7 @@
   };
   const visible = (el) => !!el && el.getClientRects().length > 0;
   const buttonsByText = (label) => [...document.querySelectorAll('button')]
-    .find((b) => visible(b) && b.textContent.trim().toLowerCase() === label.toLowerCase());
+    .find((b) => visible(b) && (b.textContent.trim().toLowerCase() === label.toLowerCase() || (b.getAttribute('aria-label') || '').trim().toLowerCase() === label.toLowerCase()));
   const clickText = (label) => {
     const button = buttonsByText(label);
     if (!button) return false;
