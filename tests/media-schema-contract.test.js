@@ -17,6 +17,8 @@ if (!script.includes('media.alt')) throw new Error('media viewer must require al
 if (!script.includes('url.origin === location.origin')) throw new Error('media viewer must reject external origins');
 if (!script.includes("url.pathname.startsWith('/assets/')")) throw new Error('media viewer must allow asset paths');
 if (!script.includes("url.pathname.startsWith('/media/')")) throw new Error('media viewer must allow media paths');
+if (!script.includes('function mediaKey')) throw new Error('media viewer must derive a stable render key');
+if (!script.includes('renderedMediaKey')) throw new Error('media viewer must prevent observer self-render loops');
 if (!script.includes("event.key === 'Escape'")) throw new Error('media viewer must close with Escape');
 if (!script.includes('__azmMediaState')) throw new Error('media viewer must expose shared interaction state');
 if (!script.includes('aria-describedby')) throw new Error('media viewer must associate caption descriptions');
