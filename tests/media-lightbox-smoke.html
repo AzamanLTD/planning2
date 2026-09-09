@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Azaman media smoke</title></head>
+<body>
+<pre id="result">running</pre>
+<iframe id="app" title="Azaman simulator" style="width:100%;height:700px;border:0"></iframe>
+<script>
+(() => {
+  const KEY = 'azaman-sat-practice-v3';
+  const out = document.getElementById('result');
+  const frame = document.getElementById('app');
+  const now = Date.now();
+  localStorage.setItem(KEY, JSON.stringify({
+    v: 3, screen: 'test', student: 'Media Smoke', accessCode: 'SAT26', roomCode: 'AZM24', startCode: '492776',
+    mi: 0, qi: 19, endAt: now + 1200000, breakEndAt: null,
+    answers: {}, marked: {}, eliminated: {}, notes: {}, highlights: {},
+    completed: {}, submitted: false, adaptive: { rw: 'hard', math: 'easy' }, timerHidden: false, lineReader: false,
+    rules: true, desk: true, warning: {}
+  }));
+  frame.src = '../index.html?media-smoke=' + now;
+  frame.addEventListener('load', () => setTimeout(() => {
+    const doc = frame.contentDocument;
+    const checks = [];
+    const check = (name, value) => { checks.push(`${value ? 'PASS' : 'FAIL'} ${name}`); if (!value) throw new Error(name); };
+    try {
+      check('question image renders', !!doc.querySelector('.azm-media-image'));
+      check('image has descriptive alt', (doc.querySelector('.azm-media-image')?.alt || '').length > 30);
+      check('image has original practice caption', /original practice/i.test(doc.querySelector('.azm-media figcaption')?.textContent || ''));
+      doc.querySelector('.azm-media-trigger').click();
+      check('lightbox opens', !!doc.getElementById('azmMediaLightbox'));
+      check('lightbox image preserves alt text', doc.querySelector('.azm-media-lightbox-image')?.alt === doc.querySelector('.azm-media-image')?.alt);
+      const zoom = doc.querySelector('.azm-media-zoom');
+      check('starts at 100%', zoom?.textContent === '100%');
+      doc.querySelector('[data-media-action="zoom-in"]').click();
+      check('zoom-in changes scale', zoom?.textContent === '125%');
+      check('zoomed viewport enables panning', doc.querySelector('.azm-media-viewport')?.classList.contains('panning'));
+      const viewport = doc.querySelector('.azm-media-viewport');
+      const image = doc.querySelector('.azm-media-lightbox-image');
+      viewport.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, clientX: 200, clientY: 200 }));
+      viewport.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, clientX: 240, clientY: 225 }));
+      viewport.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, clientX: 240, clientY: 225 }));
+      check('pan updates image transform', /translate\(40px, 25px\)/.test(image?.style.transform || ''));
+      doc.querySelector('[data-media-action="reset"]').click();
+      check('reset returns to 100%', zoom?.textContent === '100%' && image?.style.transform === 'translate(0px, 0px) scale(1)');
+      doc.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+      check('Escape closes lightbox', !doc.getElementById('azmMediaLightbox'));
+      out.textContent = checks.join('\n') + '\nMEDIA LIGHTBOX SMOKE COMPLETE';
+    } catch (error) {
+      out.textContent = checks.join('\n') + `\nFAIL ${error.message}`;
+    }
+  }, 250));
+})();
+</script>
+</body>
+</html>
