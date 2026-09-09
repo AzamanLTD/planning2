@@ -30,8 +30,16 @@ assert.equal(state.screen, 'checkin');
 assert.equal(state.mi, 0);
 assert.equal(state.qi, 4);
 
-state = run({ ...base(), submitted: true, screen: 'test', mi: 0 });
+state = run({ ...base(), submitted: true, screen: 'test', mi: 0, completed: { rw1: true, rw2: true, math1: true, math2: true } });
 assert.equal(state.screen, 'finish');
+assert.equal(state.endAt, null);
+assert.equal(state.breakEndAt, null);
+
+state = run({ ...base(), submitted: true, screen: 'finish', mi: 3, completed: { rw1: true } });
+assert.equal(state.submitted, false);
+assert.equal(state.screen, 'directions');
+assert.equal(state.mi, 1);
+assert.equal(state.qi, 0);
 assert.equal(state.endAt, null);
 assert.equal(state.breakEndAt, null);
 
