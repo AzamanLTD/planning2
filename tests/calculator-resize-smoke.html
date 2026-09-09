@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Azaman calculator resize smoke</title></head>
+<body>
+  <pre id="result">running</pre>
+  <iframe id="app" title="Azaman simulator" style="width:100%;height:700px;border:0"></iframe>
+  <script>
+    (() => {
+      const out = document.getElementById('result');
+      const frame = document.getElementById('app');
+      const KEY = 'azaman-sat-practice-v3';
+      const now = Date.now();
+      localStorage.setItem(KEY, JSON.stringify({
+        v: 3, screen: 'test', student: 'Calculator Resize Smoke', accessCode: 'SAT26', roomCode: 'AZM24', startCode: '492776',
+        mi: 2, qi: 0, endAt: now + 1200000, breakEndAt: null,
+        answers: {}, marked: {}, eliminated: {}, notes: {}, highlights: {},
+        completed: { rw1: true, rw2: true, math1: false, math2: false }, submitted: false,
+        adaptive: { rw: 'hard', math: 'easy' }, timerHidden: false, lineReader: false, rules: true, desk: true, warning: {}
+      }));
+      frame.src = '../index.html?calculator-resize-smoke=' + now;
+      frame.addEventListener('load', () => setTimeout(() => {
+        try {
+          const doc = frame.contentDocument;
+          const key = (value, init = {}) => doc.dispatchEvent(new KeyboardEvent('keydown', { key: value, bubbles: true, cancelable: true, ...init }));
+          key('c', { ctrlKey: true, altKey: true });
+          const panel = doc.getElementById('calculatorPanel');
+          if (!panel) throw new Error('calculator panel missing');
+          const handle = panel.querySelector('.resize-handle');
+          if (!handle) throw new Error('calculator resize handle missing');
+          const before = panel.getBoundingClientRect();
+          handle.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerId: 1, clientX: before.right, clientY: before.bottom }));
+          handle.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerId: 1, clientX: before.right + 80, clientY: before.bottom + 50 }));
+          handle.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 1, clientX: before.right + 80, clientY: before.bottom + 50 }));
+          const after = panel.getBoundingClientRect();
+          if (after.width <= before.width) throw new Error(`calculator width did not grow: ${before.width} -> ${after.width}`);
+          if (!panel.style.width) throw new Error('calculator resize did not set explicit width');
+          const maxHeight = Number.parseFloat(panel.style.maxHeight || '0');
+          if (!Number.isFinite(maxHeight) || maxHeight < 260) throw new Error('calculator resize did not maintain a usable max height');
+          const html = panel.querySelector('.calc-screen, #calcDisplay');
+          if (!html) throw new Error('calculator controls disappeared after resize');
+          out.textContent = `PASS calculator resized from ${Math.round(before.width)}px to ${Math.round(after.width)}px\nCALCULATOR RESIZE SMOKE COMPLETE`;
+        } catch (error) {
+          out.textContent = `FAIL ${error.message || error}`;
+        }
+      }, 200));
+    })();
+  </script>
+</body>
+</html>
