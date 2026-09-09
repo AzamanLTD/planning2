@@ -31,16 +31,24 @@
         const viewport = overlay?.querySelector('.azm-media-viewport');
         const image = overlay?.querySelector('.azm-media-lightbox-image');
         if (!viewport || !image) throw new Error('lightbox viewport missing');
-        const first = new PointerEvent('pointerdown', { bubbles: true, pointerId: 1, pointerType: 'touch', clientX: 180, clientY: 240 });
-        viewport.dispatchEvent(first);
-        const second = new PointerEvent('pointerdown', { bubbles: true, pointerId: 2, pointerType: 'touch', clientX: 300, clientY: 240 });
-        viewport.dispatchEvent(second);
+
+        viewport.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerId: 1, pointerType: 'touch', clientX: 180, clientY: 240 }));
+        viewport.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerId: 2, pointerType: 'touch', clientX: 300, clientY: 240 }));
         viewport.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerId: 2, pointerType: 'touch', clientX: 360, clientY: 240 }));
         viewport.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 2, pointerType: 'touch', clientX: 360, clientY: 240 }));
         viewport.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 1, pointerType: 'touch', clientX: 180, clientY: 240 }));
+
         const zoom = overlay.querySelector('.azm-media-zoom')?.textContent || '';
-        if (zoom === '100%') throw new Error('pinch gesture did not increase zoom');
-        out.textContent = `PASS pinch zoom increased to ${zoom}\nMEDIA TOUCH SMOKE COMPLETE`;
+        if (Number.parseFloat(zoom) <= 190) throw new Error(`pinch zoom too small: ${zoom}`);
+
+        viewport.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerId: 3, pointerType: 'touch', clientX: 240, clientY: 240 }));
+        viewport.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerId: 3, pointerType: 'touch', clientX: 280, clientY: 265 }));
+        viewport.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 3, pointerType: 'touch', clientX: 280, clientY: 265 }));
+        if (!/translate\(40px, 25px\)/.test(image.style.transform)) throw new Error(`post-pinch pan did not use shared state: ${image.style.transform}`);
+
+        overlay.querySelector('[data-media-action="reset"]')?.click();
+        if (overlay.querySelector('.azm-media-zoom')?.textContent !== '100%') throw new Error('reset after pinch did not return to 100%');
+        out.textContent = `PASS pinch zoom, pan, and reset verified at ${zoom}\nMEDIA TOUCH SMOKE COMPLETE`;
       } catch (error) {
         out.textContent = `FAIL ${error.message || error}`;
       }
