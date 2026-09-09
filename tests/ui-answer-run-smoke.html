@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Azaman UI answer-run smoke</title></head>
+<body>
+<pre id="result">running</pre>
+<iframe id="app" title="Azaman simulator" style="width:100%;height:800px;border:0"></iframe>
+<script>
+(() => {
+  const out = document.getElementById('result');
+  const frame = document.getElementById('app');
+  const KEY = 'azaman-sat-practice-v3';
+  const checks = [];
+  let phase = 0;
+  const wait = (fn) => setTimeout(fn, 60);
+  const read = () => JSON.parse(localStorage.getItem(KEY));
+  const write = (s) => localStorage.setItem(KEY, JSON.stringify(s));
+  const check = (label, value) => { checks.push(`${value ? 'PASS' : 'FAIL'} ${label}`); if (!value) throw new Error(label); };
+  const base = () => ({v:3,screen:'test',student:'UI Smoke',accessCode:'',roomCode:'',startCode:'',mi:0,qi:0,endAt:Date.now()+120000,breakEndAt:null,answers:{},marked:{},eliminated:{},notes:{},highlights:{},completed:{},submitted:false,adaptive:{rw:'easy',math:'easy'},timerHidden:false,lineReader:false,rules:true,desk:true,warning:{}});
+  const info = (id, win) => id === 'rw1' ? win.SAT_QUESTIONS.rw1 : id === 'rw2' ? win.SAT_QUESTIONS.rw2.hard : id === 'math1' ? win.SAT_QUESTIONS.math1 : win.SAT_QUESTIONS.math2.hard;
+  function enter(win, doc, id) {
+    const state = read(), bank = info(id, win), q = bank[state.qi];
+    check(`${id} q${state.qi + 1} exists`, !!q);
+    if (q.type === 'spr') {
+      const input = doc.querySelector('.spr-input');
+      check(`${id} SPR control`, !!input);
+      input.value = q.answer; input.dispatchEvent(new Event('input',{bubbles:true})); input.dispatchEvent(new Event('blur',{bubbles:true}));
+    } else {
+      const choice = doc.querySelector(`.choice[data-answer="${q.answer}"]`);
+      check(`${id} keyed control`, !!choice); choice.click();
+    }
+    wait(() => {
+      check(`${id} q${state.qi + 1} persisted`, read().answers[`${id}-${state.qi}`] !== undefined);
+      if (state.qi < bank.length - 1) { doc.querySelector('#nextBtn').click(); return; }
+      check(`${id} complete answers persisted`, bank.every((_,i) => read().answers[`${id}-${i}`] !== undefined));
+      doc.querySelector('#nextBtn').click();
+      wait(() => { check(`${id} review`, !!frame.contentDocument?.getElementById('reviewModal')); frame.contentDocument.querySelector('#submitModule')?.click(); wait(() => { phase += 1; frame.contentWindow.location.reload(); }); });
+    });
+  }
+  frame.addEventListener('load', () => {
+    const win = frame.contentWindow, doc = frame.contentDocument;
+    try {
+      if (phase === 0) { write(base()); phase = 1; frame.contentWindow.location.reload(); return; }
+      if (phase === 1) { enter(win,doc,'rw1'); return; }
+      if (phase === 2) { check('R&W hard route', read().adaptive.rw === 'hard'); enter(win,doc,'rw2'); return; }
+      if (phase === 3) { const s=read(); check('break started', s.screen==='break' && Number.isFinite(s.breakEndAt)); s.breakEndAt=Date.now()-1; write(s); phase=4; frame.contentWindow.location.reload(); return; }
+      if (phase === 4) { const s=read(); check('Math directions', s.screen==='directions' && s.mi===2); s.screen='test'; s.endAt=Date.now()+120000; write(s); phase=5; frame.contentWindow.location.reload(); return; }
+      if (phase === 5) { enter(win,doc,'math1'); return; }
+      if (phase === 6) { check('Math hard route', read().adaptive.math === 'hard'); enter(win,doc,'math2'); return; }
+      if (phase === 7) { const s=read(); check('terminal submission', s.screen==='finish' && s.submitted===true); check('four modules locked', ['rw1','rw2','math1','math2'].every(k=>s.completed[k]===true)); check('98 answers persisted', Object.keys(s.answers).length===98); out.textContent=checks.join('\n')+'\nUI ANSWER-RUN SMOKE COMPLETE'; }
+    } catch (e) { out.textContent=checks.join('\n')+`\nFAIL ${e.message}`; throw e; }
+  });
+  localStorage.removeItem(KEY);
+  frame.src='../index.html?ui-answer-run=1';
+})();
+</script>
+</body>
+</html>
