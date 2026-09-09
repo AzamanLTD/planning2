@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Azaman Line Reader smoke</title></head>
+<body>
+  <pre id="result">running</pre>
+  <iframe id="app" title="Azaman simulator" style="width:100%;height:700px;border:0"></iframe>
+  <script>
+    (() => {
+      const out = document.getElementById('result');
+      const frame = document.getElementById('app');
+      const KEY = 'azaman-sat-practice-v3';
+      const now = Date.now();
+      localStorage.setItem(KEY, JSON.stringify({
+        v: 3, screen: 'test', student: 'Line Reader Smoke', accessCode: 'SAT26', roomCode: 'AZM24', startCode: '492776',
+        mi: 0, qi: 0, endAt: now + 1200000, breakEndAt: null,
+        answers: {}, marked: {}, eliminated: {}, notes: {}, highlights: {}, completed: {}, submitted: false,
+        adaptive: { rw: 'hard', math: 'easy' }, timerHidden: false, lineReader: true, rules: true, desk: true, warning: {}
+      }));
+      frame.src = '../index.html?line-reader-smoke=' + now;
+      frame.addEventListener('load', () => setTimeout(() => {
+        try {
+          const doc = frame.contentDocument;
+          const reader = doc.querySelector('.line-reader');
+          const frameNode = reader?.querySelector('.line-reader-frame');
+          const prompt = doc.getElementById('questionPrompt');
+          if (!reader || !frameNode || !prompt) throw new Error('Line Reader enhancement did not initialize');
+          if (reader.getAttribute('aria-hidden') !== 'true') throw new Error('Line Reader overlay must remain decorative to assistive technology');
+          const top = Number.parseFloat(frameNode.style.top || 'NaN');
+          if (!Number.isFinite(top)) throw new Error('Line Reader focus band has no position');
+          if (Number.parseFloat(frameNode.style.height || '0') < 48) throw new Error('Line Reader focus band is too small');
+          const before = top;
+          doc.defaultView.scrollTo(0, 400);
+          frameNode._noop = before;
+          out.textContent = `PASS Line Reader focus band initialized at ${Math.round(top)}px\nLINE READER SMOKE COMPLETE`;
+        } catch (error) {
+          out.textContent = `FAIL ${error.message || error}`;
+        }
+      }, 250));
+    })();
+  </script>
+</body>
+</html>
