@@ -2,7 +2,7 @@
 
 This document is the behavioral source of truth for the replica. Facts below
 marked **[VERIFIED]** come from College Board's official published materials
-(retrieved 2026-09-08). Items marked **[VERIFY]** must be confirmed against
+(retrieved 2026-09-09). Items marked **[VERIFY]** must be confirmed against
 the real Bluebook app during the reference-capture pass before implementation
 is considered complete. Nothing in this file may be implemented from memory
 alone when a screenshot can prove it.
@@ -35,17 +35,21 @@ These must all exist, with the real app's icons, placements, and interactions:
 1. **Testing Timer** — shows time remaining in the module; can be hidden;
    alerts when 5 minutes remain.
 2. **Calculator** — a Desmos-style scientific/graphing calculator, draggable
-   anywhere on screen. Available on the SAT Math modules.
+   anywhere on screen. Available on the SAT Math modules. **Beginning Fall
+   2026, the embedded calculator can also be resized.**
 3. **Reference Sheet** — formula reference shown on all tests with math
-   questions. [VERIFY] exact contents/layout from capture pass.
+   questions. **Beginning Fall 2026, reference sheets can be shown in a
+   different/compressed layout and students can use zoom and pan to inspect
+   charts, graphs, and images.** [VERIFY] exact contents/layout from capture.
 4. **Highlights & Notes** — highlight text in a question/passage; attach a
-  note to a question.
+   note to a question.
 5. **Mark for Review** — bookmark icon flags a question for return.
 6. **Line Reader** — focus tool for reading test content.
 7. **Option Eliminator** — strike through wrong answer choices; undoable.
 8. **Question Menu (navigator)** — grid showing answered, unanswered, and
    marked questions; jump to any question in the section.
-9. **Zoom** — pinch on tablets / keyboard shortcut on laptops.
+9. **Zoom** — pinch on tablets / keyboard shortcut on laptops and can also be
+   used with reference-sheet/image inspection where supported.
 
 ### Keyboard shortcuts [VERIFIED — operating-system-specific official pages]
 
@@ -151,6 +155,9 @@ and typography. No hardcoded literals in components.
   the absolute deadline; stale or impossible persisted states are repaired
   without reopening completed modules. Setup/check-in state must also survive
   reload instead of falling back to the access screen.
+- Current Fall 2026 tool behavior: reference-sheet zoom/pan and alternate
+  layout controls are required in the simulator's math tool surface; calculator
+  resizing remains required. [VERIFY] exact affordances from capture pass.
 
 ## 6. Network boundary [VERIFY / implementation boundary]
 
@@ -179,3 +186,4 @@ not guessed Bluebook behavior.
 - Chromebook shortcuts: https://bluebook.collegeboard.org/help-center/chromebook-keyboard-shortcuts
 - macOS shortcuts: https://bluebook.collegeboard.org/help-center/macos-keyboard-shortcuts
 - Accessibility / platform shortcuts: https://bluebook.collegeboard.org/students/accommodations-assistive-technology/accessing-bluebook-features-content
+- Fall 2026 Bluebook updates: https://bluebook.collegeboard.org/test-admin/new-updated-features
