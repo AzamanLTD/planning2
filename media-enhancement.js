@@ -75,37 +75,50 @@
     const viewport = overlay.querySelector('.azm-media-viewport');
     const image = overlay.querySelector('.azm-media-lightbox-image');
     const zoomText = overlay.querySelector('.azm-media-zoom');
-    const state = { scale: 1, x: 0, y: 0 };
+    const viewState = { scale: 1, x: 0, y: 0 };
     const render = () => {
-      image.style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.scale})`;
-      zoomText.textContent = `${Math.round(state.scale * 100)}%`;
-      viewport.classList.toggle('panning', state.scale > 1);
+      image.style.transform = `translate(${viewState.x}px, ${viewState.y}px) scale(${viewState.scale})`;
+      zoomText.textContent = `${Math.round(viewState.scale * 100)}%`;
+      viewport.classList.toggle('panning', viewState.scale > 1);
     };
     const applyZoom = (delta) => {
-      state.scale = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, +(state.scale + delta).toFixed(1)));
-      if (state.scale === 1) { state.x = 0; state.y = 0; }
+      viewState.scale = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, +(viewState.scale + delta).toFixed(2)));
+      if (viewState.scale === 1) { viewState.x = 0; viewState.y = 0; }
       render();
+    };
+    const reset = () => { viewState.scale = 1; viewState.x = 0; viewState.y = 0; render(); };
+
+    overlay.__azmMediaState = {
+      get scale() { return viewState.scale; },
+      set scale(value) { viewState.scale = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, Number(value) || MIN_ZOOM)); render(); },
+      get x() { return viewState.x; },
+      set x(value) { viewState.x = Number(value) || 0; render(); },
+      get y() { return viewState.y; },
+      set y(value) { viewState.y = Number(value) || 0; render(); },
+      render,
+      applyZoom,
+      reset
     };
 
     overlay.querySelectorAll('[data-media-action]').forEach((button) => button.addEventListener('click', () => {
       const action = button.dataset.mediaAction;
       if (action === 'zoom-in') applyZoom(.25);
       else if (action === 'zoom-out') applyZoom(-.25);
-      else if (action === 'reset') { state.scale = 1; state.x = 0; state.y = 0; render(); }
+      else if (action === 'reset') reset();
       else if (action === 'close') overlay.remove();
     }));
 
     let pan = null;
     viewport.addEventListener('pointerdown', (event) => {
-      if (state.scale <= 1 || event.target !== image) return;
-      pan = { x: event.clientX, y: event.clientY, ox: state.x, oy: state.y };
+      if (viewState.scale <= 1 || event.target !== image) return;
+      pan = { x: event.clientX, y: event.clientY, ox: viewState.x, oy: viewState.y };
       viewport.setPointerCapture?.(event.pointerId);
       event.preventDefault();
     });
     viewport.addEventListener('pointermove', (event) => {
       if (!pan) return;
-      state.x = pan.ox + event.clientX - pan.x;
-      state.y = pan.oy + event.clientY - pan.y;
+      viewState.x = pan.ox + event.clientX - pan.x;
+      viewState.y = pan.oy + event.clientY - pan.y;
       render();
     });
     ['pointerup', 'pointercancel'].forEach((name) => viewport.addEventListener(name, () => { pan = null; }));
@@ -116,12 +129,12 @@
       if (event.key === 'Escape') { event.preventDefault(); close(); return; }
       if (event.key === '+' || event.key === '=') { event.preventDefault(); applyZoom(.25); return; }
       if (event.key === '-') { event.preventDefault(); applyZoom(-.25); return; }
-      if (event.key === '0') { event.preventDefault(); state.scale = 1; state.x = 0; state.y = 0; render(); return; }
-      if (state.scale > 1 && ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
+      if (event.key === '0') { event.preventDefault(); reset(); return; }
+      if (viewState.scale > 1 && ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
         event.preventDefault();
         const step = 24;
-        state.x += event.key === 'ArrowRight' ? step : event.key === 'ArrowLeft' ? -step : 0;
-        state.y += event.key === 'ArrowDown' ? step : event.key === 'ArrowUp' ? -step : 0;
+        viewState.x += event.key === 'ArrowRight' ? step : event.key === 'ArrowLeft' ? -step : 0;
+        viewState.y += event.key === 'ArrowDown' ? step : event.key === 'ArrowUp' ? -step : 0;
         render();
       }
     });
