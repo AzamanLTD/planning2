@@ -48,8 +48,15 @@ These must all exist, with the real app's icons, placements, and interactions:
 7. **Option Eliminator** — strike through wrong answer choices; undoable.
 8. **Question Menu (navigator)** — grid showing answered, unanswered, and
    marked questions; jump to any question in the section.
-9. **Zoom** — pinch on tablets / keyboard shortcut on laptops and can also be
-   used with reference-sheet/image inspection where supported.
+9. **Zoom** — keyboard shortcuts on laptops and pinch on tablets/touch
+   devices; current Fall 2026 releases also describe enlarged image viewing
+   with a lightbox overlay and zoom/pan for charts, graphs, and images.
+10. **Keyboard-movable calculator/reference dialogs** — the official
+    accessibility guidance exposes a Move button. Activating it with Space or
+    Enter puts it into a pressed/draggable state; Arrow keys then reposition
+    the dialog. Escape exits Move mode. This behavior is implemented by the
+    simulator for both dialogs. [VERIFY] exact iconography/placement from
+    capture.
 
 ### Keyboard shortcuts [VERIFIED — operating-system-specific official pages]
 
@@ -157,7 +164,9 @@ and typography. No hardcoded literals in components.
   reload instead of falling back to the access screen.
 - Current Fall 2026 tool behavior: reference-sheet zoom/pan and alternate
   layout controls are required in the simulator's math tool surface; calculator
-  resizing remains required. [VERIFY] exact affordances from capture pass.
+  resizing remains required. The implemented simulator also supports keyboard
+  repositioning for calculator/reference dialogs and touch pinch zoom within
+  original practice media. [VERIFY] exact affordances from capture pass.
 
 ## 6. Network boundary [VERIFY / implementation boundary]
 
@@ -187,3 +196,4 @@ not guessed Bluebook behavior.
 - macOS shortcuts: https://bluebook.collegeboard.org/help-center/macos-keyboard-shortcuts
 - Accessibility / platform shortcuts: https://bluebook.collegeboard.org/students/accommodations-assistive-technology/accessing-bluebook-features-content
 - Fall 2026 Bluebook updates: https://bluebook.collegeboard.org/test-admin/new-updated-features
+- Current Bluebook releases: https://bluebook.collegeboard.org/technology/updates-releases/releases
