@@ -59,6 +59,7 @@ assert(uiA11y.includes('installReducedMotionSupport'), 'reduced-motion preferenc
 assert(uiA11y.includes('prefers-reduced-motion: reduce'), 'reduced-motion preference must be honored');
 assert(media.includes("setAttribute('role', 'dialog')"), 'media viewer must create dialog semantics');
 assert(media.includes("setAttribute('aria-modal', 'true')"), 'media viewer must expose modal semantics');
+assert(media.includes('aria-describedby'), 'media viewer must associate captions with the viewport');
 assert(media.includes('aria-label'), 'media viewer controls must be labelled');
 assert(toolMove.includes('aria-pressed'), 'tool Move button must expose pressed state');
 assert(toolMove.includes('ArrowLeft') && toolMove.includes('ArrowRight'), 'tool Move must support horizontal keyboard movement');
