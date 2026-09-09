@@ -59,17 +59,21 @@
           }
           if (phase === 2) {
             wait(() => {
-              const current = frame.contentDocument;
-              check('warning can reappear after a fresh module state', !!current.querySelector('.warning-modal'));
-              check('fresh warning state persists', read().warning.rw1 === true);
-              current.querySelector('#dismissWarn')?.click();
-              check('fresh warning modal dismisses', !current.querySelector('.warning-modal'));
-              out.textContent = checks.join('\n') + '\nTIMER WARNING RECOVERY COMPLETE';
+              try {
+                const current = frame.contentDocument;
+                check('warning can reappear after a fresh module state', !!current.querySelector('.warning-modal'));
+                check('fresh warning state persists', read().warning.rw1 === true);
+                current.querySelector('#dismissWarn')?.click();
+                check('fresh warning modal dismisses', !current.querySelector('.warning-modal'));
+                out.textContent = checks.join('\n') + '\nTIMER WARNING RECOVERY COMPLETE';
+              } finally {
+                frame.remove();
+              }
             });
           }
         } catch (error) {
           out.textContent = checks.join('\n') + `\nFAIL ${error.message}`;
-          throw error;
+          frame.remove();
         }
       });
       write(state());
