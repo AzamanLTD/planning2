@@ -1,0 +1,42 @@
+name: Room code smoke
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'app.js'
+      - 'room-code-enhancement.js'
+      - 'code-input-enhancement.js'
+      - 'tests/room-code-smoke.html'
+      - 'tests/room-code-contract.test.js'
+      - '.github/workflows/room-code-smoke.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: room-code-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          package-manager-cache: false
+      - name: Validate room code contract
+        run: node tests/room-code-contract.test.js
+      - name: Run room code browser smoke
+        run: |
+          set -eu
+          python3 -m http.server 8091 --bind 127.0.0.1 >/tmp/azaman-room-code-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          sleep 1
+          timeout 60s chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage \
+            --virtual-time-budget=10000 --dump-dom http://127.0.0.1:8091/tests/room-code-smoke.html \
+            > /tmp/azaman-room-code-smoke.html
+          cat /tmp/azaman-room-code-smoke.html
+          grep -q 'ROOM CODE SMOKE COMPLETE' /tmp/azaman-room-code-smoke.html
