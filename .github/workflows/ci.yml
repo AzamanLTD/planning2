@@ -19,6 +19,8 @@ jobs:
         with:
           node-version: 22
           package-manager-cache: false
+      - name: Validate canonical repository entrypoint
+        run: node tests/entrypoint-contract.test.js
       - name: Check JavaScript syntax
         run: |
           set -eu
