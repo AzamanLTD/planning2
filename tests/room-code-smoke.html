@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Azaman room code smoke</title></head>
+<body>
+  <pre id="result">running</pre>
+  <iframe id="app" title="Azaman simulator" style="width:100%;height:500px;border:0"></iframe>
+  <script>
+    (() => {
+      const out = document.getElementById('result');
+      const frame = document.getElementById('app');
+      const KEY = 'azaman-sat-practice-v3';
+      const baseState = () => ({ v: 3, screen: 'room', student: 'Room Code Smoke', accessCode: 'SAT26', roomCode: '', startCode: '', mi: 0, qi: 0, endAt: null, breakEndAt: null, answers: {}, marked: {}, eliminated: {}, notes: {}, highlights: {}, completed: {}, submitted: false, adaptive: { rw: 'easy', math: 'easy' }, timerHidden: false, lineReader: false, rules: true, desk: true, warning: {} });
+      localStorage.setItem(KEY, JSON.stringify(baseState()));
+      frame.src = '../index.html?room-code-smoke=' + Date.now();
+      function run() {
+        const doc = frame.contentDocument;
+        try {
+          const input = doc.getElementById('room');
+          const button = doc.getElementById('roomBtn');
+          if (!input || !button) throw new Error('room screen controls unavailable');
+          if (input.maxLength !== 5 || input.pattern !== '[A-Za-z]{5}') throw new Error('room field is not configured for five letters');
+          input.value = 'AZM1P';
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          button.click();
+          const rejected = JSON.parse(localStorage.getItem(KEY));
+          if (rejected?.screen !== 'room') throw new Error('invalid five-character room code was accepted');
+          input.value = 'azmpr';
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          if (input.value !== 'AZMPR') throw new Error(`expected uppercase normalization, got ${input.value}`);
+          input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+          setTimeout(() => {
+            try {
+              const next = JSON.parse(localStorage.getItem(KEY));
+              if (next?.screen !== 'startcode') throw new Error(`expected startcode screen after Enter, got ${next?.screen}`);
+              if (next?.roomCode !== 'AZM24') throw new Error(`internal room fixture bridge failed: ${next?.roomCode || '(empty)'}`);
+              const digits = doc.querySelectorAll('.start-digit');
+              if (digits.length !== 6) throw new Error(`expected 6 start-code inputs, got ${digits.length}`);
+              out.textContent = 'PASS invalid-code rejection, uppercase normalization, Enter submission, internal fixture bridge, five-letter room code, six-digit start code\nROOM CODE SMOKE COMPLETE';
+            } catch (error) { out.textContent = `FAIL ${error.message}`; }
+            finally { frame.remove(); }
+          }, 100);
+        } catch (error) { out.textContent = `FAIL ${error.message}`; frame.remove(); }
+      }
+      const waiter = setInterval(() => {
+        try { const doc = frame.contentDocument; if (doc?.readyState === 'complete' && doc.getElementById('app')) { clearInterval(waiter); setTimeout(run, 100); } } catch (_) {}
+      }, 50);
+    })();
+  </script>
+</body>
+</html>
