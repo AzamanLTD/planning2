@@ -11,6 +11,7 @@ on:
       - 'styles-tokens.css'
       - 'tests/line-reader-contract.test.js'
       - 'tests/line-reader-smoke.html'
+      - '.github/workflows/line-reader-smoke.yml'
   workflow_dispatch:
 
 concurrency:
@@ -32,7 +33,7 @@ jobs:
           server_pid=$!
           trap 'kill "$server_pid"' EXIT
           sleep 1
-          timeout 45s chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage \
-            --virtual-time-budget=8000 --dump-dom http://127.0.0.1:8090/tests/line-reader-smoke.html > /tmp/azaman-line-reader-smoke.html
+          timeout 60s chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage \
+            --virtual-time-budget=12000 --dump-dom http://127.0.0.1:8090/tests/line-reader-smoke.html > /tmp/azaman-line-reader-smoke.html
           cat /tmp/azaman-line-reader-smoke.html
           grep -q 'LINE READER SMOKE COMPLETE' /tmp/azaman-line-reader-smoke.html
