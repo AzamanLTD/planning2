@@ -9,6 +9,8 @@ const modal = read('modal-enhancement.js');
 const calculator = read('calculator-enhancement.js');
 const codeInput = read('code-input-enhancement.js');
 const uiA11y = read('ui-accessibility-enhancement.js');
+const media = read('media-enhancement.js');
+const toolMove = read('tools-move-enhancement.js');
 
 assert(html.includes('<html lang="en">'), 'document language must be declared');
 assert(app.includes('aria-live'), 'application status region must expose live updates');
@@ -55,6 +57,14 @@ assert(uiA11y.includes("setAttribute('role', 'menu')"), 'test tools must expose 
 assert(uiA11y.includes('Question ${number}, ${states.join'), 'review buttons must have descriptive labels');
 assert(uiA11y.includes('installReducedMotionSupport'), 'reduced-motion preference must have a dedicated accessibility path');
 assert(uiA11y.includes('prefers-reduced-motion: reduce'), 'reduced-motion preference must be honored');
+assert(media.includes('role', 'media viewer must create dialog semantics');
+assert(media.includes('aria-modal'), 'media viewer must expose modal semantics');
+assert(media.includes('aria-label'), 'media viewer controls must be labelled');
+assert(toolMove.includes('aria-pressed'), 'tool Move button must expose pressed state');
+assert(toolMove.includes('ArrowLeft') && toolMove.includes('ArrowRight'), 'tool Move must support horizontal keyboard movement');
+assert(toolMove.includes('ArrowUp') && toolMove.includes('ArrowDown'), 'tool Move must support vertical keyboard movement');
 assert(html.includes('ui-accessibility-enhancement.js'), 'semantic accessibility enhancement must be loaded');
+assert(html.includes('media-enhancement.js'), 'media accessibility enhancement must be loaded');
+assert(html.includes('tools-move-enhancement.js'), 'keyboard tool movement enhancement must be loaded');
 
-console.log('Accessibility, reduced-motion, and platform shortcut contract checks passed.');
+console.log('Accessibility, reduced-motion, media, tool movement, and platform shortcut contract checks passed.');
