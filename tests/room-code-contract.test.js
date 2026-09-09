@@ -16,6 +16,8 @@ for (const phrase of [
   "button.dispatchEvent(new MouseEvent('click'",
   'event.stopImmediatePropagation()',
   "form?.addEventListener('submit', bridge, true)",
+  "input.addEventListener('keydown'",
+  "if (event.key === 'Enter') bridge(event)",
   "input.setCustomValidity('')",
   'Do not dispatch the public input normalizer here'
 ]) assert(source.includes(phrase), `room code contract missing: ${phrase}`);
