@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Azaman results SPR equivalence smoke</title></head>
+<body>
+  <pre id="result">running</pre>
+  <iframe id="app" title="Azaman simulator" style="width:100%;height:800px;border:0"></iframe>
+  <script>
+    (() => {
+      const out = document.getElementById('result');
+      const frame = document.getElementById('app');
+      const KEY = 'azaman-sat-practice-v3';
+      function equivalentForm(answer) {
+        const text = String(answer).trim();
+        if (text.includes('/')) {
+          const [a, b] = text.replace(/\s+/g, '').split('/');
+          const value = Number(a) / Number(b);
+          return String(value);
+        }
+        const numeric = Number(text);
+        if (!Number.isFinite(numeric)) throw new Error('fixture answer is not numeric');
+        return numeric === 0 ? '0.0' : String(numeric);
+      }
+      frame.addEventListener('load', () => {
+        const win = frame.contentWindow;
+        try {
+          const bank = win.SAT_QUESTIONS.math1;
+          const index = bank.findIndex((q) => q.type === 'spr');
+          if (index < 0) throw new Error('no Math SPR item found');
+          const question = bank[index];
+          const equivalent = equivalentForm(question.answer);
+          if (String(question.answer).trim() === equivalent) throw new Error('fixture did not produce an equivalent non-identical form');
+          const answers = {}; answers[`math1-${index}`] = equivalent;
+          answers['rw1-0'] = bank[0].type === 'spr' ? '' : undefined;
+          localStorage.setItem(KEY, JSON.stringify({
+            v:3, screen:'finish', student:'Results Smoke', accessCode:'', roomCode:'', startCode:'', mi:3, qi:0,
+            endAt:null, breakEndAt:null, answers, marked:{}, eliminated:{}, notes:{}, highlights:{},
+            completed:{rw1:true,rw2:true,math1:true,math2:true}, submitted:true,
+            adaptive:{rw:'easy',math:'easy'}, timerHidden:false, lineReader:false, rules:true, desk:true, warning:{}
+          }));
+          frame.contentWindow.location.reload();
+          setTimeout(() => {
+            const doc = frame.contentDocument;
+            const rows = [...doc.querySelectorAll('.results-module-row')];
+            const mathRow = rows.find((row) => row.textContent.includes('Math · Module 1'));
+            if (!mathRow) throw new Error('Math Module 1 result row not rendered');
+            const passed = mathRow.textContent.includes('1/22') && mathRow.textContent.includes('5%');
+            out.textContent = `${passed ? 'PASS' : 'FAIL'} results report scores equivalent SPR form\nRESULTS SPR EQUIVALENCE COMPLETE`;
+            if (!passed) throw new Error(mathRow.textContent);
+          }, 700);
+        } catch (error) {
+          out.textContent = `FAIL ${error.message}`;
+          throw error;
+        }
+      });
+      frame.src = '../index.html?results-spr-equivalence=1';
+    })();
+  </script>
+</body>
+</html>

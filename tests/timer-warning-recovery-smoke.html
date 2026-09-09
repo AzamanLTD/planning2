@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Azaman timer warning recovery smoke</title></head>
+<body>
+  <pre id="result">running</pre>
+  <iframe id="app" title="Azaman simulator" style="width:100%;height:800px;border:0"></iframe>
+  <script>
+    (() => {
+      const out = document.getElementById('result');
+      const frame = document.getElementById('app');
+      const KEY = 'azaman-sat-practice-v3';
+      const checks = [];
+      let phase = 0;
+      function check(name, value) {
+        checks.push(`${value ? 'PASS' : 'FAIL'} ${name}`);
+        if (!value) throw new Error(name);
+      }
+      function state() {
+        return { v:3, screen:'test', student:'Timer Smoke', accessCode:'', roomCode:'', startCode:'', mi:0, qi:0,
+          endAt:Date.now()+299500, breakEndAt:null, answers:{}, marked:{}, eliminated:{}, notes:{}, highlights:{}, completed:{}, submitted:false,
+          adaptive:{rw:'easy',math:'easy'}, timerHidden:true, lineReader:false, rules:true, desk:true, warning:{} };
+      }
+      function write(value) { localStorage.setItem(KEY, JSON.stringify(value)); }
+      function read() { return JSON.parse(localStorage.getItem(KEY)); }
+      function wait(fn, ms = 700) { setTimeout(fn, ms); }
+      frame.addEventListener('load', () => {
+        const doc = frame.contentDocument;
+        try {
+          if (phase === 0) {
+            const timer = doc.getElementById('timer');
+            check('recovered module renders', !!timer);
+            wait(() => {
+              const current = frame.contentDocument;
+              const timerNow = current.getElementById('timer');
+              check('recovered 4:59 timer is in warning state', !!timerNow?.classList.contains('warning'));
+              check('recovered timer cannot remain hidden', !!timerNow && !timerNow.classList.contains('hidden'));
+              check('warning modal appears after recovery', !!current.querySelector('.warning-modal'));
+              check('warning state persists after recovery', read().warning.rw1 === true);
+              const expired = read();
+              expired.endAt = Date.now() - 1;
+              write(expired);
+              phase = 1;
+              frame.contentWindow.location.reload();
+            });
+            return;
+          }
+          if (phase === 1) {
+            wait(() => {
+              const current = frame.contentDocument;
+              const next = read();
+              check('expired module completes', next.completed.rw1 === true);
+              check('expired module advances to directions', next.screen === 'directions' && next.mi === 1);
+              check('orphaned warning overlay is removed on module transition', !current.querySelector('.warning-modal'));
+              next.screen = 'test'; next.mi = 0; next.qi = 0; next.endAt = Date.now() + 299500; next.completed = {}; next.warning = {}; next.timerHidden = true; write(next);
+              phase = 2;
+              frame.contentWindow.location.reload();
+            });
+            return;
+          }
+          if (phase === 2) {
+            wait(() => {
+              const current = frame.contentDocument;
+              check('warning can reappear after a fresh module state', !!current.querySelector('.warning-modal'));
+              check('fresh warning state persists', read().warning.rw1 === true);
+              current.querySelector('#dismissWarn')?.click();
+              check('fresh warning modal dismisses', !current.querySelector('.warning-modal'));
+              out.textContent = checks.join('\n') + '\nTIMER WARNING RECOVERY COMPLETE';
+            });
+          }
+        } catch (error) {
+          out.textContent = checks.join('\n') + `\nFAIL ${error.message}`;
+          throw error;
+        }
+      });
+      write(state());
+      frame.src = '../index.html?timer-warning-recovery=1';
+    })();
+  </script>
+</body>
+</html>

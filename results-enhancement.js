@@ -19,6 +19,16 @@
     return window.SAT_QUESTIONS?.[module.source] || [];
   }
 
+  function sameAnswer(value, expected) {
+    const a = String(value ?? '').trim();
+    const b = String(expected ?? '').trim();
+    if (!a || !b) return false;
+    const na = Number(a);
+    const nb = Number(b);
+    if (Number.isFinite(na) && Number.isFinite(nb)) return na === nb;
+    return a.toLowerCase() === b.toLowerCase();
+  }
+
   function score(module, current) {
     const bank = bankFor(module, current);
     let answered = 0;
@@ -27,7 +37,7 @@
       const value = current.answers?.[`${module.id}-${index}`];
       if (value === undefined || String(value).trim() === '') return;
       answered += 1;
-      if (window.same ? window.same(value, question.answer) : String(value).trim().toLowerCase() === String(question.answer).trim().toLowerCase()) correct += 1;
+      if (sameAnswer(value, question.answer)) correct += 1;
     });
     return { answered, correct, total: bank.length, accuracy: bank.length ? Math.round(correct / bank.length * 100) : 0 };
   }

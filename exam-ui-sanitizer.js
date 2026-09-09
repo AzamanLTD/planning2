@@ -5,6 +5,9 @@
     const access = document.querySelector('#access');
     if (access) access.setAttribute('placeholder', 'Enter access code');
 
+    const room = document.querySelector('#room');
+    if (room) room.setAttribute('placeholder', 'Enter room code');
+
     if (!document.querySelector('.test-shell')) return;
 
     const meta = document.querySelector('.q-meta');
