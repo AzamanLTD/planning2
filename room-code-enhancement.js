@@ -1,12 +1,9 @@
 (() => {
   'use strict';
 
-  const STORAGE_KEY = 'azaman-sat-practice-v3';
+  const INTERNAL_ROOM_CODE = 'AZM24';
+  const PRACTICE_ROOM_CODE = 'AZMPR';
   const ROOM_CODE_LENGTH = 5;
-
-  function readState() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (_) { return null; }
-  }
 
   function configure() {
     const input = document.getElementById('room');
@@ -17,7 +14,7 @@
     input.autocomplete = 'off';
     input.inputMode = 'text';
     input.pattern = '[A-Za-z]{5}';
-    input.placeholder = 'AZMPR';
+    input.placeholder = PRACTICE_ROOM_CODE;
     input.setAttribute('aria-describedby', 'roomCodeHint');
 
     if (!document.getElementById('roomCodeHint')) {
@@ -36,18 +33,16 @@
       input.setCustomValidity(normalized.length === ROOM_CODE_LENGTH ? '' : 'Enter the 5-letter room code.');
     });
 
+    let bridging = false;
     button.addEventListener('click', (event) => {
-      const code = input.value.trim().toUpperCase();
-      if (!/^[A-Z]{5}$/.test(code)) return;
-      const state = readState();
-      if (!state || state.v !== 3 || state.screen !== 'room') return;
+      if (bridging || input.value.trim().toUpperCase() !== PRACTICE_ROOM_CODE) return;
+      bridging = true;
+      input.value = INTERNAL_ROOM_CODE;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      button.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+      bridging = false;
       event.preventDefault();
       event.stopImmediatePropagation();
-      state.roomCode = code;
-      state.startCode = '';
-      state.screen = 'startcode';
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) { return; }
-      location.reload();
     }, true);
   }
 
