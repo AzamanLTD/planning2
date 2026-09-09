@@ -53,11 +53,16 @@
         if (overlay.querySelector('.azm-media-zoom')?.textContent !== '100%') throw new Error('reset after pinch did not return to 100%');
         close.click();
         setTimeout(() => {
-          if (doc.activeElement !== trigger) throw new Error('focus was not restored to media trigger');
-          out.textContent = `PASS focus, pinch zoom, pan, and reset verified at ${zoom}\nMEDIA TOUCH SMOKE COMPLETE`;
+          try {
+            if (doc.activeElement !== trigger) throw new Error('focus was not restored to media trigger');
+            out.textContent = `PASS focus, pinch zoom, pan, and reset verified at ${zoom}\nMEDIA TOUCH SMOKE COMPLETE`;
+          } finally {
+            frame.remove();
+          }
         }, 20);
       } catch (error) {
         out.textContent = `FAIL ${error.message || error}`;
+        frame.remove();
       }
     }, 350));
   })();
