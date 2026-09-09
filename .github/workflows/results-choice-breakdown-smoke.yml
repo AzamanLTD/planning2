@@ -1,0 +1,42 @@
+name: Results choice breakdown smoke
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'results-enhancement.js'
+      - 'results-choice-breakdown-enhancement.js'
+      - 'results-choice-breakdown.css'
+      - 'tests/results-choice-breakdown-contract.test.js'
+      - 'tests/results-choice-breakdown-smoke.html'
+      - '.github/workflows/results-choice-breakdown-smoke.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: results-choice-breakdown-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          package-manager-cache: false
+      - name: Validate choice breakdown contract
+        run: node tests/results-choice-breakdown-contract.test.js
+      - name: Run choice breakdown browser smoke
+        run: |
+          set -eu
+          python3 -m http.server 8095 --bind 127.0.0.1 >/tmp/azaman-results-choice-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          sleep 1
+          timeout 60s chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage \
+            --dump-dom http://127.0.0.1:8095/tests/results-choice-breakdown-smoke.html \
+            > /tmp/azaman-results-choice-smoke.html
+          cat /tmp/azaman-results-choice-smoke.html
+          grep -q 'RESULTS CHOICE BREAKDOWN SMOKE COMPLETE' /tmp/azaman-results-choice-smoke.html
