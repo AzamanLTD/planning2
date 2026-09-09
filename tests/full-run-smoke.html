@@ -55,8 +55,13 @@
         wait(() => {
           check(`${id}: review opens`, !!frame.contentDocument?.getElementById('reviewModal'));
           check(`${id}: review exposes ${count} question buttons`, frame.contentDocument?.querySelectorAll('#reviewModal [data-q]').length === count);
-          frame.contentDocument?.querySelector('#submitModule')?.click();
-          wait(done, 50);
+          const expired = read();
+          expired.endAt = Date.now() - 1;
+          write(expired);
+          wait(() => {
+            frame.contentDocument?.querySelector('#submitModule')?.click();
+            wait(done, 50);
+          }, 150);
         });
       }
 
