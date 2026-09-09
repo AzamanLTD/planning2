@@ -1,0 +1,25 @@
+.line-reader {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.line-reader-frame {
+  position: absolute;
+  left: 0;
+  right: 0;
+  min-height: 48px;
+  box-sizing: border-box;
+  border-top: 2px solid var(--color-focus);
+  border-bottom: 2px solid var(--color-focus);
+  background: var(--color-surface-soft);
+  box-shadow: 0 0 0 9999px var(--line-reader-mask);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .line-reader-frame {
+    transition: none !important;
+  }
+}
