@@ -1,0 +1,12 @@
+.azm-move-button[aria-pressed="true"] {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.azm-move-button {
+  min-width: 2.25rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .azm-move-button { transition: none; }
+}

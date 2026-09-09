@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Media touch smoke</title></head>
+<body>
+  <main><p>Media touch smoke</p></main>
+  <iframe id="app" title="Azaman simulator" style="width:100%;height:700px;border:0"></iframe>
+  <script>
+  (() => {
+    const KEY = 'azaman-sat-practice-v3';
+    const out = document.createElement('pre');
+    out.id = 'result';
+    out.textContent = 'running';
+    document.body.appendChild(out);
+    const frame = document.getElementById('app');
+    const now = Date.now();
+    localStorage.setItem(KEY, JSON.stringify({
+      v: 3, screen: 'test', student: 'Media Touch Smoke', accessCode: 'SAT26', roomCode: 'AZM24', startCode: '492776',
+      mi: 0, qi: 19, endAt: now + 1200000, breakEndAt: null,
+      answers: {}, marked: {}, eliminated: {}, notes: {}, highlights: {}, completed: {},
+      submitted: false, adaptive: { rw: 'hard', math: 'easy' }, timerHidden: false, lineReader: false,
+      rules: true, desk: true, warning: {}
+    }));
+    frame.src = '../index.html?media-touch-smoke=' + now;
+    frame.addEventListener('load', () => setTimeout(() => {
+      try {
+        const doc = frame.contentDocument;
+        const trigger = doc.querySelector('.azm-media-trigger');
+        if (!trigger) throw new Error('media trigger missing');
+        trigger.focus();
+        trigger.click();
+        const overlay = doc.getElementById('azmMediaLightbox');
+        const viewport = overlay?.querySelector('.azm-media-viewport');
+        const image = overlay?.querySelector('.azm-media-lightbox-image');
+        const close = overlay?.querySelector('[data-media-action="close"]');
+        if (!viewport || !image || !close) throw new Error('lightbox controls missing');
+        if (!overlay.contains(doc.activeElement)) throw new Error('focus did not enter lightbox');
+
+        viewport.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerId: 1, pointerType: 'touch', clientX: 180, clientY: 240 }));
+        viewport.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerId: 2, pointerType: 'touch', clientX: 300, clientY: 240 }));
+        viewport.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerId: 2, pointerType: 'touch', clientX: 360, clientY: 240 }));
+        viewport.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 2, pointerType: 'touch', clientX: 360, clientY: 240 }));
+        viewport.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 1, pointerType: 'touch', clientX: 180, clientY: 240 }));
+
+        const zoom = overlay.querySelector('.azm-media-zoom')?.textContent || '';
+        if (Number.parseFloat(zoom) < 140) throw new Error(`pinch zoom too small: ${zoom}`);
+
+        viewport.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, pointerId: 3, pointerType: 'touch', clientX: 240, clientY: 240 }));
+        viewport.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, pointerId: 3, pointerType: 'touch', clientX: 280, clientY: 265 }));
+        viewport.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 3, pointerType: 'touch', clientX: 280, clientY: 265 }));
+        if (!/translate\(40px, 25px\)/.test(image.style.transform)) throw new Error(`post-pinch pan did not use shared state: ${image.style.transform}`);
+
+        overlay.querySelector('[data-media-action="reset"]')?.click();
+        if (overlay.querySelector('.azm-media-zoom')?.textContent !== '100%') throw new Error('reset after pinch did not return to 100%');
+        close.click();
+        setTimeout(() => {
+          if (doc.activeElement !== trigger) throw new Error('focus was not restored to media trigger');
+          out.textContent = `PASS focus, pinch zoom, pan, and reset verified at ${zoom}\nMEDIA TOUCH SMOKE COMPLETE`;
+        }, 20);
+      } catch (error) {
+        out.textContent = `FAIL ${error.message || error}`;
+      }
+    }, 350));
+  })();
+  </script>
+</body>
+</html>

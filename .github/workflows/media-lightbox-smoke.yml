@@ -1,0 +1,26 @@
+name: Media lightbox smoke
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: media-lightbox-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v5
+      - name: Run media lightbox browser smoke
+        run: |
+          set -eu
+          python3 -m http.server 8087 --bind 127.0.0.1 >/tmp/azaman-media-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          sleep 1
+          timeout 45s chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=20000 --dump-dom http://127.0.0.1:8087/tests/media-lightbox-smoke.html > /tmp/azaman-media-smoke.html
+          cat /tmp/azaman-media-smoke.html
+          grep -q 'MEDIA LIGHTBOX SMOKE COMPLETE' /tmp/azaman-media-smoke.html

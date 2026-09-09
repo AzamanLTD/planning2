@@ -52,8 +52,21 @@
             viewport.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, clientX: 128, clientY: 116, pointerId: 1, isPrimary: true }));
             check('Zoomed reference can be panned', content.style.transform !== before && /translate\(28px, 16px\) scale\(1\.1\)/.test(content.style.transform));
 
+            const move = panel.querySelector('.azm-move-button');
+            check('Reference sheet Move button exists', !!move);
+            check('Move starts unpressed', move.getAttribute('aria-pressed') === 'false');
+            const leftBefore = panel.getBoundingClientRect().left;
+            move.click();
+            check('Move enters pressed state', move.getAttribute('aria-pressed') === 'true');
+            key('ArrowRight');
+            const leftAfter = panel.getBoundingClientRect().left;
+            check('Reference sheet moves with ArrowRight', leftAfter > leftBefore);
+            key('Escape');
+            check('Escape exits Move mode', move.getAttribute('aria-pressed') === 'false');
+
             panel.querySelector('[data-reference-action="reset"]').click();
             check('Reset restores 100% zoom and origin', zoom.textContent === '100%' && /translate\(0px, 0px\) scale\(1\)/.test(content.style.transform));
+            panel.querySelector('#closeRef')?.click();
 
             out.textContent = checks.join('\n') + '\nREFERENCE SHEET SMOKE COMPLETE';
           } catch (error) {

@@ -1,0 +1,17 @@
+name: Media schema contract
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: media-schema-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Validate media schema and asset safety
+        run: node tests/media-schema-contract.test.js
