@@ -131,7 +131,10 @@
     installReducedMotionSupport();
   }
 
+  // The exam renderer replaces DOM subtrees on state changes, so child-list
+  // mutations are sufficient. Watching aria-pressed/class here caused the
+  // enhancer itself to retrigger indefinitely when it refreshed attributes.
   const observer = new MutationObserver(enhance);
-  observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'aria-pressed'] });
+  observer.observe(document.body, { childList: true, subtree: true });
   enhance();
 })();
