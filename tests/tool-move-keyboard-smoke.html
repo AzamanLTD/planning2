@@ -5,8 +5,9 @@
   <main><p>Tool move keyboard smoke</p></main>
   <script>
     localStorage.setItem('azaman-sat-practice-v3', JSON.stringify({
-      version: 3, moduleIndex: 0, questionIndex: 0, answers: {}, marked: {}, eliminated: {},
-      startedAt: Date.now(), moduleStartedAt: Date.now(), completed: false
+      v: 3, mi: 0, qi: 0, answers: {}, marked: {}, eliminated: {},
+      startedAt: Date.now(), moduleStartedAt: Date.now(), completed: false,
+      adaptive: { rw: 'easy', math: 'easy' }
     }));
   </script>
   <script src="../data/questions.js"></script>
@@ -29,25 +30,43 @@
   <script src="../media-enhancement.js"></script>
   <script src="../tools-move-enhancement.js"></script>
   <script>
-    setTimeout(() => {
-      const open = [...document.querySelectorAll('button')].find((button) => /calculator/i.test(button.textContent || button.getAttribute('aria-label') || ''));
-      if (!open) throw new Error('calculator opener missing');
+    const fail = (message) => { throw new Error(message); };
+    const waitFor = (selector) => new Promise((resolve) => {
+      const find = () => {
+        const value = document.querySelector(selector);
+        if (value) resolve(value); else setTimeout(find, 50);
+      };
+      find();
+    });
+    const exerciseMove = async (panelId, openerPattern, directionKey) => {
+      const open = [...document.querySelectorAll('button')].find((button) => openerPattern.test(button.textContent || button.getAttribute('aria-label') || ''));
+      if (!open) fail(`${panelId} opener missing`);
       open.click();
-      setTimeout(() => {
-        const panel = document.getElementById('calculatorPanel');
-        const move = panel?.querySelector('.azm-move-button');
-        if (!move) throw new Error('move button missing');
-        if (move.getAttribute('aria-pressed') !== 'false') throw new Error('move button initial state incorrect');
-        const before = panel.getBoundingClientRect().left;
-        move.click();
-        if (move.getAttribute('aria-pressed') !== 'true') throw new Error('move button did not enter pressed state');
-        move.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
-        const after = panel.getBoundingClientRect().left;
-        if (after <= before) throw new Error(`calculator did not move right: ${before} -> ${after}`);
-        move.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
-        if (move.getAttribute('aria-pressed') !== 'false') throw new Error('Escape did not leave move mode');
+      const panel = await waitFor(`#${panelId}`);
+      const move = panel.querySelector('.azm-move-button');
+      if (!move) fail(`${panelId} move button missing`);
+      if (move.getAttribute('aria-pressed') !== 'false') fail(`${panelId} move initial state incorrect`);
+      const rectBefore = panel.getBoundingClientRect();
+      move.click();
+      if (move.getAttribute('aria-pressed') !== 'true') fail(`${panelId} move button did not enter pressed state`);
+      move.dispatchEvent(new KeyboardEvent('keydown', { key: directionKey, bubbles: true }));
+      const rectAfter = panel.getBoundingClientRect();
+      const moved = directionKey === 'ArrowRight' ? rectAfter.left > rectBefore.left : rectAfter.top > rectBefore.top;
+      if (!moved) fail(`${panelId} did not move for ${directionKey}: ${rectBefore.left},${rectBefore.top} -> ${rectAfter.left},${rectAfter.top}`);
+      move.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+      if (move.getAttribute('aria-pressed') !== 'false') fail(`${panelId} Escape did not leave move mode`);
+      panel.querySelector('.panel-head .icon-btn')?.click();
+    };
+
+    setTimeout(async () => {
+      try {
+        await exerciseMove('calculatorPanel', /calculator/i, 'ArrowRight');
+        await exerciseMove('referencePanel', /reference/i, 'ArrowDown');
         document.body.insertAdjacentHTML('beforeend', '<p id="move-pass">TOOL MOVE KEYBOARD SMOKE COMPLETE</p>');
-      }, 150);
+      } catch (error) {
+        document.body.insertAdjacentHTML('beforeend', `<pre id="move-fail">${String(error.message || error)}</pre>`);
+        throw error;
+      }
     }, 250);
   </script>
 </body>
