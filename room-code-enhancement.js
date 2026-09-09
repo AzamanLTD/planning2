@@ -27,22 +27,26 @@
 
     if (input.dataset.roomCodeEnhancer === '1') return;
     input.dataset.roomCodeEnhancer = '1';
+    let bridging = false;
     input.addEventListener('input', () => {
+      if (bridging) return;
       const normalized = input.value.replace(/[^A-Za-z]/g, '').slice(0, ROOM_CODE_LENGTH).toUpperCase();
       if (input.value !== normalized) input.value = normalized;
       input.setCustomValidity(normalized.length === ROOM_CODE_LENGTH ? '' : 'Enter the 5-letter room code.');
     });
 
-    let bridging = false;
     button.addEventListener('click', (event) => {
       if (bridging || input.value.trim().toUpperCase() !== PRACTICE_ROOM_CODE) return;
-      bridging = true;
-      input.value = INTERNAL_ROOM_CODE;
-      input.dispatchEvent(new Event('input', { bubbles: true }));
-      button.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
-      bridging = false;
       event.preventDefault();
       event.stopImmediatePropagation();
+      bridging = true;
+      try {
+        input.value = INTERNAL_ROOM_CODE;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        button.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+      } finally {
+        bridging = false;
+      }
     }, true);
   }
 
