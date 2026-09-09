@@ -8,6 +8,10 @@
     { id: 'math1', label: 'Math · Module 1', source: 'math1' },
     { id: 'math2', label: 'Math · Module 2', section: 'math2' },
   ];
+  const DOMAINS = {
+    'Reading and Writing': ['Craft and Structure', 'Information and Ideas', 'Standard English Conventions', 'Expression of Ideas'],
+    Math: ['Algebra', 'Advanced Math', 'Problem Solving and Data Analysis', 'Geometry and Trigonometry']
+  };
 
   function state() {
     try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (_) { return null; }
@@ -42,6 +46,29 @@
     return { answered, correct, total: bank.length, accuracy: bank.length ? Math.round(correct / bank.length * 100) : 0 };
   }
 
+  function domainAccuracy(current, modules) {
+    const groups = Object.fromEntries(Object.entries(DOMAINS).map(([section, domains]) => [section, Object.fromEntries(domains.map((domain) => [domain, { answered: 0, correct: 0 }]))]));
+    modules.forEach((module) => {
+      const bank = bankFor(module, current);
+      bank.forEach((question, index) => {
+        const value = current.answers?.[`${module.id}-${index}`];
+        if (value === undefined || String(value).trim() === '') return;
+        const bucket = groups[question.section]?.[question.domain];
+        if (!bucket) return;
+        bucket.answered += 1;
+        if (sameAnswer(value, question.answer)) bucket.correct += 1;
+      });
+    });
+    return groups;
+  }
+
+  function renderDomainBreakdown(section, values) {
+    return `<section class="results-domain-breakdown" aria-labelledby="${section.replace(/\W+/g, '').toLowerCase()}DomainTitle"><h3 id="${section.replace(/\W+/g, '').toLowerCase()}DomainTitle">${section} domains</h3><div class="results-domain-list">${Object.entries(values).map(([domain, result]) => {
+      const percent = result.answered ? Math.round(result.correct / result.answered * 100) : 0;
+      return `<div class="results-domain-row"><span class="results-domain-name">${domain}</span><div class="results-domain-track" role="progressbar" aria-label="${domain} accuracy" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}"><div class="results-domain-bar" style="width:${percent}%"></div></div><span class="results-domain-score">${result.answered ? `${percent}%` : 'No responses'}</span></div>`;
+    }).join('')}</div></section>`;
+  }
+
   function render() {
     const heading = [...document.querySelectorAll('.kicker')].find((el) => el.textContent.trim() === 'Practice complete');
     const current = state();
@@ -53,6 +80,7 @@
     const rows = MODULES.map((module) => ({ ...module, result: score(module, current) }));
     const rw = rows.slice(0, 2).reduce((a, x) => ({ answered: a.answered + x.result.answered, correct: a.correct + x.result.correct, total: a.total + x.result.total }), { answered: 0, correct: 0, total: 0 });
     const math = rows.slice(2).reduce((a, x) => ({ answered: a.answered + x.result.answered, correct: a.correct + x.result.correct, total: a.total + x.result.total }), { answered: 0, correct: 0, total: 0 });
+    const domains = domainAccuracy(current, MODULES);
 
     const section = document.createElement('section');
     section.className = 'results-detail';
@@ -63,6 +91,7 @@
         <article class="results-section-card"><h3>Math</h3><div class="results-big">${math.correct}/${math.total}</div><p>${math.answered}/${math.total} answered · ${math.total ? Math.round(math.correct / math.total * 100) : 0}% accuracy</p></article>
       </div>
       <div class="results-module-list">${rows.map((row) => `<div class="results-module-row"><span>${row.label}</span><strong>${row.result.correct}/${row.result.total}</strong><span>${row.result.accuracy}%</span></div>`).join('')}</div>
+      <div class="results-domain-report" aria-label="Domain performance">${renderDomainBreakdown('Reading and Writing', domains['Reading and Writing'])}${renderDomainBreakdown('Math', domains.Math)}</div>
       <p class="small results-note">These are raw practice-test results only. They are not an official SAT scaled score, percentile, or College Board result.</p>`;
     const actions = card.querySelector('.btn-row');
     card.insertBefore(section, actions || null);
