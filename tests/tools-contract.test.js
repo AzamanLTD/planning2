@@ -4,6 +4,8 @@ const assert = require('assert');
 const tools = fs.readFileSync('tools-enhancement.js', 'utf8');
 const app = fs.readFileSync('app.js', 'utf8');
 const keyboard = fs.readFileSync('keyboard.js', 'utf8');
+const index = fs.readFileSync('index.html', 'utf8');
+const unscheduledBreak = fs.readFileSync('unscheduled-break-enhancement.js', 'utf8');
 
 for (const formula of ['A = πr²', 'C = 2πr', 'A = lw', 'A = ½bh', 'c² = a² + b²', 'x√3', 's√2', 'V = lwh', 'V = πr²h', 'V = 4/3πr³', 'V = 1/3πr²h', '360° = 2π radians', '180°']) {
   assert(tools.includes(formula), `reference sheet missing public formula: ${formula}`);
@@ -17,5 +19,8 @@ assert(app.includes('Line reader'), 'line reader tool must remain in the core ex
 assert(app.includes('Mark for review'), 'mark-for-review tool must remain in the core exam surface');
 assert(keyboard.includes('Option eliminator'), 'option eliminator shortcut must remain wired in keyboard layer');
 assert(app.includes('Reference sheet'), 'reference sheet tool must remain in the core exam surface');
+assert(unscheduledBreak.includes("button.textContent = 'Unscheduled break'"), 'unscheduled break must remain exposed');
+assert(unscheduledBreak.includes('The module timer continues while you are away.'), 'unscheduled break must document live timer behavior');
+assert(index.includes('src="unscheduled-break-enhancement.js"'), 'unscheduled break enhancement must remain in the canonical entrypoint');
 
 console.log('Reference-sheet and exam-tool contracts passed.');

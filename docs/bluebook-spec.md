@@ -60,6 +60,11 @@ These must all exist, with the real app's icons, placements, and interactions:
     the dialog. Escape exits Move mode. This behavior is implemented by the
     simulator for both dialogs. [VERIFY] exact iconography/placement from
     capture.
+11. **Unscheduled Break** — a quick break available from the in-test More
+    menu. **The test timer continues running while the student is away.** The
+    replica models this as an interrupting break dialog without changing the
+    active module deadline. [VERIFY] exact wording, placement, and return
+    interaction from capture.
 
 ### Keyboard shortcuts [VERIFIED — operating-system-specific official pages]
 
@@ -156,7 +161,8 @@ and typography. No hardcoded literals in components.
   never lose an answer on navigation.
 - Answers persist across module revisit (back from review into questions).
 - Module submission is final within a run: after submit, no re-entry to
-  the module (matches real exam).
+  the module (matches real exam). Ordinary students cannot finish a module
+  early; the review surface remains available until the module deadline.
 - Keyboard shortcuts mirror the real app where they exist. [VERIFY] exact
   platform-specific list; the implemented subset above is based on the current
   official Windows/ChromeOS/macOS/iPad documentation.
@@ -169,8 +175,9 @@ and typography. No hardcoded literals in components.
   layout controls are required in the simulator's math tool surface; calculator
   resizing remains required. The implemented simulator also supports keyboard
   repositioning for calculator/reference dialogs, touch pinch zoom within
-  original practice media, and a visual Line Reader focus band. [VERIFY]
-  exact affordances from the capture pass.
+  original practice media, a visual Line Reader focus band, and an
+  interrupting Unscheduled Break dialog whose module timer continues to run.
+  [VERIFY] exact affordances from the capture pass.
 
 ## 6. Network boundary [VERIFY / implementation boundary]
 
