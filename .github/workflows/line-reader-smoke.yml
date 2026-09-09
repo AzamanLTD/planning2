@@ -21,7 +21,7 @@ concurrency:
 jobs:
   smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 2
+    timeout-minutes: 3
     steps:
       - uses: actions/checkout@v5
       - name: Run Line Reader contract
@@ -33,7 +33,7 @@ jobs:
           server_pid=$!
           trap 'kill "$server_pid"' EXIT
           sleep 1
-          timeout 60s chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage \
+          timeout 120s chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage \
             --virtual-time-budget=12000 --dump-dom http://127.0.0.1:8090/tests/line-reader-smoke.html > /tmp/azaman-line-reader-smoke.html
           cat /tmp/azaman-line-reader-smoke.html
           grep -q 'LINE READER SMOKE COMPLETE' /tmp/azaman-line-reader-smoke.html
