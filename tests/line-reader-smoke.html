@@ -32,8 +32,10 @@
           doc.defaultView.scrollTo(0, 400);
           frameNode._noop = before;
           out.textContent = `PASS Line Reader focus band initialized at ${Math.round(top)}px\nLINE READER SMOKE COMPLETE`;
+          frame.remove();
         } catch (error) {
           out.textContent = `FAIL ${error.message || error}`;
+          frame.remove();
         }
       }, 250));
     })();
