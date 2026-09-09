@@ -160,9 +160,11 @@ and typography. No hardcoded literals in components.
 - Question navigation: next/back, question menu, review screen —
   never lose an answer on navigation.
 - Answers persist across module revisit (back from review into questions).
-- Module submission is final within a run: after submit, no re-entry to
-  the module (matches real exam). Ordinary students cannot finish a module
-  early; the review surface remains available until the module deadline.
+- Module submission is final within a run. For this **practice simulator**,
+  match current Bluebook full-length practice behavior: students may move
+  forward before a module's timer expires. Test-day Bluebook is stricter and
+  does not generally permit early submission; that distinction is not enabled
+  as a separate mode in this project.
 - Keyboard shortcuts mirror the real app where they exist. [VERIFY] exact
   platform-specific list; the implemented subset above is based on the current
   official Windows/ChromeOS/macOS/iPad documentation.
