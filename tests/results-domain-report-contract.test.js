@@ -13,7 +13,10 @@ for (const phrase of [
   'renderQuestionReview',
   'results-review',
   'Review answer',
-  'resultsReviewFilter'
+  'resultsReviewFilter',
+  'numericAnswer',
+  'denominator === 0',
+  'Math.abs(an - bn) <= 1e-9'
 ]) assert(source.includes(phrase), `results report contract missing: ${phrase}`);
 assert(index.includes('results-domain-report.css'), 'domain report stylesheet must be loaded');
 assert(index.includes('results-question-review.css'), 'question review stylesheet must be loaded');
