@@ -184,9 +184,12 @@
       return;
     }
 
-    if (state.submitted) {
-      state.screen = 'finish';
-      state.mi = 3;
+    // A persisted terminal flag is only valid after all four modules are complete.
+    // Reopening an incomplete run is safer than trusting a stale/corrupt finish state.
+    if (state.submitted || state.screen === 'finish') {
+      state.submitted = false;
+      state.screen = 'directions';
+      state.mi = firstIncompleteModuleIndex(state);
       state.qi = 0;
       state.endAt = null;
       state.breakEndAt = null;
