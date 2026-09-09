@@ -11,7 +11,12 @@ for (const phrase of [
   "setAttribute('aria-expanded'",
   "setAttribute('aria-label', 'Open question menu')",
   "setAttribute('aria-label', 'Previous question')",
-  'Review module'
+  'Review module',
+  "source?.setAttribute('role', 'region')",
+  "source?.setAttribute('aria-label', 'Source')",
+  "question?.setAttribute('role', 'region')",
+  "question?.setAttribute('aria-label', 'Question')",
+  "footer?.setAttribute('role', 'contentinfo')"
 ]) assert(source.includes(phrase), `navigation accessibility contract missing: ${phrase}`);
 
 assert(source.includes("attributeFilter: ['class', 'aria-pressed']"), 'navigation observer must react to mark-state changes');
