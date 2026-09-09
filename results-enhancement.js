@@ -23,14 +23,30 @@
     return window.SAT_QUESTIONS?.[module.source] || [];
   }
 
+  function numericAnswer(value) {
+    const raw = String(value ?? '').trim().replace(/\s+/g, '');
+    if (!raw) return null;
+    if (/^-?\d+\/\d+$/.test(raw)) {
+      const [numerator, denominator] = raw.split('/').map(Number);
+      if (!Number.isFinite(numerator) || !Number.isFinite(denominator) || denominator === 0) return null;
+      const result = numerator / denominator;
+      return Number.isFinite(result) ? result : null;
+    }
+    if (/^-?(?:\d+(?:\.\d*)?|\.\d+)$/.test(raw)) {
+      const result = Number(raw);
+      return Number.isFinite(result) ? result : null;
+    }
+    return null;
+  }
+
   function sameAnswer(value, expected) {
-    const a = String(value ?? '').trim();
-    const b = String(expected ?? '').trim();
+    const a = String(value ?? '').trim().toLowerCase();
+    const b = String(expected ?? '').trim().toLowerCase();
     if (!a || !b) return false;
-    const na = Number(a);
-    const nb = Number(b);
-    if (Number.isFinite(na) && Number.isFinite(nb)) return na === nb;
-    return a.toLowerCase() === b.toLowerCase();
+    if (a === b) return true;
+    const an = numericAnswer(a);
+    const bn = numericAnswer(b);
+    return an !== null && bn !== null && Math.abs(an - bn) <= 1e-9;
   }
 
   function escapeHtml(value) {
