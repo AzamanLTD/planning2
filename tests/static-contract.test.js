@@ -16,6 +16,8 @@ const results = read('results-enhancement.js');
 const sanitizer = read('exam-ui-sanitizer.js');
 const accessibility = read('tests/accessibility-contract.test.js');
 const helpSmoke = read('tests/help-shortcut-smoke.html');
+const fullRunSmoke = read('tests/full-run-smoke.html');
+const mobileSmoke = read('tests/mobile-layout-smoke.html');
 const uiA11y = read('ui-accessibility-enhancement.js');
 const quality = read('data/question-quality-overrides.js');
 const tokens = read('styles.css');
@@ -66,6 +68,13 @@ assert(helpSmoke.includes('HELP SMOKE COMPLETE'), 'Help smoke must expose a mach
 for (const phrase of ['ChromeOS 144', 'macOS 15', 'iPadOS 18', 'Windows 11 24H2', 'support matrix']) assert(platformReadiness.includes(phrase), `platform readiness documentation missing: ${phrase}`);
 for (const phrase of ['Control + Search + S', 'ChromeOS', 'macOS', 'iPad', 'Command + Control + P', 'Setup/check-in state']) assert(spec.includes(phrase), `Bluebook platform spec missing: ${phrase}`);
 for (const phrase of ['hash(value)', 'question.options = original.map', 'question.answer = letters', 'difficulty: \'hard\'']) assert(quality.includes(phrase), `question quality override missing: ${phrase}`);
+
+assert(fullRunSmoke.includes('FULL RUN SMOKE COMPLETE'), 'full-run smoke must expose a machine-checkable completion marker');
+for (const phrase of ['27', '22', 'rw1', 'rw2', 'math1', 'math2', 'adaptive.rw === \'hard\'', 'adaptive.math === \'hard\'', 'screen === \'break\'', 'screen === \'finish\'', 'Object.keys(next.answers).length === 98']) {
+  assert(fullRunSmoke.includes(phrase), `full-run smoke missing coverage: ${phrase}`);
+}
+assert(mobileSmoke.includes('MOBILE LAYOUT SMOKE COMPLETE'), 'mobile smoke must expose a machine-checkable completion marker');
+for (const phrase of ['scrollWidth', 'getBoundingClientRect', '#toolPopover', '#calculatorPanel', 'innerWidth']) assert(mobileSmoke.includes(phrase), `mobile smoke missing layout guard: ${phrase}`);
 
 for (const token of ['--color-page:', '--color-surface:', '--color-text:', '--color-border:', '--color-primary:', '--color-warning:', '--color-focus:', '--color-selected:']) assert(tokens.includes(token), `visual token missing: ${token}`);
 assert(!app.includes('Function('), 'unsafe Function() evaluator must not return');
