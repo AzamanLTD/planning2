@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Azaman results report smoke</title></head>
+<body>
+  <pre id="result">running</pre>
+  <iframe id="app" title="Azaman simulator" style="width:100%;height:900px;border:0"></iframe>
+  <script>
+    (() => {
+      const out = document.getElementById('result');
+      const frame = document.getElementById('app');
+      const KEY = 'azaman-sat-practice-v3';
+      const now = Date.now();
+      localStorage.setItem(KEY, JSON.stringify({
+        v: 3, screen: 'finish', student: 'Results Report Smoke', accessCode: 'SAT26', roomCode: 'AZMPR', startCode: '492776',
+        mi: 3, qi: 0, endAt: null, breakEndAt: null,
+        answers: { 'rw1-0': 'A', 'rw1-1': 'B', 'math1-0': '1/2', 'math1-1': '0.5' },
+        marked: {}, eliminated: {}, notes: {}, highlights: {}, completed: { rw1: true, rw2: true, math1: true, math2: true }, submitted: true,
+        adaptive: { rw: 'easy', math: 'easy' }, timerHidden: false, lineReader: false, rules: true, desk: true, warning: {}, smoke: now
+      }));
+      frame.src = '../index.html?results-report-smoke=' + now;
+      function run() {
+        clearInterval(waiter);
+        setTimeout(() => {
+          try {
+            const doc = frame.contentDocument;
+            const report = doc.querySelector('.results-detail');
+            const domains = doc.querySelectorAll('.results-domain-breakdown');
+            const bars = doc.querySelectorAll('.results-domain-track[role="progressbar"]');
+            const items = doc.querySelectorAll('.results-review-item');
+            const filter = doc.getElementById('resultsReviewFilter');
+            const download = doc.getElementById('downloadPracticeReport');
+            if (!report) throw new Error('results report missing');
+            if (domains.length !== 2) throw new Error(`expected 2 domain sections, got ${domains.length}`);
+            if (bars.length !== 8) throw new Error(`expected 8 domain bars, got ${bars.length}`);
+            if (items.length !== 98) throw new Error(`expected 98 review questions, got ${items.length}`);
+            if (!filter) throw new Error('results review filter missing');
+            if (!download) throw new Error('download practice report button missing');
+            const incorrect = [...items].filter((item) => item.dataset.result === 'incorrect');
+            if (incorrect.length < 1) throw new Error('incorrect-answer filter has no candidates');
+            const math = [...items].filter((item) => item.dataset.section === 'Math');
+            if (math.length !== 44) throw new Error(`expected 44 Math review rows, got ${math.length}`);
+            filter.value = 'incorrect';
+            filter.dispatchEvent(new Event('change', { bubbles: true }));
+            const visible = [...items].filter((item) => !item.hidden);
+            if (visible.length !== incorrect.length) throw new Error('incorrect filter did not isolate incorrect rows');
+            let clicked = null;
+            const originalClick = doc.defaultView.HTMLAnchorElement.prototype.click;
+            doc.defaultView.HTMLAnchorElement.prototype.click = function () { clicked = { download: this.download, href: this.href }; };
+            download.click();
+            doc.defaultView.HTMLAnchorElement.prototype.click = originalClick;
+            if (!clicked?.download?.startsWith('azaman-sat-practice-report-results-report-smoke')) {
+              throw new Error(`download filename missing or unexpected: ${clicked?.download || ''}`);
+            }
+            out.textContent = 'PASS results report, 8 domain bars, 98-question review, filtering, downloadable report\nRESULTS REPORT SMOKE COMPLETE';
+          } catch (error) {
+            out.textContent = `FAIL ${error.message || error}`;
+          } finally {
+            frame.remove();
+          }
+        }, 150);
+      }
+      const waiter = setInterval(() => {
+        try {
+          const doc = frame.contentDocument;
+          if (doc?.readyState === 'complete' && doc.getElementById('app')) run();
+        } catch (_) {}
+      }, 50);
+    })();
+  </script>
+</body>
+</html>
