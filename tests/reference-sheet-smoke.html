@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Azaman reference sheet smoke</title></head>
+<body>
+  <pre id="result">running</pre>
+  <iframe id="app" title="Azaman simulator" style="width:100%;height:600px;border:0"></iframe>
+  <script>
+    (() => {
+      const out = document.getElementById('result');
+      const frame = document.getElementById('app');
+      const KEY = 'azaman-sat-practice-v3';
+      const state = {
+        v: 3, screen: 'test', student: 'Reference Smoke', accessCode: 'SAT26', roomCode: 'AZM24', startCode: '492776',
+        mi: 2, qi: 0, endAt: Date.now() + 1200000, breakEndAt: null,
+        answers: {}, marked: {}, eliminated: {}, notes: {}, highlights: {},
+        completed: { rw1: true, rw2: true, math1: false, math2: false }, submitted: false,
+        adaptive: { rw: 'hard', math: 'easy' }, timerHidden: false, lineReader: false, rules: true, desk: true, warning: {}
+      };
+      localStorage.setItem(KEY, JSON.stringify(state));
+      frame.src = '../index.html?reference-smoke=' + Date.now();
+      frame.addEventListener('load', () => {
+        const doc = frame.contentDocument;
+        const checks = [];
+        const check = (name, value) => { checks.push(`${value ? 'PASS' : 'FAIL'} ${name}`); if (!value) throw new Error(name); };
+        const key = (value, init = {}) => doc.dispatchEvent(new KeyboardEvent('keydown', { key: value, bubbles: true, cancelable: true, ...init }));
+        setTimeout(() => {
+          try {
+            check('Math module loads', /Math/i.test(doc.querySelector('.test-title')?.textContent || ''));
+            key('r', { ctrlKey: true, altKey: true });
+            const panel = doc.getElementById('referencePanel');
+            check('Reference sheet opens', !!panel);
+            check('Reference sheet viewport exists', !!panel?.querySelector('.reference-viewport'));
+            check('Zoom control exists', !!panel?.querySelector('[data-reference-action="zoom-in"]'));
+            check('Compact layout control exists', !!panel?.querySelector('[data-reference-action="compact"]'));
+
+            const content = panel.querySelector('.reference-sheet-content');
+            const zoom = panel.querySelector('.reference-zoom-value');
+            panel.querySelector('[data-reference-action="zoom-in"]').click();
+            check('Zoom increases to 110%', zoom.textContent === '110%');
+            check('Zoom transform is applied', /scale\(1\.1\)/.test(content.style.transform));
+
+            const compact = panel.querySelector('[data-reference-action="compact"]');
+            compact.click();
+            check('Compact layout toggles on', compact.getAttribute('aria-pressed') === 'true' && panel.querySelector('.reference-viewport').classList.contains('compact'));
+            compact.click();
+            check('Compact layout toggles off', compact.getAttribute('aria-pressed') === 'false' && !panel.querySelector('.reference-viewport').classList.contains('compact'));
+
+            const viewport = panel.querySelector('.reference-viewport');
+            const before = content.style.transform;
+            viewport.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, clientX: 100, clientY: 100, pointerId: 1, isPrimary: true }));
+            viewport.dispatchEvent(new PointerEvent('pointermove', { bubbles: true, clientX: 128, clientY: 116, pointerId: 1, isPrimary: true }));
+            viewport.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, clientX: 128, clientY: 116, pointerId: 1, isPrimary: true }));
+            check('Zoomed reference can be panned', content.style.transform !== before && /translate\(28px, 16px\) scale\(1\.1\)/.test(content.style.transform));
+
+            panel.querySelector('[data-reference-action="reset"]').click();
+            check('Reset restores 100% zoom and origin', zoom.textContent === '100%' && /translate\(0px, 0px\) scale\(1\)/.test(content.style.transform));
+
+            out.textContent = checks.join('\n') + '\nREFERENCE SHEET SMOKE COMPLETE';
+          } catch (error) {
+            out.textContent = checks.join('\n') + `\nFAIL ${error.message}`;
+          }
+        }, 150);
+      });
+    })();
+  </script>
+</body>
+</html>
