@@ -44,7 +44,10 @@ These must all exist, with the real app's icons, placements, and interactions:
 4. **Highlights & Notes** — highlight text in a question/passage; attach a
    note to a question.
 5. **Mark for Review** — bookmark icon flags a question for return.
-6. **Line Reader** — focus tool for reading test content.
+6. **Line Reader** — focus tool for reading test content. The simulator's
+   current implementation renders a non-interactive focus band aligned to the
+   active question content and updates it with viewport changes. [VERIFY]
+   exact band geometry, mask opacity, and placement from a real-app capture.
 7. **Option Eliminator** — strike through wrong answer choices; undoable.
 8. **Question Menu (navigator)** — grid showing answered, unanswered, and
    marked questions; jump to any question in the section.
@@ -165,8 +168,9 @@ and typography. No hardcoded literals in components.
 - Current Fall 2026 tool behavior: reference-sheet zoom/pan and alternate
   layout controls are required in the simulator's math tool surface; calculator
   resizing remains required. The implemented simulator also supports keyboard
-  repositioning for calculator/reference dialogs and touch pinch zoom within
-  original practice media. [VERIFY] exact affordances from capture pass.
+  repositioning for calculator/reference dialogs, touch pinch zoom within
+  original practice media, and a visual Line Reader focus band. [VERIFY]
+  exact affordances from the capture pass.
 
 ## 6. Network boundary [VERIFY / implementation boundary]
 
