@@ -94,6 +94,14 @@
     });
   }
 
+  function enhanceBreakTimer() {
+    const clock = document.getElementById('breakClock');
+    if (!clock) return;
+    clock.setAttribute('role', 'timer');
+    clock.setAttribute('aria-label', 'Break time remaining');
+    clock.setAttribute('aria-atomic', 'true');
+  }
+
   function enhanceStartCode(root = document) {
     const fields = [...root.querySelectorAll('.start-digit')];
     fields.forEach((field, index) => {
@@ -118,11 +126,14 @@
     enhanceTools(document.getElementById('toolPopover'));
     enhanceNavigation();
     enhanceSourceTables();
+    enhanceBreakTimer();
     enhanceStartCode();
     installReducedMotionSupport();
   }
 
+  // State changes replace DOM subtrees. Watching only child-list mutations keeps
+  // accessibility augmentation responsive without observing the attributes it edits.
   const observer = new MutationObserver(enhance);
-  observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'aria-pressed'] });
+  observer.observe(document.body, { childList: true, subtree: true });
   enhance();
 })();
