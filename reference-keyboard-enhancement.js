@@ -14,7 +14,7 @@
     if (!document.getElementById('referenceSheetPanHelp')) {
       const help = document.createElement('span');
       help.id = 'referenceSheetPanHelp';
-      help.className = 'visually-hidden';
+      help.style.cssText = 'position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;';
       help.textContent = 'At greater than 100 percent zoom, use the arrow keys to pan the reference sheet. Hold Shift to pan farther. Home resets the view.';
       viewport.insertAdjacentElement('afterend', help);
     }
@@ -24,10 +24,12 @@
       const transform = getComputedStyle(content).transform;
       const match = transform.match(/^matrix\([^,]+,[^,]+,[^,]+,[^,]+,\s*([^,]+),\s*([^,]+)\)$/);
       if (!match) return;
-      const x = Number(match[1]) + dx;
-      const y = Number(match[2]) + dy;
       const scale = zoomLevel() / 100;
       if (scale <= 1) return;
+      const minX = Math.min(0, viewport.clientWidth - content.offsetWidth * scale);
+      const minY = Math.min(0, viewport.clientHeight - content.offsetHeight * scale);
+      const x = Math.max(minX, Math.min(0, Number(match[1]) + dx));
+      const y = Math.max(minY, Math.min(0, Number(match[2]) + dy));
       content.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
     };
 
