@@ -91,7 +91,7 @@
                                     const d12b = frame.contentDocument; check('room code success message', !!d12b.querySelector('.success-msg'));
                                     d12b.querySelector('#wizNext').click();
                                     setTimeout(() => {
-                                      const st3 = readState(); check('practice room code bridges to internal fixture', st3.roomCode === 'AZM24' && st3.step === 4);
+                                      const st3 = readState(); check('any five-letter room code is accepted', st3.roomCode === 'AZMPR' && st3.step === 4);
                                       const d13 = frame.contentDocument; check('check-in step 4 accommodations', /Accommodations/.test(d13.querySelector('.wiz-card h1')?.textContent || '')); d13.querySelector('#wizNext').click();
                                       setTimeout(() => {
                                         const d14 = frame.contentDocument; check('check-in step 5 accessibility aids', !!d14.querySelector('.aid-check')); d14.querySelector('#wizNext').click();

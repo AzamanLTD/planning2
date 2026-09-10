@@ -1,8 +1,9 @@
 (() => {
   'use strict';
 
-  const INTERNAL_ROOM_CODE = 'AZM24';
-  const PRACTICE_ROOM_CODE = 'AZMPR';
+  // This is an offline practice tool: any 5-letter room code the student
+  // types is accepted (see app.js wizNext, step 3) — there is no server to
+  // validate against and no fixture code to match.
   const ROOM_CODE_LENGTH = 5;
 
   function configure() {
@@ -14,7 +15,7 @@
       const hint = document.createElement('span');
       hint.id = 'roomCodeHint';
       hint.style.cssText = 'position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;';
-      hint.textContent = 'Enter the five-letter room code. The room code contains letters only.';
+      hint.textContent = 'Enter any five-letter room code. The room code contains letters only.';
       document.body.append(hint);
     }
 
