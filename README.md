@@ -36,7 +36,7 @@ The repository contains 147 structured original question records across the laun
 ## Demo credentials
 
 - Sign-in accepts any full name and email (practice simulator; nothing is transmitted)
-- Room code: `AZM24` (practice bridge: `AZMPR`)
+- Room code: type `AZMPR` in the five letter boxes (letters only, like real Bluebook room codes — digits are rejected). `AZMPR` bridges to the internal fixture code `AZM24`, which the app also accepts programmatically.
 - Start code: `492776`
 
 These values are documented only for proctor/developer setup. They are intentionally not shown in student-facing UI fields or help text.
