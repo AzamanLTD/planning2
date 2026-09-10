@@ -8,6 +8,12 @@
   }
 
   function questionKey() {
+    const data = state();
+    if (data && Number.isFinite(data.mi)) {
+      const modules = ['rw1', 'rw2', 'math1', 'math2'];
+      const module = modules[data.mi] || 'rw1';
+      return `${module}-${Math.max(0, data.qi || 0)}`;
+    }
     const title = document.querySelector('.test-title')?.textContent || '';
     const counter = document.querySelector('.test-counter')?.textContent || '';
     const module = title.includes('Reading and Writing') ? (title.includes('Module 2') ? 'rw2' : 'rw1')
@@ -47,7 +53,7 @@
     backdrop.className = 'modal-backdrop';
     backdrop.innerHTML = `<div class="modal note-editor" role="dialog" aria-modal="true" aria-labelledby="noteEditorTitle">
       <div class="modal-head"><h3 id="noteEditorTitle">Notes</h3><button class="icon-btn" id="noteEditorClose" aria-label="Close notes">×</button></div>
-      <p class="small">Write a private note for this question. Your note is saved with this practice run.</p>
+      <p class="small">Write a private note for this question. Your note is saved with this test.</p>
       <textarea id="noteEditorText" rows="8" maxlength="1000" aria-label="Question note" style="width:100%;resize:vertical;padding:12px;border:1px solid var(--color-border-strong);border-radius:6px;background:var(--color-surface);color:var(--color-text)">${escapeHtml(existing)}</textarea>
       <div class="modal-actions"><button class="btn" id="noteEditorCancel">Cancel</button><button class="btn primary-action" id="noteEditorSave">Save note</button></div>
     </div>`;

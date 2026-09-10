@@ -16,7 +16,7 @@ assert(app.includes('cta-yellow'), 'finish CTA must use the yellow pill style');
 assert(app.includes('laptopArt()'), 'finish card must include the laptop illustration');
 
 // practice score reporting stays attached for the results layers
-assert(app.includes('>Practice complete</div>'), 'practice complete kicker must remain for the results layers');
+assert(app.includes('>Test complete</div>'), 'test complete kicker must remain for the results layers');
 assert(app.includes('id="restartBtn"'), 'restart control must remain wired');
 assert(smoke.includes("restartBtn") === false, 'no smoke coupling to the restart control label');
 

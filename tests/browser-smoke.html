@@ -11,17 +11,24 @@
       const KEY = 'azaman-sat-practice-v3';
       let phase = 0;
       let preflight = true;
+      let errored = false;
       const checks = [];
       function check(name, value) { checks.push(`${value ? 'PASS' : 'FAIL'} ${name}`); if (!value) throw new Error(name); }
+      window.addEventListener('error', () => {
+        errored = true;
+        out.textContent = 'FAIL ' + checks.filter((c) => c.startsWith('FAIL')).join(' | ');
+        document.querySelectorAll('script').forEach((s) => s.remove());
+      });
       function writeState(data) { localStorage.setItem(KEY, JSON.stringify(data)); }
       function readState() { return JSON.parse(localStorage.getItem(KEY)); }
       function baseState() {
         return { v:3, screen:'test', student:'Smoke Student', accessCode:'SAT26', roomCode:'AZM24', startCode:'492776', mi:0, qi:0,
           endAt:Date.now()+600000, breakEndAt:null, answers:{}, marked:{}, eliminated:{}, notes:{}, highlights:{}, completed:{}, submitted:false,
-          adaptive:{rw:'easy',math:'easy'}, timerHidden:false, lineReader:false, rules:true, desk:true, warning:{} };
+          adaptive:{rw:'easy',math:'easy'}, timerHidden:false, lineReader:false, rules:true, desk:true, rulesOk:true, harness:true, setupDone:true, warning:{} };
       }
       function preflightFlow(doc) {
         check('sign-in screen renders', !!doc.querySelector('#ticketBtn') && !!doc.querySelector('#accountBtn'));
+        check('bluebook logo renders', !!doc.querySelector('.signin-brand .ico-logo'));
         doc.querySelector('#ticketBtn').click();
         setTimeout(() => {
           const d1 = frame.contentDocument; check('credential screen renders', !!d1.querySelector('#student') && !!d1.querySelector('#email') && !!d1.querySelector('#password'));
@@ -30,57 +37,103 @@
           d1.querySelector('#password').value = 'correcthorse'; d1.querySelector('#password').dispatchEvent(new Event('input', { bubbles:true }));
           check('submit enabled after credentials', d1.querySelector('#signinBtn')?.disabled === false); d1.querySelector('#signinBtn').click();
           setTimeout(() => {
-            const d2 = frame.contentDocument; check('your tests dashboard renders', !!d2.querySelector('#startSetupBtn') && /Digital SAT/.test(d2.querySelector('.test-name')?.textContent || ''));
+            const d2 = frame.contentDocument;
+            check('your tests dashboard renders', !!d2.querySelector('#startSetupBtn') && /SAT/.test(d2.querySelector('.test-name')?.textContent || ''));
+            check('dashboard shows test-day location', /International Community School/.test(d2.querySelector('.test-meta')?.textContent || ''));
+            check('dashboard shows test date', /Sat, Sep 12, 2026/.test(d2.querySelector('.test-meta')?.textContent || ''));
+            check('dashboard has exam overview and checklist links', !!d2.querySelector('#examOverviewBtn') && !!d2.querySelector('#checklistBtn'));
             d2.querySelector('#startSetupBtn').click();
             setTimeout(() => {
-              const d3 = frame.contentDocument; check('wizard step 1 renders', !!d3.querySelector('#wizNext'));
-              d3.querySelector('#wizNext').click();
+              const d3 = frame.contentDocument;
+              check('setup step 1 personal info renders', !!d3.querySelector('input[name="infoCorrect"]') && !!d3.querySelector('#setupNext'));
+              check('setup back button disabled on step 1', d3.querySelector('#setupBack')?.disabled === true);
+              d3.querySelector('input[name="infoCorrect"][value="yes"]').click();
+              d3.querySelector('#setupNext').click();
               setTimeout(() => {
-                const d4 = frame.contentDocument; check('wizard step 2 your info', !!d4.querySelector('#infoAck')); d4.querySelector('#infoAck').click(); d4.querySelector('#wizNext').click();
+                const d4 = frame.contentDocument;
+                check('setup step 2 device requirements', /Review Device Requirements/.test(d4.querySelector('.wiz-card h1')?.textContent || ''));
+                d4.querySelector('input[name="deviceOk"][value="yes"]').click();
                 setTimeout(() => {
-                  const d5 = frame.contentDocument, boxes = [...d5.querySelectorAll('.room-digit')];
-                  check('wizard step 3 room code boxes', boxes.length === 5);
-                  'AZM24'.split('').forEach((ch, i) => { const b = frame.contentDocument.querySelectorAll('.room-digit')[i]; b.value = ch; b.dispatchEvent(new Event('input', { bubbles:true })); });
+                  const d4b = frame.contentDocument; check('device confirmation success message', !!d4b.querySelector('.success-msg'));
+                  d4b.querySelector('#setupNext').click();
                   setTimeout(() => {
-                    const d5b = frame.contentDocument; check('room code success message', !!d5b.querySelector('.success-msg'));
-                    d5b.querySelector('#wizNext').click();
+                    const d5 = frame.contentDocument;
+                    check('setup step 3 testing rules', /SAT Testing Rules/.test(d5.querySelector('.wiz-card h1')?.textContent || '') && !!d5.querySelector('#rulesAccept'));
+                    d5.querySelector('#rulesAccept').click();
+                    d5.querySelector('#setupNext').click();
                     setTimeout(() => {
-                      const d6 = frame.contentDocument; check('wizard step 4 accommodations', /Accommodations/.test(d6.querySelector('.wiz-card h1')?.textContent || '')); d6.querySelector('#wizNext').click();
+                      const d6 = frame.contentDocument;
+                      check('setup step 4 test day checklist', /Test Day Checklist/.test(d6.querySelector('.wiz-card h1')?.textContent || '') && !!d6.querySelector('.checklist-cols'));
+                      d6.querySelector('#setupNext').click();
                       setTimeout(() => {
-                        const d7 = frame.contentDocument; check('wizard step 5 accessibility aids', !!d7.querySelector('.aid-check')); d7.querySelector('#wizNext').click();
+                        const d7 = frame.contentDocument;
+                        check('setup step 5 get ready', /Get Ready for Test Day/.test(d7.querySelector('.wiz-card h1')?.textContent || ''));
+                        d7.querySelector('#setupNext').click();
                         setTimeout(() => {
-                          const d8 = frame.contentDocument; check('wizard step 6 equipment check', /Equipment Check/.test(d8.querySelector('.wiz-card h1')?.textContent || '')); d8.querySelector('#wizNext').click();
+                          const d8 = frame.contentDocument;
+                          check('admission ticket renders', !!d8.querySelector('.admit-ticket') && !!d8.querySelector('.ticket-qr'));
+                          check('ticket shows registration number', /4106920164/.test(d8.querySelector('.admit-ticket')?.textContent || ''));
+                          check('ticket offers print and email', !!d8.querySelector('#printTicketBtn') && !!d8.querySelector('#emailTicketBtn'));
+                          d8.querySelector('#setupNext').click();
                           setTimeout(() => {
-                            const d9 = frame.contentDocument; check('wizard step 7 testing rules', !!d9.querySelector('#deskAck') && !!d9.querySelector('#pledge'));
-                            d9.querySelector('#deskAck').click();
-                            const p = d9.querySelector('#pledge'); p.value = 'I agree'; p.dispatchEvent(new Event('input', { bubbles:true }));
-                            d9.querySelector('#wizNext').click();
+                            const d9 = frame.contentDocument;
+                            check('dashboard confirms exam setup complete', !!d9.querySelector('#checkinBtn') && /setup is complete/.test(d9.querySelector('.ready-note')?.textContent || ''));
+                            d9.querySelector('#checkinBtn').click();
                             setTimeout(() => {
-                              const d10 = frame.contentDocument, digits = [...d10.querySelectorAll('.start-digit')];
-                              check('wizard step 8 start code boxes', digits.length === 6);
-                              const paste = new Event('paste', { bubbles:true, cancelable:true }); Object.defineProperty(paste, 'clipboardData', { value: { getData: () => '492776' } }); digits[0].dispatchEvent(paste);
-                              check('start-code paste accepted', [...frame.contentDocument.querySelectorAll('.start-digit')].map((x) => x.value).join('') === '492776');
-                              d10.querySelector('#wizNext').click();
+                              const d10 = frame.contentDocument; check('check-in step 1 welcome', !!d10.querySelector('#wizNext')); d10.querySelector('#wizNext').click();
                               setTimeout(() => {
-                                const d11 = frame.contentDocument; check('wizard step 9 directions', /Directions/.test(d11.querySelector('.wiz-card h1')?.textContent || '')); d11.querySelector('#wizNext').click();
+                                const d11 = frame.contentDocument; check('check-in step 2 your info', !!d11.querySelector('#infoAck')); d11.querySelector('#infoAck').click(); d11.querySelector('#wizNext').click();
                                 setTimeout(() => {
-                                  const d12 = frame.contentDocument; check('wizard step 10 checked in', /checked in/.test(d12.querySelector('.wiz-card h1')?.textContent || '')); d12.querySelector('#wizNext').click();
+                                  const d12 = frame.contentDocument, boxes = [...d12.querySelectorAll('.room-digit')];
+                                  check('check-in step 3 room code boxes', boxes.length === 5);
+                                  'AZMPR'.split('').forEach((ch, i) => { const b = frame.contentDocument.querySelectorAll('.room-digit')[i]; b.value = ch; b.dispatchEvent(new Event('input', { bubbles:true })); });
                                   setTimeout(() => {
-                                    const d13 = frame.contentDocument; check('directions screen follows start code', !!d13.querySelector('#beginModuleBtn'));
-                                    d13.querySelector('#beginModuleBtn').click();
+                                    const d12b = frame.contentDocument; check('room code success message', !!d12b.querySelector('.success-msg'));
+                                    d12b.querySelector('#wizNext').click();
                                     setTimeout(() => {
-                                      preflight = false; phase = 0; writeState(baseState()); frame.contentWindow.location.reload();
-                                    }, 50);
-                                  }, 50);
-                                }, 50);
-                              }, 60);
+                                      const st3 = readState(); check('practice room code bridges to internal fixture', st3.roomCode === 'AZM24' && st3.step === 4);
+                                      const d13 = frame.contentDocument; check('check-in step 4 accommodations', /Accommodations/.test(d13.querySelector('.wiz-card h1')?.textContent || '')); d13.querySelector('#wizNext').click();
+                                      setTimeout(() => {
+                                        const d14 = frame.contentDocument; check('check-in step 5 accessibility aids', !!d14.querySelector('.aid-check')); d14.querySelector('#wizNext').click();
+                                        setTimeout(() => {
+                                          const d15 = frame.contentDocument; check('check-in step 6 equipment check', /Equipment Check/.test(d15.querySelector('.wiz-card h1')?.textContent || '')); d15.querySelector('#wizNext').click();
+                                          setTimeout(() => {
+                                            const d16 = frame.contentDocument; check('check-in step 7 testing rules', !!d16.querySelector('#rulesAck'));
+                                            d16.querySelector('#rulesAck').click(); d16.querySelector('#wizNext').click();
+                                            setTimeout(() => {
+                                              const d17 = frame.contentDocument, digits = [...d17.querySelectorAll('.start-digit')];
+                                              check('check-in step 8 start code boxes', digits.length === 6);
+                                              const paste = new Event('paste', { bubbles:true, cancelable:true }); Object.defineProperty(paste, 'clipboardData', { value: { getData: () => '492776' } }); digits[0].dispatchEvent(paste);
+                                              check('start-code paste accepted', [...frame.contentDocument.querySelectorAll('.start-digit')].map((x) => x.value).join('') === '492776');
+                                              d17.querySelector('#wizNext').click();
+                                              setTimeout(() => {
+                                                const d18 = frame.contentDocument; check('check-in step 9 directions', /Directions/.test(d18.querySelector('.wiz-card h1')?.textContent || '')); d18.querySelector('#wizNext').click();
+                                                setTimeout(() => {
+                                                  const d19 = frame.contentDocument; check('check-in step 10 checked in', /checked in/.test(d19.querySelector('.wiz-card h1')?.textContent || '')); d19.querySelector('#wizNext').click();
+                                                  setTimeout(() => {
+                                                    const d20 = frame.contentDocument; check('directions screen follows check-in', !!d20.querySelector('#beginModuleBtn'));
+                                                    d20.querySelector('#beginModuleBtn').click();
+                                                    setTimeout(() => {
+                                                      preflight = false; phase = 0; writeState(baseState()); frame.contentWindow.location.reload();
+                                                    }, 50);
+                                                  }, 50);
+                                                }, 50);
+                                              }, 60);
+                                            }, 50);
+                                          }, 50);
+                                        }, 50);
+                                      }, 50);
+                                    }, 60);
+                                  }, 60);
+                                }, 60);
+                              }, 50);
                             }, 50);
                           }, 50);
                         }, 50);
                       }, 50);
-                    }, 60);
-                  }, 60);
-                }, 50);
+                    }, 50);
+                  }, 50);
+                }, 80);
               }, 50);
             }, 50);
           }, 50);
@@ -208,11 +261,12 @@
               }, 50);
             }, 50);
           }, 50);
+        }
         if (phase === 4) {
           const input = doc.querySelector('.spr-input'); check('SPR field renders', !!input); input.value = '.6666';
           input.dispatchEvent(new Event('input', { bubbles:true })); input.dispatchEvent(new Event('blur', { bubbles:true }));
           setTimeout(() => {
-            const stored = readState().answers[`math1-${readState().qi}`]; check('SPR answer persists after normalization', stored === '.6666');
+            const stored = readState().answers[`math1-${readState().qi}`]; check('SPR answer persists after normalization', stored === '.6666' && input.value === '.6666');
             const state = readState(); state.mi = 3; state.qi = 0; state.endAt = Date.now()-1; state.completed.math1 = true; state.completed.math2 = false;
             writeState(state); phase = 5; frame.contentWindow.location.reload();
           }, 50); return;
@@ -220,7 +274,7 @@
         if (phase === 5) {
           setTimeout(() => {
             check('expired module auto-submits', readState().screen === 'finish' && !!readState().completed.math2 && readState().submitted === true);
-            check('practice report renders', !!doc.querySelector('.results-detail') && doc.querySelector('.results-detail')?.textContent.includes('Practice report'));
+            check('results report renders', !!doc.querySelector('.results-detail') && doc.querySelector('.results-detail')?.textContent.includes('Your results'));
             check('report includes both sections', doc.querySelectorAll('.results-section-card').length === 2);
             check('report disclaims official score', doc.querySelector('.results-note')?.textContent.includes('not an official SAT scaled score'));
             const state = readState(); state.submitted=false; state.screen='break'; state.mi=2; state.breakEndAt=Date.now()-1; state.completed.math2=false;
@@ -230,7 +284,7 @@
         if (phase === 6) {
           setTimeout(() => {
             const state = readState(); check('expired break advances to Math directions', state.screen === 'directions' && state.mi === 2 && state.breakEndAt === null);
-            state.screen='startcode'; state.startCode=''; writeState(state); phase=7; frame.contentWindow.location.reload();
+            state.screen='checkin'; state.step=8; state.startCode=''; state.checkinRules=true; writeState(state); phase=7; frame.contentWindow.location.reload();
           }, 350); return;
         }
         if (phase === 7) {
@@ -239,7 +293,7 @@
           const event = new Event('paste', { bubbles:true, cancelable:true }); Object.defineProperty(event, 'clipboardData', { value: { getData: () => '492776' } });
           fields[0].dispatchEvent(event); check('paste fills start code', fields.map((x) => x.value).join('') === '492776'); check('start code state persists', readState().startCode === '492776');
           const st = readState(); st.screen = 'test'; st.mi = 0; st.qi = 0; st.endAt = Date.now() + 300250; st.warning = {}; st.completed = {}; st.timerHidden = true; writeState(st);
-          phase = 8; frame.contentWindow.location.reload();
+          phase = 8; frame.contentWindow.location.reload(); return;
         }
         if (phase === 8) {
           setTimeout(() => {
@@ -250,7 +304,8 @@
             check('warning fires once per module', readState().warning.rw1 === true && doc.querySelectorAll('.warning-modal').length === 1);
             doc.querySelector('#dismissWarn')?.click();
             check('warning modal dismisses', !doc.querySelector('.warning-modal'));
-            out.textContent = checks.join('\n') + '\nSMOKE COMPLETE';
+            if (errored) return;
+            out.textContent = checks.join('\n') + '\nSMOKE COMPLETE'; document.querySelectorAll('script').forEach((s) => s.remove());
           }, 900); return;
         }
       }

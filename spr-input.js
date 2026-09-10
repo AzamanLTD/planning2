@@ -22,7 +22,12 @@
     if (!/^-?(?:\d+(?:\.\d*)?|\.\d+)$/.test(raw)) return null;
     const number = Number(raw);
     if (!Number.isFinite(number)) return null;
-    return String(Number(number.toPrecision(12)));
+    // Prefer the shortest form with the same numeric value: rewriting
+    // '.6666' to '0.6666' would exceed the 5-character SPR limit and the
+    // trailing truncate would corrupt the answer (0.666). Bluebook keeps
+    // student-typed '.667'-style decimals as entered.
+    const canonical = String(Number(number.toPrecision(12)));
+    return raw.length <= canonical.length ? raw : canonical;
   }
 
   function normalize(value) {

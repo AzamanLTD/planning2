@@ -144,3 +144,53 @@ body.access-active .app-shell{min-height:100vh}
 .review-q.answered{background:var(--color-blue);border-color:var(--color-blue);color:var(--color-surface)}
 .review-q.marked:after{content:"";position:absolute;top:4px;right:4px;width:9px;height:11px;background:var(--color-danger);clip-path:polygon(0 0,100% 0,100% 100%,50% 70%,0 100%)}
 .tool-item.danger{color:var(--color-danger)}
+,
+.code-row{display:flex;gap:12px;justify-content:center;margin:28px 0}
+.code-input{width:54px;height:62px;padding:0;border:2px solid var(--color-border-strong);border-radius:10px;background:var(--color-surface);color:var(--color-text);text-align:center;font-size:1.75rem;font-weight:700;line-height:1}
+.code-input:focus{border-color:var(--color-seg-fill);box-shadow:0 0 0 3px var(--color-focus)}
+.app-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0 14px}
+.app-head-links{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.app-brand{display:flex;align-items:center;gap:9px}
+.wiz-brand{display:flex;align-items:center;gap:9px}
+.ico-logo{width:34px;height:28px;display:block}
+.brand-word.sm{font-size:1.25rem}
+.profile-chip{display:flex;align-items:center;gap:8px}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--color-seg-fill);color:var(--color-surface);display:grid;place-items:center;font-size:.8rem;font-weight:700}
+.yt-welcome{font-size:1.5rem;margin:22px 0 4px}
+.yt-h2{font-size:1.25rem;margin:14px 0 10px}
+.test-links{display:flex;gap:18px;margin-top:12px}
+.test-links .btn{padding-left:0}
+.field-label{font-weight:700;display:block;margin-bottom:6px}
+.radio-row{display:flex;gap:22px;margin-top:6px}
+.radio{display:flex;gap:8px;align-items:center;font-weight:400}
+.rules-doc{border:1px solid var(--color-border);border-radius:8px;padding:4px 18px;max-height:280px;overflow:auto;margin:16px 0;background:var(--color-surface-soft)}
+.rules-doc p{font-size:.92rem;line-height:1.55;margin:12px 0}
+.checklist-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+.check-col{border:1px solid var(--color-border);border-radius:8px;padding:14px 16px 14px 20px;background:var(--color-surface-soft);margin-bottom:14px}
+.check-col h3{font-size:1rem;margin:0 0 8px}
+.check-col .check-list{margin:0;padding-left:20px;line-height:1.6}
+.device-list{padding-left:22px}
+.device-list li{margin:7px 0}
+.ready-art{display:flex;justify-content:center;margin:24px 0 10px}
+.ready-art svg{width:220px;height:132px;color:var(--color-text)}
+.ready-sub{font-weight:800;text-align:center;font-size:1.1rem}
+.admit-ticket{border:2px solid var(--color-text);border-radius:8px;background:var(--color-surface);margin:22px auto 6px;max-width:560px;position:relative;padding:16px 120px 16px 18px}
+.ticket-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--color-border);padding-bottom:10px;font-weight:800}
+.sat-badge{background:var(--color-seg-fill);color:var(--color-surface);padding:4px 10px;border-radius:5px;font-size:.85rem;letter-spacing:.06em}
+.ticket-name{font-size:1.15rem;font-weight:800;margin:12px 0 2px}
+.ticket-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0 4px}
+.ticket-cell span{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--color-text-muted);margin-bottom:2px}
+.ticket-cell strong{font-size:.95rem}
+.ticket-cell.wide{grid-column:1/-1}
+.ticket-qr{position:absolute;right:18px;top:50%;transform:translateY(-50%);width:92px;height:92px;color:var(--color-text)}
+.ticket-qr-img{width:100%;height:100%}
+.prepare-block{margin-top:34px}
+.prepare-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.prepare-item{border:1px solid var(--color-border);border-radius:8px;background:var(--color-surface);padding:18px;display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;cursor:pointer;color:var(--color-text)}
+.prepare-item span{font-weight:800}
+.prepare-item small{color:var(--color-text-muted)}
+.bigfuture-banner{display:flex;align-items:center;justify-content:space-between;gap:18px;border:1px solid var(--color-border);border-radius:10px;background:var(--color-surface);padding:18px 22px;margin-top:22px;flex-wrap:wrap}
+.bigfuture-banner h3{margin:0 0 6px}
+.bigfuture-banner p{margin:0;color:var(--color-text-muted)}
+.success-msg{display:flex;align-items:center;gap:8px;color:var(--color-green);font-weight:700;margin:16px 0}
+@media(max-width:720px){.admit-ticket{padding-right:18px}.ticket-qr{position:static;transform:none;margin:12px auto 0}.checklist-cols,.prepare-grid{grid-template-columns:1fr}.ticket-grid{grid-template-columns:1fr}}

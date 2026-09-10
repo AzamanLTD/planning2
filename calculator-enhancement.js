@@ -96,7 +96,12 @@
   }
 
   function graphExpression(input, x) {
-    return evaluate(input.replace(/\bx\b/gi, `(${x})`));
+    // Substitute the variable at letter-run level: \bx\b never matches '2x'
+    // (no word boundary between digit and letter), and a plain /x/g would
+    // corrupt function names like 'exp'. Only runs that are exactly 'x'
+    // are the variable; everything else (sin, cos, exp, pi, ...) is kept.
+    const substituted = input.replace(/[A-Za-z]+/g, (name) => (name.toLowerCase() === 'x' ? `(${x})` : name));
+    return evaluate(substituted);
   }
 
   function install(panel) {
