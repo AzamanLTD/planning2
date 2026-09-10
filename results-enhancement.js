@@ -124,7 +124,7 @@
   }
 
   function render() {
-    const heading = [...document.querySelectorAll('.kicker')].find((el) => el.textContent.trim() === 'Practice complete');
+    const heading = [...document.querySelectorAll('.kicker')].find((el) => el.textContent.trim() === 'Test complete');
     const current = state();
     if (!heading || !current || current.v !== 3) return;
     const card = heading.closest('.card');
@@ -139,7 +139,7 @@
     const section = document.createElement('section');
     section.className = 'results-detail';
     section.setAttribute('aria-labelledby', 'resultsDetailTitle');
-    section.innerHTML = `<h2 id="resultsDetailTitle">Practice report</h2>
+    section.innerHTML = `<h2 id="resultsDetailTitle">Your results</h2>
       <div class="results-section-grid">
         <article class="results-section-card"><h3>Reading and Writing</h3><div class="results-big">${rw.correct}/${rw.total}</div><p>${rw.answered}/${rw.total} answered · ${rw.total ? Math.round(rw.correct / rw.total * 100) : 0}% accuracy</p></article>
         <article class="results-section-card"><h3>Math</h3><div class="results-big">${math.correct}/${math.total}</div><p>${math.answered}/${math.total} answered · ${math.total ? Math.round(math.correct / math.total * 100) : 0}% accuracy</p></article>
@@ -147,7 +147,7 @@
       <div class="results-module-list">${rows.map((row) => `<div class="results-module-row"><span>${escapeHtml(row.label)}</span><strong>${row.result.correct}/${row.result.total}</strong><span>${row.result.accuracy}%</span></div>`).join('')}</div>
       <div class="results-domain-report" aria-label="Domain performance">${renderDomainBreakdown('Reading and Writing', domains['Reading and Writing'])}${renderDomainBreakdown('Math', domains.Math)}</div>
       ${renderQuestionReview(current)}
-      <p class="small results-note">These are raw practice-test results only. The domain bars are a practice accuracy view, not an official SAT scaled score, percentile, or College Board result.</p>`;
+      <p class="small results-note">These are raw results from your submitted answers. The domain bars are an accuracy view, not an official SAT scaled score, percentile, or College Board result.</p>`;
     const actions = card.querySelector('.btn-row');
     card.insertBefore(section, actions || null);
     bindQuestionReview(section.querySelector('.results-review'));

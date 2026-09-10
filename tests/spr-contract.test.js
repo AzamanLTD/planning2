@@ -15,7 +15,8 @@ assert.ok(spr, 'SPR helpers must be instrumentable for contract tests');
 
 assert.equal(spr.normalize('7/2'), '3.5');
 assert.equal(spr.normalize('-7/2'), '-3.5');
-assert.equal(spr.normalize('.6666'), '0.6666');
+assert.equal(spr.normalize('.6666'), '.6666');
+  assert.equal(spr.normalize('2.50'), '2.5');
 assert.equal(spr.normalize('  12.5000  '), '12.5');
 assert.equal(spr.normalize(''), '');
 assert.equal(spr.normalize('7/0'), null);
