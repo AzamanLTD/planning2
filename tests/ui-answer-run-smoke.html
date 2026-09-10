@@ -24,7 +24,7 @@
           if (phase === 1) {
             check('module chrome renders', !!doc.querySelector('.test-title') && /Reading and Writing/.test(doc.querySelector('.test-title').textContent));
             const bank = win.SAT_QUESTIONS.rw1; check('R&W bank is 27 questions', bank.length === 27);
-            check('first question counter renders', /Question 1 of 27/.test(doc.querySelector('.test-counter')?.textContent || ''));
+            check('first question counter renders', /Question 1 of 27/.test(doc.querySelector('.question-nav')?.textContent || ''));
             const choices = [...doc.querySelectorAll('.choice')]; check('four answer choices render', choices.length === 4);
             check('answer controls expose radio semantics', choices.every((x) => x.getAttribute('role') === 'radio'));
             const target = choices.find((x) => x.dataset.answer === bank[0].answer) || choices[0];

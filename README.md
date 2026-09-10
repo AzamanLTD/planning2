@@ -1,13 +1,13 @@
 # Azaman SAT Practice Simulator
 
-An independent browser-based SAT practice experience for Azaman students. The product models the documented digital SAT/Bluebook workflow without reproducing College Board branding, proprietary assets, or College Board questions.
+A browser-based SAT practice experience for Azaman students that mirrors the Bluebook test-day workflow screen for screen — sign-in, Your Tests, the 10-step check-in wizard, exam chrome, and Check Your Work. All questions and sources are original Azaman content; the interface replicates the documented Bluebook workflow for authentic practice.
 
 ## Current implementation
 
 - Reading and Writing: 2 × 32-minute modules, 27 questions each
 - Math: 2 × 35-minute modules, 22 questions each
 - Mandatory 10-minute break between Reading and Writing and Math
-- Practice access-code, student, check-in, room-code, start-code, and module-directions flow
+- Bluebook-style flow: sign-in choice, student-account credentials, Your Tests dashboard, 10-step exam-setup check-in wizard (welcome, your info, room code, accommodations, accessibility aids, equipment check, testing rules with typed agreement, start code, directions, check-in complete), and module directions
 - Absolute-deadline timers that survive page refreshes
 - Locked module transitions with score-based easy/hard Module 2 routing
 - Back/Next navigation, question menu/review grid, and Mark for Review
@@ -35,8 +35,8 @@ The repository contains 147 structured original question records across the laun
 
 ## Demo credentials
 
-- Access code: `SAT26` (also `PRACTICE` or `AZM-SAT`)
-- Room code: `AZM24`
+- Sign-in accepts any full name and email (practice simulator; nothing is transmitted)
+- Room code: `AZM24` (practice bridge: `AZMPR`)
 - Start code: `492776`
 
 These values are documented only for proctor/developer setup. They are intentionally not shown in student-facing UI fields or help text.

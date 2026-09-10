@@ -33,11 +33,11 @@
             key('Escape');
             check('Escape closes keyboard shortcuts', !doc.getElementById('shortcutHelp'));
 
-            check('Starts on question 2', /Question\s+2/i.test(doc.querySelector('.test-counter')?.textContent || ''));
+            check('Starts on question 2', /Question\s+2/i.test(doc.querySelector('.question-nav')?.textContent || ''));
             key('b', { ctrlKey: true, altKey: true });
-            check('Ctrl+Alt+B moves back', /Question\s+1/i.test(doc.querySelector('.test-counter')?.textContent || ''));
+            check('Ctrl+Alt+B moves back', /Question\s+1/i.test(doc.querySelector('.question-nav')?.textContent || ''));
             key('x', { ctrlKey: true, altKey: true });
-            check('Ctrl+Alt+X moves next', /Question\s+2/i.test(doc.querySelector('.test-counter')?.textContent || ''));
+            check('Ctrl+Alt+X moves next', /Question\s+2/i.test(doc.querySelector('.question-nav')?.textContent || ''));
 
             key('g', { ctrlKey: true, altKey: true });
             check('Ctrl+Alt+G opens question menu', !!doc.getElementById('reviewModal'));

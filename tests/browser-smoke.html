@@ -21,32 +21,65 @@
           adaptive:{rw:'easy',math:'easy'}, timerHidden:false, lineReader:false, rules:true, desk:true, warning:{} };
       }
       function preflightFlow(doc) {
-        check('sign-in screen renders', !!doc.querySelector('#access') && !!doc.querySelector('#student'));
-        doc.querySelector('#access').value = 'sat26'; doc.querySelector('#access').dispatchEvent(new Event('input', { bubbles:true }));
-        doc.querySelector('#student').value = 'Smoke Student'; doc.querySelector('#student').dispatchEvent(new Event('input', { bubbles:true }));
-        doc.querySelector('#accessBtn').click();
+        check('sign-in screen renders', !!doc.querySelector('#ticketBtn') && !!doc.querySelector('#accountBtn'));
+        doc.querySelector('#ticketBtn').click();
         setTimeout(() => {
-          const d1 = frame.contentDocument; check('test-day setup screen renders', !!d1.querySelector('#rulesAck') && !!d1.querySelector('#deskAck'));
-          d1.querySelector('#rulesAck').click();
+          const d1 = frame.contentDocument; check('credential screen renders', !!d1.querySelector('#student') && !!d1.querySelector('#email') && !!d1.querySelector('#password'));
+          d1.querySelector('#student').value = 'Smoke Student'; d1.querySelector('#student').dispatchEvent(new Event('input', { bubbles:true }));
+          d1.querySelector('#email').value = 'smoke@example.com'; d1.querySelector('#email').dispatchEvent(new Event('input', { bubbles:true }));
+          d1.querySelector('#password').value = 'correcthorse'; d1.querySelector('#password').dispatchEvent(new Event('input', { bubbles:true }));
+          check('submit enabled after credentials', d1.querySelector('#signinBtn')?.disabled === false); d1.querySelector('#signinBtn').click();
           setTimeout(() => {
-            const d2 = frame.contentDocument; d2.querySelector('#deskAck').click();
+            const d2 = frame.contentDocument; check('your tests dashboard renders', !!d2.querySelector('#startSetupBtn') && /Digital SAT/.test(d2.querySelector('.test-name')?.textContent || ''));
+            d2.querySelector('#startSetupBtn').click();
             setTimeout(() => {
-              const d3 = frame.contentDocument; check('setup enables continuation', !d3.querySelector('#checkinBtn')?.disabled); d3.querySelector('#checkinBtn').click();
+              const d3 = frame.contentDocument; check('wizard step 1 renders', !!d3.querySelector('#wizNext'));
+              d3.querySelector('#wizNext').click();
               setTimeout(() => {
-                const d4 = frame.contentDocument; check('room-code screen renders', !!d4.querySelector('#room'));
-                d4.querySelector('#room').value = 'azm24'; d4.querySelector('#room').dispatchEvent(new Event('input', { bubbles:true })); d4.querySelector('#roomBtn').click();
+                const d4 = frame.contentDocument; check('wizard step 2 your info', !!d4.querySelector('#infoAck')); d4.querySelector('#infoAck').click(); d4.querySelector('#wizNext').click();
                 setTimeout(() => {
-                  const d5 = frame.contentDocument, codeFields = [...d5.querySelectorAll('.start-digit')];
-                  check('start-code screen renders', codeFields.length === 6);
-                  const paste = new Event('paste', { bubbles:true, cancelable:true }); Object.defineProperty(paste, 'clipboardData', { value: { getData: () => '492776' } }); codeFields[0].dispatchEvent(paste);
-                  check('start-code paste accepted', codeFields.map((x) => x.value).join('') === '492776'); d5.querySelector('#startTestBtn').click();
+                  const d5 = frame.contentDocument, boxes = [...d5.querySelectorAll('.room-digit')];
+                  check('wizard step 3 room code boxes', boxes.length === 5);
+                  'AZM24'.split('').forEach((ch, i) => { const b = frame.contentDocument.querySelectorAll('.room-digit')[i]; b.value = ch; b.dispatchEvent(new Event('input', { bubbles:true })); });
                   setTimeout(() => {
-                    const d6 = frame.contentDocument; check('directions screen follows start code', !!d6.querySelector('#beginModuleBtn'));
-                    d6.querySelector('#beginModuleBtn').click();
+                    const d5b = frame.contentDocument; check('room code success message', !!d5b.querySelector('.success-msg'));
+                    d5b.querySelector('#wizNext').click();
                     setTimeout(() => {
-                      preflight = false; phase = 0; writeState(baseState()); frame.contentWindow.location.reload();
-                    }, 50);
-                  }, 50);
+                      const d6 = frame.contentDocument; check('wizard step 4 accommodations', /Accommodations/.test(d6.querySelector('.wiz-card h1')?.textContent || '')); d6.querySelector('#wizNext').click();
+                      setTimeout(() => {
+                        const d7 = frame.contentDocument; check('wizard step 5 accessibility aids', !!d7.querySelector('.aid-check')); d7.querySelector('#wizNext').click();
+                        setTimeout(() => {
+                          const d8 = frame.contentDocument; check('wizard step 6 equipment check', /Equipment Check/.test(d8.querySelector('.wiz-card h1')?.textContent || '')); d8.querySelector('#wizNext').click();
+                          setTimeout(() => {
+                            const d9 = frame.contentDocument; check('wizard step 7 testing rules', !!d9.querySelector('#deskAck') && !!d9.querySelector('#pledge'));
+                            d9.querySelector('#deskAck').click();
+                            const p = d9.querySelector('#pledge'); p.value = 'I agree'; p.dispatchEvent(new Event('input', { bubbles:true }));
+                            d9.querySelector('#wizNext').click();
+                            setTimeout(() => {
+                              const d10 = frame.contentDocument, digits = [...d10.querySelectorAll('.start-digit')];
+                              check('wizard step 8 start code boxes', digits.length === 6);
+                              const paste = new Event('paste', { bubbles:true, cancelable:true }); Object.defineProperty(paste, 'clipboardData', { value: { getData: () => '492776' } }); digits[0].dispatchEvent(paste);
+                              check('start-code paste accepted', [...frame.contentDocument.querySelectorAll('.start-digit')].map((x) => x.value).join('') === '492776');
+                              d10.querySelector('#wizNext').click();
+                              setTimeout(() => {
+                                const d11 = frame.contentDocument; check('wizard step 9 directions', /Directions/.test(d11.querySelector('.wiz-card h1')?.textContent || '')); d11.querySelector('#wizNext').click();
+                                setTimeout(() => {
+                                  const d12 = frame.contentDocument; check('wizard step 10 checked in', /checked in/.test(d12.querySelector('.wiz-card h1')?.textContent || '')); d12.querySelector('#wizNext').click();
+                                  setTimeout(() => {
+                                    const d13 = frame.contentDocument; check('directions screen follows start code', !!d13.querySelector('#beginModuleBtn'));
+                                    d13.querySelector('#beginModuleBtn').click();
+                                    setTimeout(() => {
+                                      preflight = false; phase = 0; writeState(baseState()); frame.contentWindow.location.reload();
+                                    }, 50);
+                                  }, 50);
+                                }, 50);
+                              }, 60);
+                            }, 50);
+                          }, 50);
+                        }, 50);
+                      }, 50);
+                    }, 60);
+                  }, 60);
                 }, 50);
               }, 50);
             }, 50);
@@ -58,8 +91,8 @@
         if (preflight) { preflightFlow(doc); return; }
         if (phase === 0) {
           check('module 1 renders', !!doc.querySelector('.test-title') && doc.querySelector('.test-title').textContent.includes('Reading and Writing'));
-          check('27-question module', /Question 1 of 27/.test(doc.querySelector('.test-counter')?.textContent || ''));
-          check('student metadata row hidden', doc.querySelector('.q-meta')?.hidden === true && doc.querySelector('.q-meta')?.getAttribute('aria-hidden') === 'true');
+          check('27-question module', /Question 1 of 27/.test(doc.querySelector('.question-nav')?.textContent || ''));
+          check('student metadata row removed from exam view', !doc.querySelector('.q-meta'));
           check('student UI labels passage as source', doc.querySelector('.source-label')?.textContent.trim() === 'Source');
           check('answer choices expose radio semantics', doc.querySelector('.choice')?.getAttribute('role') === 'radio');
           const bank = win.SAT_QUESTIONS.rw1, state = baseState();
@@ -75,7 +108,7 @@
           phase = 2; const state = readState(); state.qi = 26; writeState(state); frame.contentWindow.location.reload(); return;
         }
         if (phase === 2) {
-          check('last question reachable', /Question 27 of 27/.test(doc.querySelector('.test-counter')?.textContent || ''));
+          check('last question reachable', /Question 27 of 27/.test(doc.querySelector('.question-nav')?.textContent || ''));
           doc.querySelector('#nextBtn')?.click();
           setTimeout(() => {
             check('review modal opens', !!frame.contentWindow.document.getElementById('reviewModal'));

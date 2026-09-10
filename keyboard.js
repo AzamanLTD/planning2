@@ -43,7 +43,7 @@
 
   function openToolByText(label, fallback) {
     if (clickText(label)) return true;
-    const tools = buttonsByText('Test tools');
+    const tools = buttonsByText('More') || document.getElementById('toolsBtn');
     if (!tools) { fallback?.(); return false; }
     tools.click();
     requestAnimationFrame(() => { if (!clickText(label)) fallback?.(); });
@@ -82,7 +82,7 @@
     document.getElementById('helpDialog')?.remove();
     const n = document.createElement('div');
     n.id = 'helpDialog'; n.className = 'modal-backdrop';
-    n.innerHTML = `<div class="modal" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><div class="modal-head"><h3 id="helpTitle">Help</h3><button class="icon-btn" id="helpClose" aria-label="Close help">×</button></div><p>Use the question menu to move between questions, Mark for Review to flag work, and Test tools for notes, highlighting, the line reader, timer controls, calculator, reference sheet, and zoom.</p><p>Your responses are saved automatically. Completed modules cannot be reopened, and the timer continues while help is open.</p><div class="modal-actions"><button class="btn" id="helpShortcuts">Keyboard shortcuts</button><button class="btn" id="helpDone">Done</button></div></div>`;
+    n.innerHTML = `<div class="modal" role="dialog" aria-modal="true" aria-labelledby="helpTitle"><div class="modal-head"><h3 id="helpTitle">Help</h3><button class="icon-btn" id="helpClose" aria-label="Close help">×</button></div><p>Use the question menu to move between questions, Mark for Review to flag work, and More for notes, highlighting, the line reader, timer controls, calculator, reference sheet, and zoom.</p><p>Your responses are saved automatically. Completed modules cannot be reopened, and the timer continues while help is open.</p><div class="modal-actions"><button class="btn" id="helpShortcuts">Keyboard shortcuts</button><button class="btn" id="helpDone">Done</button></div></div>`;
     document.body.appendChild(n);
     const close = () => n.remove();
     n.querySelector('#helpClose').onclick = close;
@@ -144,7 +144,7 @@
 
     if (triple && !alt && lower === 'b') { event.preventDefault(); clickText('Back'); return; }
     if (triple && !alt && lower === 'x') { event.preventDefault(); nextShortcut(); return; }
-    if (triple && !alt && lower === 'g') { event.preventDefault(); clickText('Question menu'); return; }
+    if (triple && !alt && lower === 'g') { event.preventDefault(); document.getElementById('reviewBtn')?.click(); return; }
     if ((isIPad && command && ctrl && lower === 'p') || (!isIPad && triple && !alt && lower === 'h')) { event.preventDefault(); openHelp(); return; }
     if (triple && event.shiftKey && lower === 'd') { event.preventDefault(); openDirections(); return; }
     if ((isMac ? command : ctrl) && !alt && lower === 'l') { event.preventDefault(); openToolByText('Line reader'); return; }
@@ -165,3 +165,5 @@
     regionNodes().forEach((node) => { if (node.tabIndex < 0) node.tabIndex = 0; });
   }).observe(app, { childList: true, subtree: true });
 })();
+
+window.AZAMAN_HELP=openHelp;window.AZAMAN_SHORTCUTS=openShortcuts;

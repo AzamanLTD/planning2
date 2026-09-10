@@ -29,9 +29,9 @@
       }
       function exerciseModule(doc, win, expectedTitle, count, bank, id, done) {
         check(`${id}: module renders`, doc.querySelector('.test-title')?.textContent.includes(expectedTitle));
-        check(`${id}: question count is ${count}`, new RegExp(`Question 1 of ${count}`).test(doc.querySelector('.test-counter')?.textContent || ''));
+        check(`${id}: question count is ${count}`, new RegExp(`Question 1 of ${count}`).test(doc.querySelector('.question-nav')?.textContent || ''));
         for (let i = 0; i < bank.length; i += 1) {
-          const before = doc.querySelector('.test-counter')?.textContent || '';
+          const before = doc.querySelector('.question-nav')?.textContent || '';
           check(`${id}: question ${i + 1} renders`, before.includes(`Question ${i + 1} of ${count}`));
           if (bank[i].type === 'spr') {
             const input = doc.querySelector('.spr-input');
@@ -50,7 +50,7 @@
           }
           if (i < bank.length - 1) doc.querySelector('#nextBtn')?.click();
         }
-        check(`${id}: final question reached`, doc.querySelector('.test-counter')?.textContent.includes(`Question ${count} of ${count}`));
+        check(`${id}: final question reached`, doc.querySelector('.question-nav')?.textContent.includes(`Question ${count} of ${count}`));
         doc.querySelector('#nextBtn')?.click();
         wait(() => {
           check(`${id}: review opens`, !!frame.contentDocument?.getElementById('reviewModal'));

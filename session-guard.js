@@ -9,7 +9,7 @@
     { id: 'math1', count: 22 },
     { id: 'math2', count: 22 },
   ];
-  const SCREENS = new Set(['access', 'setup', 'checkin', 'room', 'startcode', 'directions', 'test', 'break', 'finish']);
+  const SCREENS = new Set(['access', 'signin', 'yourtests', 'checkin', 'directions', 'test', 'break', 'finish']);
 
   const normalizeObject = (value) => (value && typeof value === 'object' && !Array.isArray(value) ? value : {});
   const normalizeBooleanMap = (value) => Object.fromEntries(
