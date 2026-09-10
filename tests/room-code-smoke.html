@@ -17,28 +17,26 @@
         try {
           const boxes = doc.querySelectorAll('.room-digit');
           if (boxes.length !== 5) throw new Error(`expected 5 room-code boxes, got ${boxes.length}`);
-          // invalid five-letter code must be rejected
+          // digits are filtered out — a code with a digit stays incomplete, no success yet
           'AZM1P'.split('').forEach((ch, i) => { const b = frame.contentDocument.querySelectorAll('.room-digit')[i]; b.value = ch; b.dispatchEvent(new Event('input', { bubbles: true })); });
           setTimeout(() => {
             try {
               const doc1 = frame.contentDocument;
-              if (!doc1.querySelector('.error-msg')) throw new Error('invalid five-character room code did not surface an error');
-              const rejected = JSON.parse(localStorage.getItem(KEY));
-              if (rejected?.screen !== 'checkin' || rejected?.step !== 3) throw new Error('invalid five-character room code advanced the wizard');
-              // practice code bridges to the internal fixture and shows the success message
-              'AZMPR'.split('').forEach((ch, i) => { const b = frame.contentDocument.querySelectorAll('.room-digit')[i]; b.value = ch; b.dispatchEvent(new Event('input', { bubbles: true })); });
+              if (doc1.querySelector('.success-msg')) throw new Error('incomplete (digit-filtered) room code should not show success yet');
+              if (doc1.querySelector('.error-msg')) throw new Error('offline tool must not show an invalid-code error');
+              // any five letters is accepted — no exact-match fixture
+              'QWRTY'.split('').forEach((ch, i) => { const b = frame.contentDocument.querySelectorAll('.room-digit')[i]; b.value = ch; b.dispatchEvent(new Event('input', { bubbles: true })); });
               setTimeout(() => {
                 try {
                   const doc2 = frame.contentDocument;
-                  if (!doc2.querySelector('.success-msg')) throw new Error('practice room code did not surface the success message');
+                  if (!doc2.querySelector('.success-msg')) throw new Error('five-letter room code did not surface the success message');
                   doc2.querySelector('#wizNext').click();
                   setTimeout(() => {
                     try {
                       const next = JSON.parse(localStorage.getItem(KEY));
-                      if (next?.step !== 4) throw new Error(`expected wizard step 4 after valid room code, got ${next?.step}`);
-                      if (next?.roomCode !== 'AZM24') throw new Error(`internal room fixture bridge failed: ${next?.roomCode || '(empty)'}`);
-                      const digits = JSON.parse(localStorage.getItem(KEY)).startCode;
-                      out.textContent = 'PASS invalid-code rejection, success message gating, practice-code fixture bridge, wizard advancement, five-letter room boxes\nROOM CODE SMOKE COMPLETE';
+                      if (next?.step !== 4) throw new Error(`expected wizard step 4 after room code, got ${next?.step}`);
+                      if (next?.roomCode !== 'QWRTY') throw new Error(`room code not stored as typed: ${next?.roomCode || '(empty)'}`);
+                      out.textContent = 'PASS digit filtering, accept-any success message, wizard advancement, five-letter room boxes\nROOM CODE SMOKE COMPLETE';
                     } catch (error) { out.textContent = `FAIL ${error.message}`; }
                     finally { frame.remove(); }
                   }, 80);

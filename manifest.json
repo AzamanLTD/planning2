@@ -1,0 +1,12 @@
+{
+  "name": "Bluebook",
+  "short_name": "Bluebook",
+  "description": "Azaman original digital SAT practice simulator",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#384bbf",
+  "theme_color": "#384bbf",
+  "icons": [
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

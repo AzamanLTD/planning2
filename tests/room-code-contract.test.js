@@ -7,8 +7,6 @@ const index = fs.readFileSync('index.html', 'utf8');
 const smoke = fs.readFileSync('tests/room-code-smoke.html', 'utf8');
 
 for (const phrase of [
-  "INTERNAL_ROOM_CODE = 'AZM24'",
-  "PRACTICE_ROOM_CODE = 'AZMPR'",
   'ROOM_CODE_LENGTH = 5',
   "querySelectorAll('.room-digit')",
   "inputMode = 'text'",
@@ -16,9 +14,11 @@ for (const phrase of [
   'roomCodeHint'
 ]) assert(source.includes(phrase), `room code contract missing: ${phrase}`);
 
-// the practice-code fixture bridge lives in the wizard advance path now
-assert(app.includes('s.roomCode=C.roomCode'), 'room code contract missing: practice-code bridge must normalize the stored fixture code');
-assert(app.includes('AZMPR'), 'room code contract missing: practice room code must remain accepted');
+// Offline practice tool: any complete 5-letter room code is accepted.
+// There is no server to validate against and no fixture code to match.
+assert(app.includes('s.roomCode=rc'), 'room code contract missing: wizard must accept and store the typed room code as-is');
+assert(!app.includes('Invalid room code'), 'room code contract violated: offline tool must not reject any complete code');
+assert(!app.includes("isn't right"), 'room code contract violated: offline tool must not reject any complete code');
 
 // the room code UI must be five letter boxes, never a single free-text field
 assert(app.includes('room-digit'), 'room code contract missing: app must render room-digit boxes');
@@ -26,6 +26,6 @@ assert(!app.includes('id="room" class="text-input'), 'room code contract must no
 
 assert(index.includes('src="room-code-enhancement.js"'), 'room code enhancement must be loaded');
 assert(smoke.includes("step !== 4"), 'room code smoke must verify wizard advancement');
-assert(smoke.includes('AZMPR'), 'room code smoke must cover the practice-code fixture bridge');
+assert(smoke.includes('QWRTY'), 'room code smoke must cover accept-any behavior with a non-fixture code');
 
 console.log('ROOM CODE CONTRACT PASSED');

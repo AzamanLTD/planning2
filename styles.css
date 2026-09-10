@@ -152,7 +152,7 @@ body.access-active .app-shell{min-height:100vh}
 .app-head-links{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .app-brand{display:flex;align-items:center;gap:9px}
 .wiz-brand{display:flex;align-items:center;gap:9px}
-.ico-logo{width:34px;height:28px;display:block}
+.ico-logo{width:30px;height:30px;display:block;border-radius:22%}
 .brand-word.sm{font-size:1.25rem}
 .profile-chip{display:flex;align-items:center;gap:8px}
 .avatar{width:32px;height:32px;border-radius:50%;background:var(--color-seg-fill);color:var(--color-surface);display:grid;place-items:center;font-size:.8rem;font-weight:700}

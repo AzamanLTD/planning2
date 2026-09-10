@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Azaman original digital SAT practice simulator">
   <title>Bluebook</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#384bbf">
   <link rel="stylesheet" href="styles.css?v=3af">
   <link rel="stylesheet" href="styles-tokens.css?v=3af">
   <link rel="stylesheet" href="reference-pan.css">
@@ -43,5 +46,10 @@
   <script src="line-reader-enhancement.js"></script>
   <script src="reference-keyboard-enhancement.js"></script>
   <script src="unscheduled-break-enhancement.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+    }
+  </script>
 </body>
 </html>
