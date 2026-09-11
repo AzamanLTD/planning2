@@ -1,0 +1,25 @@
+name: Fidelity contract
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: fidelity-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          package-manager-cache: false
+      - name: Validate fidelity refinement contract
+        run: node tests/fidelity-refinement-contract.test.js
+      - name: Check refinement JavaScript syntax
+        run: |
+          node --check bluebook-fidelity-refinements.js
+          node --check bluebook-exam-mode.js
