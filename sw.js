@@ -1,8 +1,9 @@
 'use strict';
 
-// Fully offline static runtime. The app must not depend on a live network once
-// the shell and question assets have been installed into the service-worker cache.
-const CACHE_NAME = 'azaman-bluebook-v3';
+// The exam model is intentionally self-contained. Every runtime asset needed
+// by the browser is precached during installation; after installation the
+// service worker never reaches the network.
+const CACHE_NAME = 'azaman-bluebook-v4';
 const PRECACHE_URLS = [
   './',
   'index.html',
@@ -54,7 +55,7 @@ const PRECACHE_URLS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then((cache) => Promise.all(PRECACHE_URLS.map((url) => cache.add(url).catch(() => {}))))
+      .then((cache) => Promise.all(PRECACHE_URLS.map((url) => cache.add(url))))
       .then(() => self.skipWaiting())
   );
 });
@@ -71,19 +72,17 @@ self.addEventListener('fetch', (event) => {
   const request = event.request;
   if (request.method !== 'GET') return;
 
-  // Cache-first: the installed exam build is authoritative for runtime. A
-  // missing asset may still be fetched once and then cached, but normal runs
-  // never wait on the network for an already-installed resource.
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) return cached;
-      return fetch(request).then((response) => {
-        if (response && response.ok) {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy)).catch(() => {});
-        }
-        return response;
-      }).catch(() => caches.match('index.html'));
+      // No network fallback by design. Navigation falls back to the cached
+      // application shell; an unknown static asset gets a clear offline 404.
+      if (request.mode === 'navigate') return caches.match('./index.html');
+      return new Response('Offline asset unavailable', {
+        status: 503,
+        statusText: 'Offline asset unavailable',
+        headers: {'Content-Type': 'text/plain; charset=utf-8'}
+      });
     })
   );
 });
