@@ -127,7 +127,17 @@
     target?.click();
   }
 
-  function nextShortcut() { clickText('Next') || clickText('Review module'); }
+  function nextShortcut() {
+    const next = document.getElementById('nextBtn');
+    if (visible(next)) { next.click(); return; }
+    clickText('Next') || clickText('Review module');
+  }
+
+  function backShortcut() {
+    const previous = document.getElementById('prevBtn');
+    if (visible(previous)) { previous.click(); return; }
+    clickText('Back');
+  }
 
   function onKeydown(event) {
     const key = event.key;
@@ -151,7 +161,7 @@
     const comboAlt = isMac ? command && alt : ctrl && alt;
     const navCombo = isMac ? command && ctrl && !alt : ctrl && alt;
 
-    if (navCombo && lower === 'b') { event.preventDefault(); clickText('Back'); return; }
+    if (navCombo && lower === 'b') { event.preventDefault(); backShortcut(); return; }
     if (navCombo && lower === 'x') { event.preventDefault(); nextShortcut(); return; }
     if (navCombo && lower === 'g') { event.preventDefault(); document.getElementById('reviewBtn')?.click(); return; }
     if ((isIPad && command && ctrl && lower === 'p') || (isMac && command && ctrl && lower === 'h') || (!isMac && !isIPad && ctrl && alt && lower === 'h')) { event.preventDefault(); openHelp(); return; }
