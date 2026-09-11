@@ -1,7 +1,6 @@
 (() => {
   'use strict';
 
-  const STORAGE_KEY = 'azaman-sat-practice-v3';
   let recoveryCountdown = null;
   let submissionTimer = null;
 
@@ -97,6 +96,10 @@
     window.AZAMAN_APP?.render?.();
   }
 
+  function laptopArt() {
+    return `<svg viewBox="0 0 120 100" class="azm-congrats-laptop" aria-hidden="true"><rect x="18" y="12" width="84" height="58" rx="6" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="60" cy="41" r="15" fill="none" stroke="currentColor" stroke-width="3"/><path d="M53 41 q3.5 4 7 0 M63 41 q3.5 4 7 0 M53 47 q7 5 14 0" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M10 74 h100 l6 9 H4 z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/></svg>`;
+  }
+
   function mountSubmissionScreen() {
     const state = getState();
     if (!isActualRuntime() || state.screen !== 'finish' || document.getElementById('azmSubmissionScreen')) return;
@@ -104,20 +107,12 @@
     if (!app) return;
 
     if (submissionTimer) window.clearTimeout(submissionTimer);
-    app.innerHTML = `<main id="azmSubmissionScreen" class="azm-submission-page"><section class="azm-submission-card" role="status" aria-live="polite" aria-atomic="true"><div class="azm-submission-spinner" aria-hidden="true"><span></span><span></span><span></span></div><p class="azm-submission-kicker">Digital SAT</p><h1 id="azmSubmissionTitle">Submitting your answers</h1><p id="azmSubmissionCopy">Your answers are being saved on this device. Please don't close Bluebook.</p><div class="azm-submission-rule" aria-hidden="true"></div><p class="azm-submission-foot" id="azmSubmissionFoot">Your proctor will let you know when you may leave.</p></section></main>`;
+    app.innerHTML = `<main id="azmSubmissionScreen" class="azm-submission-page azm-congrats-page"><section class="azm-congrats-card" role="status" aria-live="polite" aria-atomic="true"><h1>Congratulations!</h1><p class="azm-congrats-sub">The test is complete, and your answers have been submitted.</p><div class="azm-congrats-panel"><div class="azm-congrats-art">${laptopArt()}</div><div class="azm-congrats-copy"><p>Your proctor will dismiss you when it’s time to go.</p><p>Please <strong>be quiet</strong>; other students may still be testing.</p></div></div><button type="button" id="azmReturnHome" class="azm-congrats-home">Return to Homepage</button></section></main>`;
 
-    submissionTimer = window.setTimeout(() => {
-      const current = getState();
-      const title = document.getElementById('azmSubmissionTitle');
-      const copy = document.getElementById('azmSubmissionCopy');
-      const spinner = document.querySelector('.azm-submission-spinner');
-      if (!current || current.screen !== 'finish' || current.harness || !title || !copy) return;
-      title.textContent = 'Answers submitted';
-      copy.textContent = 'Your test responses have been recorded successfully on this device.';
-      spinner?.setAttribute('data-complete', '1');
-      const foot = document.getElementById('azmSubmissionFoot');
-      if (foot) foot.textContent = 'Do not close your device until your proctor dismisses you.';
-    }, 1200);
+    document.getElementById('azmReturnHome')?.addEventListener('click', () => {
+      try { localStorage.removeItem('azaman-sat-practice-v3'); } catch (_) {}
+      location.reload();
+    });
   }
 
   function maintain() {
