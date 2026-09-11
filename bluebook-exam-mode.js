@@ -27,6 +27,53 @@
     return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
   }
 
+  function scoreRatio(items, state, id) {
+    if (!Array.isArray(items) || !items.length) return 0;
+    let good = 0;
+    for (let i = 0; i < items.length; i += 1) {
+      const value = state.answers?.[`${id}-${i}`];
+      const expected = items[i]?.answer;
+      if (value !== undefined && String(value).trim().toLowerCase() === String(expected ?? '').trim().toLowerCase()) good += 1;
+    }
+    return good / items.length;
+  }
+
+  function expireActualDirectionsModule() {
+    const state = getState();
+    if (!state || state.harness || state.screen !== 'directions') return;
+    const index = Math.max(0, Math.min(3, Number(state.mi) || 0));
+    const id = index === 0 ? 'rw1' : index === 1 ? 'rw2' : index === 2 ? 'math1' : 'math2';
+    state.completed = state.completed || {};
+    state.completed[id] = true;
+    state.endAt = null;
+
+    if (id === 'rw1') {
+      const bank = window.SAT_QUESTIONS?.rw1 || [];
+      state.adaptive = state.adaptive || { rw: 'easy', math: 'easy' };
+      state.adaptive.rw = scoreRatio(bank, state, id) >= 0.7 ? 'hard' : 'easy';
+      state.mi = 1;
+      state.qi = 0;
+      state.screen = 'directions';
+    } else if (id === 'rw2') {
+      state.mi = 2;
+      state.qi = 0;
+      state.breakEndAt = Date.now() + 600 * 1000;
+      state.screen = 'break';
+    } else if (id === 'math1') {
+      const bank = window.SAT_QUESTIONS?.math1 || [];
+      state.adaptive = state.adaptive || { rw: 'easy', math: 'easy' };
+      state.adaptive.math = scoreRatio(bank, state, id) >= 0.7 ? 'hard' : 'easy';
+      state.mi = 3;
+      state.qi = 0;
+      state.screen = 'directions';
+    } else {
+      state.submitted = true;
+      state.screen = 'finish';
+    }
+    save();
+    render();
+  }
+
   function syncDirectionsTimer() {
     const state = getState();
     const timer = document.querySelector('#azmDirectionsPage .azm-directions-timer');
@@ -53,7 +100,7 @@
       if (seconds <= 0 && current.endAt) {
         if (directionsTimer) window.clearInterval(directionsTimer);
         directionsTimer = null;
-        render();
+        expireActualDirectionsModule();
       }
     };
 
@@ -92,7 +139,13 @@
     const state = getState();
     const button = event.target?.closest?.('#beginModuleBtn');
     if (!state || state.harness || !button || state.screen !== 'directions') return;
-    if (!state.endAt || state.endAt <= Date.now()) return;
+    if (state.endAt && state.endAt <= Date.now()) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      expireActualDirectionsModule();
+      return;
+    }
+    if (!state.endAt) return;
     event.preventDefault();
     event.stopImmediatePropagation();
     state.qi = 0;
