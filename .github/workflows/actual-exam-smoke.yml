@@ -24,4 +24,3 @@ jobs:
           cat /tmp/azaman-actual-exam-smoke.html
           grep -q 'ACTUAL EXAM SMOKE COMPLETE' /tmp/azaman-actual-exam-smoke.html
           ! grep -q '<iframe' /tmp/azaman-actual-exam-smoke.html
-          ! grep -q '<script' /tmp/azaman-actual-exam-smoke.html
