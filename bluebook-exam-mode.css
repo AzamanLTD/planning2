@@ -8,12 +8,14 @@ body:not(.azm-harness) .access-foot {
   display: none !important;
 }
 
+/* In actual exam mode the review surface is navigation-only. Keep its real
+   guidance visible, but never expose a practice-only early-submit control. */
 body:not(.azm-harness) #reviewModal .small {
-  display: none;
+  display: block;
+  margin: 10px 0 0;
+  color: #4e5257;
 }
 
-/* The review grid remains a navigation tool; submission is timer-gated in
-   actual exam mode. */
 body:not(.azm-harness) #reviewModal #submitModule {
   display: none !important;
 }
