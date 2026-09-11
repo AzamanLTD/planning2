@@ -44,7 +44,7 @@ const requiredJs = [
   'This Module Is Over',
   'Expand All',
   'Collapse All',
-  'bluebook-fidelity-refinements',
+  'moduleTransitions',
 ];
 requiredJs.forEach((text) => {
   if (!js.includes(text)) throw new Error(`missing fidelity behavior: ${text}`);
