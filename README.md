@@ -1,6 +1,6 @@
 # Azaman Digital SAT Exam-Model Simulator
 
-An offline-capable, browser-delivered SAT exam-model experience for Azaman that mirrors the Bluebook-style test-day workflow as closely as permitted by the supplied references: sign-in, Your Tests, exam setup, check-in, exam chrome, question navigation, testing tools, accessibility surfaces, module transitions, and completion. All question content and non-College-Board assets are Azaman-owned originals; the application is independent and is not affiliated with College Board.
+An offline-capable, browser-delivered SAT exam-model experience for Azaman that mirrors the Bluebook-style test-day workflow as closely as permitted by the supplied references: sign-in, Your Tests, exam setup, check-in, exam chrome, question navigation, testing tools, accessibility surfaces, module transitions, interruption recovery, and completion. All question content and non-College-Board assets are Azaman-owned originals; the application is independent and is not affiliated with College Board.
 
 ## Current implementation
 
@@ -18,17 +18,19 @@ An offline-capable, browser-delivered SAT exam-model experience for Azaman that 
 - Formula reference sheet with compact layout, zoom/pan, and draggable/resizable tool panel behavior
 - Calculator/reference keyboard Move mode and touch/pointer handling
 - Pre-boot recovery guard that repairs stale/corrupt timed-session state, prevents reopening completed modules, and clears malformed completion states
+- Technical interruption recovery: actual exam mode preserves answers/module/question and a bounded remaining-time window when Bluebook is exited for technical recovery; the session must be signed into again before resuming
+- Actual completion surface: finished exam runs show a submission state and never expose the QA/practice score report
 - Robust five-letter room-code and six-digit start-code entry with paste, arrow-key, backspace, and assistive labels
 - Rich Assistive Technology dialog with Expand All / Collapse All and speech-to-text guidance
 - Floating accessibility rail with volume and notification controls
 - Local Test Your Device readiness dialog
 - Student-facing UI hides internal domain/skill/difficulty metadata and neutralizes demo credential placeholders
 - Practice completion report and detailed module accuracy reporting retained as a QA/development surface
-- Automated question-bank validation, authored-source content audit, source-override coverage, diversity audit, adaptive-variant integrity checks, answer-position balance, static contracts, recovery edge-case tests, SPR normalization contracts, accessibility contracts, representative Chromium smoke, complete 98-question Chromium smoke, mobile viewport smoke, dedicated Help smoke, timer-warning recovery smoke, and a dedicated fidelity contract
+- Automated question-bank validation, authored-source content audit, source-override coverage, diversity audit, adaptive-variant integrity checks, answer-position balance, static contracts, recovery edge-case tests, SPR normalization contracts, accessibility contracts, representative Chromium smoke, complete 98-question Chromium smoke, mobile viewport smoke, dedicated Help smoke, timer-warning recovery smoke, actual-exam browser smoke, and dedicated fidelity contracts
 
 ## Offline runtime
 
-The application is designed as a static offline exam model. All runtime HTML/CSS/JavaScript/question-bank assets are precached by the service worker and existing assets are served cache-first, so an installed exam build does not wait on network access during testing. The local state engine uses browser persistence for answers, flags, notes, highlights, timers, setup, and check-in recovery.
+The application is designed as a static offline exam model. All runtime HTML/CSS/JavaScript/question-bank assets are precached by the service worker and existing assets are served cache-first, so an installed exam build does not wait on network access during testing. The local state engine uses browser persistence for answers, flags, notes, highlights, timers, setup, check-in recovery, and technical interruption recovery.
 
 The simulator does not fabricate a testing-center SSID lock. Center networking, proctor administration, and secure test-session policy belong to a real deployment layer rather than the browser exam-state engine.
 
@@ -59,7 +61,7 @@ These values are for local/proctor development only and are not required by the 
 
 ## Verification status
 
-Automated CI covers JavaScript syntax, effective question-bank shape/coverage, content integrity, authored-source override coverage, diversity, adaptive-variant integrity, answer-position balance, calculator safety, static simulator contracts, accessibility contracts, session recovery edge cases, SPR normalization and scoring, representative browser smoke, the complete 98-question adaptive run, mobile viewport layout, dedicated Help shortcut behavior, timer-warning recovery, offline precache coverage, and reference-fidelity contracts. Visual comparison remains an iterative engineering task driven by the supplied reference captures and future permitted device captures.
+Automated CI covers JavaScript syntax, effective question-bank shape/coverage, content integrity, authored-source override coverage, diversity, adaptive-variant integrity, answer-position balance, calculator safety, static simulator contracts, accessibility contracts, session recovery edge cases, SPR normalization and scoring, representative browser smoke, the complete 98-question adaptive run, mobile viewport layout, dedicated Help shortcut behavior, timer-warning recovery, offline precache coverage, reference-fidelity contracts, and actual exam-model recovery/finalization behavior. Visual comparison remains an iterative engineering task driven by the supplied reference captures and future permitted device captures.
 
 ## Run locally
 
