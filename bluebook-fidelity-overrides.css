@@ -571,53 +571,11 @@
 @keyframes azmPulse{0%,100%{opacity:.25;transform:scale(.9)}50%{opacity:1;transform:scale(1)}}
 
 /* ---------- Assistive technology / accessibility rail ---------- */
-.azm-a11y-rail {
-  position: fixed;
-  right: 18px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 120;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
 
-.azm-a11y-rail button {
-  width: 76px;
-  height: 72px;
-  border: 0;
-  border-radius: 17px;
-  background: #fff;
-  box-shadow: 0 8px 26px rgba(0,0,0,.13);
-  color: #333;
-  display: grid;
-  place-items: center;
-  position: relative;
-}
 
-.azm-a11y-rail .rail-volume {
-  overflow: hidden;
-}
 
-.azm-a11y-rail .rail-level {
-  position: absolute;
-  width: 8px;
-  height: 48px;
-  right: 14px;
-  bottom: 12px;
-  border-radius: 8px;
-  background: linear-gradient(to top, #2868df 0 62%, #e4e7ec 62% 100%);
-}
 
-.azm-a11y-rail .rail-speaker,
-.azm-a11y-rail .rail-bell {
-  font-size: 27px;
-  line-height: 1;
-}
 
-.azm-a11y-rail[aria-hidden="true"] {
-  display: none;
-}
 
 #atModal .modal {
   width: min(830px, calc(100vw - 48px));
@@ -718,9 +676,7 @@
   .source-panel { max-height: 38vh; padding: 22px; }
   .question-panel { padding: 20px; }
   .test-footer { padding: 0 12px; }
-  .azm-a11y-rail { right: 8px; }
-  .azm-a11y-rail button { width: 56px; height: 58px; }
-}
+    }
 
 @media (prefers-reduced-motion: reduce) {
   .azm-loading-dots span { animation: none; }

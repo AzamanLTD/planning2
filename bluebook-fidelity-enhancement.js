@@ -139,37 +139,6 @@
     dialog.querySelector('#refExitCancel').focus();
   }
 
-  function addAccessibilityRail() {
-    if (!isTest() || document.getElementById('azmA11yRail')) return;
-    const rail = document.createElement('aside');
-    rail.id = 'azmA11yRail';
-    rail.className = 'azm-a11y-rail';
-    rail.setAttribute('aria-label', 'Accessibility controls');
-    rail.innerHTML = '<button type="button" class="rail-volume" id="railVolume" aria-label="Volume"><span class="rail-speaker" aria-hidden="true">🔊</span><span class="rail-level" aria-hidden="true"></span></button><button type="button" id="railBell" aria-label="Notifications"><span class="rail-bell" aria-hidden="true">♧</span></button>';
-    document.body.appendChild(rail);
-    rail.querySelector('#railVolume').addEventListener('click', () => openVolumePanel());
-    rail.querySelector('#railBell').addEventListener('click', () => window.AZAMAN_HELP?.() || alert('Accessibility notifications are enabled for this practice simulator.'));
-  }
-
-  function openVolumePanel() {
-    if (document.getElementById('azmVolumePanel')) {
-      document.getElementById('azmVolumePanel').remove();
-      return;
-    }
-    const panel = document.createElement('div');
-    panel.id = 'azmVolumePanel';
-    panel.className = 'modal volume-popover';
-    panel.setAttribute('role', 'dialog');
-    panel.innerHTML = '<div class="modal-head"><h3>Volume</h3><button class="icon-btn" id="volumeClose" aria-label="Close">×</button></div><label for="volumeRange">Speech volume</label><input id="volumeRange" type="range" min="0" max="100" value="62"><p class="small">Audio is controlled by your device and browser.</p>';
-    document.body.appendChild(panel);
-    panel.style.position = 'fixed';
-    panel.style.right = '102px';
-    panel.style.top = '50%';
-    panel.style.transform = 'translateY(-50%)';
-    panel.querySelector('#volumeClose').onclick = () => panel.remove();
-    panel.querySelector('#volumeRange').focus();
-  }
-
   function enhanceAssistiveTechnology() {
     const modal = document.getElementById('atModal');
     if (!modal || modal.dataset.refReady === '1') return;
@@ -211,7 +180,6 @@
     normalizeStudentLogin();
     hideDashboardExtras();
     addExitItem();
-    addAccessibilityRail();
     enhanceAssistiveTechnology();
     maybeShowModuleTransition();
   }

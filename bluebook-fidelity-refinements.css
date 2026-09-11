@@ -93,13 +93,6 @@ body { font-family: Arial, Helvetica, sans-serif; color: var(--ref2-text); }
 #reviewModal .modal-actions { gap:8px; margin-top:14px; }
 #reviewModal .modal-actions .btn { min-width:57px; min-height:30px; height:30px; padding:0 12px; border-radius:16px; font-size:9px; }
 
-.azm-a11y-rail { right:20px; gap:14px; }
-.azm-a11y-rail button { width:72px; border-radius:16px; }
-.azm-a11y-rail .rail-volume { height:378px; align-content:end; padding:14px; }
-.azm-a11y-rail .rail-level { top:22px; bottom:88px; right:25px; width:7px; }
-.azm-a11y-rail .rail-speaker,.azm-a11y-rail .rail-bell { display:block; font-size:0; }
-.azm-a11y-rail .rail-speaker svg,.azm-a11y-rail .rail-bell svg { width:28px; height:28px; }
-.azm-a11y-rail #railBell { height:82px; }
 #azmVolumePanel { z-index:121; }
 
 /* ---------- Assistive Technology: match the supplied centered dialog ---------- */

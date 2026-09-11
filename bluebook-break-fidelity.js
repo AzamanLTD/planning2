@@ -59,7 +59,7 @@
   function bindResume() {
     const state = getState();
     const btn = document.getElementById('azmResumeBtn');
-    if (!btn || !state || state.breakEndAt || btn.dataset.bound === '1') return;
+    if (!btn || !state || (state.breakEndAt && state.breakEndAt > Date.now()) || btn.dataset.bound === '1') return;
     btn.dataset.bound = '1';
     btn.focus();
     btn.addEventListener('click', () => {
