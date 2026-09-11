@@ -16,7 +16,7 @@
         answers: {}, marked: {}, eliminated: {}, notes: {}, highlights: {}, completed: {}, submitted: false,
         adaptive: { rw: 'hard', math: 'easy' }, timerHidden: false, lineReader: true, rules: true, desk: true, warning: {}
       }));
-      frame.src = '../index.html?line-reader-smoke=' + now;
+      frame.src = '../index.html?browser-smoke=1&line-reader-smoke=' + now;
       frame.addEventListener('load', () => setTimeout(() => {
         try {
           const doc = frame.contentDocument;
@@ -35,8 +35,6 @@
         } catch (error) {
           out.textContent = `FAIL ${error.message || error}`;
         } finally {
-          // The iframe application owns live timers/observers. Tear it down once the
-          // smoke result is recorded so headless Chromium can terminate deterministically.
           frame.remove();
         }
       }, 250));

@@ -21,11 +21,6 @@
     if (title.textContent.trim() !== text) title.textContent = text;
   }
 
-  function fmt(seconds) {
-    seconds = Math.max(0, Math.ceil(seconds));
-    return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
-  }
-
   function scoreRatio(items, state, id) {
     if (!Array.isArray(items) || !items.length) return 0;
     let good = 0;
@@ -41,27 +36,27 @@
     const state = getState();
     if (!state || state.harness || state.screen !== 'directions') return;
     const index = Math.max(0, Math.min(3, Number(state.mi) || 0));
-    const id = index === 0 ? 'rw1' : index === 1 ? 'rw2' : index === 2 ? 'math1' : 'math2';
+    const moduleId = state.mi === 0 ? 'rw1' : state.mi === 1 ? 'rw2' : state.mi === 2 ? 'math1' : 'math2';
     state.completed = state.completed || {};
-    state.completed[id] = true;
+    state.completed[moduleId] = true;
     state.endAt = null;
 
-    if (id === 'rw1') {
+    if (moduleId === 'rw1') {
       const bank = window.SAT_QUESTIONS?.rw1 || [];
       state.adaptive = state.adaptive || { rw: 'easy', math: 'easy' };
-      state.adaptive.rw = scoreRatio(bank, state, id) >= 0.7 ? 'hard' : 'easy';
+      state.adaptive.rw = scoreRatio(bank, state, moduleId) >= 0.7 ? 'hard' : 'easy';
       state.mi = 1;
       state.qi = 0;
       state.screen = 'directions';
-    } else if (id === 'rw2') {
+    } else if (moduleId === 'rw2') {
       state.mi = 2;
       state.qi = 0;
       state.breakEndAt = Date.now() + 600 * 1000;
       state.screen = 'break';
-    } else if (id === 'math1') {
+    } else if (moduleId === 'math1') {
       const bank = window.SAT_QUESTIONS?.math1 || [];
       state.adaptive = state.adaptive || { rw: 'easy', math: 'easy' };
-      state.adaptive.math = scoreRatio(bank, state, id) >= 0.7 ? 'hard' : 'easy';
+      state.adaptive.math = scoreRatio(bank, state, moduleId) >= 0.7 ? 'hard' : 'easy';
       state.mi = 3;
       state.qi = 0;
       state.screen = 'directions';
@@ -108,9 +103,6 @@
       expireActualDirectionsModule();
       return;
     }
-    // In actual exam mode the module clock starts when the student begins
-    // the module from the directions surface, not while the directions are
-    // merely being displayed.
     event.preventDefault();
     event.stopImmediatePropagation();
     const minutes = state.mi >= 2 ? 35 : 32;
@@ -151,17 +143,28 @@
     window.setTimeout(() => n.remove(), 2200);
   }
 
-  document.addEventListener('click', actualModeDirectionsContinue, true);
-  document.addEventListener('click', actualModeAdvanceGuard, true);
-
-  const observer = new MutationObserver(() => {
+  function afterRender() {
     syncModeClass();
     actualModeExamHeader();
     actualModeDirections();
     actualModeReviewCopy();
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
-  syncModeClass();
-  actualModeExamHeader();
-  actualModeDirections();
+  }
+
+  function installRenderHook() {
+    const api = window.AZAMAN_APP;
+    if (!api?.render || api.render.__azmExamModeWrapped) return;
+    const originalRender = api.render;
+    const wrappedRender = function wrappedRender(...args) {
+      const result = originalRender.apply(this, args);
+      queueMicrotask(afterRender);
+      return result;
+    };
+    Object.defineProperty(wrappedRender, '__azmExamModeWrapped', { value: true });
+    api.render = wrappedRender;
+  }
+
+  document.addEventListener('click', actualModeDirectionsContinue, true);
+  document.addEventListener('click', actualModeAdvanceGuard, true);
+  installRenderHook();
+  afterRender();
 })();
