@@ -1,2 +1,0 @@
-state=implementation-wired
-verification=pending

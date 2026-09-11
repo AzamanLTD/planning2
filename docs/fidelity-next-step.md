@@ -1,1 +1,0 @@
-Next loop: run the existing Chromium smoke suite on main, then compare the rendered reference states at desktop and mobile sizes. Prefer measured screenshot deltas over guessed CSS values. Consolidate only after the regression floor stays green.
