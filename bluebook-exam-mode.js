@@ -5,6 +5,7 @@
   const save = () => window.AZAMAN_APP?.save?.();
   const render = () => window.AZAMAN_APP?.render?.();
   let directionsTimer = null;
+  let directionsTimerElement = null;
 
   function syncModeClass() {
     const state = getState();
@@ -74,14 +75,23 @@
     render();
   }
 
+  function stopDirectionsTimer() {
+    if (directionsTimer) window.clearInterval(directionsTimer);
+    directionsTimer = null;
+    directionsTimerElement = null;
+  }
+
   function syncDirectionsTimer() {
     const state = getState();
     const timer = document.querySelector('#azmDirectionsPage .azm-directions-timer');
     if (!state || state.harness || state.screen !== 'directions' || !timer) {
-      if (directionsTimer) window.clearInterval(directionsTimer);
-      directionsTimer = null;
+      stopDirectionsTimer();
       return;
     }
+
+    // A render replaces the directions DOM. Never keep an interval bound to a
+    // detached timer element, or a later module would display a stale clock.
+    if (directionsTimer && directionsTimerElement !== timer) stopDirectionsTimer();
 
     const minutes = state.mi >= 2 ? 35 : 32;
     const moduleId = state.mi === 0 ? 'rw1' : state.mi === 1 ? 'rw2' : state.mi === 2 ? 'math1' : 'math2';
@@ -93,17 +103,20 @@
 
     const update = () => {
       const current = getState();
-      if (!current || current.screen !== 'directions') return;
+      if (!current || current.screen !== 'directions' || directionsTimerElement !== timer) {
+        stopDirectionsTimer();
+        return;
+      }
       const seconds = current.endAt ? Math.max(0, Math.ceil((current.endAt - Date.now()) / 1000)) : minutes * 60;
       const textNode = [...timer.childNodes].find((node) => node.nodeType === Node.TEXT_NODE);
       if (textNode) textNode.nodeValue = `${fmt(seconds)} `;
       if (seconds <= 0 && current.endAt) {
-        if (directionsTimer) window.clearInterval(directionsTimer);
-        directionsTimer = null;
+        stopDirectionsTimer();
         expireActualDirectionsModule();
       }
     };
 
+    directionsTimerElement = timer;
     if (!directionsTimer) directionsTimer = window.setInterval(update, 250);
     update();
   }
