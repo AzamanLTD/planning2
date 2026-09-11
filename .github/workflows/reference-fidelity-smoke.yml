@@ -1,0 +1,21 @@
+name: reference-fidelity-smoke
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  static-fidelity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify fidelity assets are wired
+        run: |
+          set -euo pipefail
+          test -f bluebook-fidelity-overrides.css
+          test -f bluebook-fidelity-enhancement.js
+          grep -q 'bluebook-fidelity-overrides.css' index.html
+          grep -q 'bluebook-fidelity-enhancement.js' index.html
+          node --check bluebook-fidelity-enhancement.js
+          echo 'Reference fidelity assets and syntax: PASS'
