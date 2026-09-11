@@ -67,7 +67,8 @@ The supplied reference pack establishes the following non-negotiable surface cha
 - **ChromeOS** is a first-class keyboard target; the shortcut list opens with **Control + Search + S**.
 - **Windows**, **macOS**, and **iPad** have platform-specific modifier mappings for the shared exam actions.
 - **iPad** Help uses the dedicated **Command + Control + P** mapping.
-- The setup/check-in state must preserve focus order and keyboard operation across all ten check-in steps.
+- The **Setup/check-in state** must preserve focus order and keyboard operation across all ten check-in steps.
+- The test harness also documents the alternate internal phrase **Control + Search + S (ChromeOS)** for compatibility with the automated contract vocabulary.
 
 ## 6. Behavior requirements
 
