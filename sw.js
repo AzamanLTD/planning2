@@ -2,7 +2,7 @@
 
 // Fully offline static runtime. The app must not depend on a live network once
 // the shell and question assets have been installed into the service-worker cache.
-const CACHE_NAME = 'azaman-bluebook-v2';
+const CACHE_NAME = 'azaman-bluebook-v3';
 const PRECACHE_URLS = [
   './',
   'index.html',
@@ -17,6 +17,7 @@ const PRECACHE_URLS = [
   'results-choice-breakdown.css',
   'bluebook-fidelity-overrides.css',
   'bluebook-fidelity-refinements.css',
+  'bluebook-exam-mode.css',
   'data/questions.js',
   'data/rw2-easy.js',
   'data/rw-source-overrides.js',
@@ -45,6 +46,7 @@ const PRECACHE_URLS = [
   'unscheduled-break-enhancement.js',
   'bluebook-fidelity-enhancement.js',
   'bluebook-fidelity-refinements.js',
+  'bluebook-exam-mode.js',
   'favicon.svg',
   'manifest.json'
 ];
@@ -69,9 +71,9 @@ self.addEventListener('fetch', (event) => {
   const request = event.request;
   if (request.method !== 'GET') return;
 
-  // Cache-first: runtime behavior is deterministic and offline-capable. A
-  // network request is only used as a recovery path for assets that were not
-  // present in the install cache, never as the primary source for the exam UI.
+  // Cache-first: the installed exam build is authoritative for runtime. A
+  // missing asset may still be fetched once and then cached, but normal runs
+  // never wait on the network for an already-installed resource.
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) return cached;
