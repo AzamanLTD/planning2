@@ -72,7 +72,7 @@ The supplied reference pack establishes the following non-negotiable surface cha
 - After a module expires, its state is locked and the application displays the module-transition surface before advancing.
 - Refresh/reopen repairs stale/corrupt persisted session state and never reopens a completed module.
 - Unscheduled breaks do not pause the module deadline.
-- Keyboard shortcuts mirror the documented platform action families used by the simulator.
+- Keyboard shortcuts mirror the documented platform action families used by the simulator, including **Control + Search + S** for opening keyboard shortcuts on ChromeOS.
 - Accessibility remains keyboard navigable, semantically labeled and reduced-motion aware.
 
 ## 6. Offline boundary
