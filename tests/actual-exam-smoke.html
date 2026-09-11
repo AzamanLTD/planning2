@@ -34,17 +34,27 @@
     check('exam gate message appears',!!doc.getElementById('azmExamGate'));
     check('review modal does not open during blocked advance',!doc.getElementById('reviewModal'));
   }
+  async function phaseBreak(){
+    write({...base,screen:'break',mi:2,qi:0,endAt:null,breakEndAt:Date.now()+500,completed:{rw1:true,rw2:true,math1:false,math2:false}});
+    frame.src='../index.html?actual-break='+Date.now(); const [win,doc]=await load();
+    await wait(2050);
+    check('scheduled break surface renders',!!doc.getElementById('azmBreakPage'));
+    check('scheduled break shows break rules',/During your break/i.test(doc.getElementById('azmBreakPage').textContent));
+    check('break waits for explicit resume control',!!doc.getElementById('azmResumeBtn'));
+    check('resume control is enabled after break time',!doc.getElementById('azmResumeBtn').disabled);
+    doc.getElementById('azmResumeBtn').click(); await wait(80); const s=state();
+    check('resume enters the next section directions',s.screen==='directions' && s.mi===2 && s.breakEndAt===null);
+  }
   async function phaseSubmission(){
     write({...base,screen:'finish',mi:3,qi:0,endAt:null,completed:{rw1:true,rw2:true,math1:true,math2:true},submitted:true,answers:Object.fromEntries(Array.from({length:98},(_,i)=>['q'+i,'A']))});
     frame.src='../index.html?actual-submit='+Date.now(); const [win,doc]=await load();
     check('submission screen renders',!!doc.getElementById('azmSubmissionScreen'));
-    check('submission starts in saving state',doc.getElementById('azmSubmissionTitle')?.textContent==='Submitting your answers');
-    check('submission suppresses result report',!doc.querySelector('.congrats-card'));
-    await wait(1400);
-    check('submission completes visibly',doc.getElementById('azmSubmissionTitle')?.textContent==='Answers submitted');
-    check('submission completion keeps proctor instruction',/proctor/i.test(doc.getElementById('azmSubmissionFoot')?.textContent||''));
+    check('congratulations heading is present',doc.querySelector('.azm-congrats-card h1')?.textContent==='Congratulations!');
+    check('submission copy matches exam completion',/test is complete, and your answers have been submitted/i.test(doc.querySelector('.azm-congrats-sub')?.textContent||''));
+    check('proctor instruction is present',/proctor/i.test(doc.querySelector('.azm-congrats-copy')?.textContent||''));
+    check('return-home control is present',!!doc.getElementById('azmReturnHome'));
   }
-  (async()=>{try{await phaseRecovery();await phaseGate();await phaseSubmission();out.textContent=checks.join('\n')+'\nACTUAL EXAM SMOKE COMPLETE';}catch(e){out.textContent=checks.join('\n')+'\nFAIL '+e.message;}finally{frame.remove();}})();
+  (async()=>{try{await phaseRecovery();await phaseGate();await phaseBreak();await phaseSubmission();out.textContent=checks.join('\n')+'\nACTUAL EXAM SMOKE COMPLETE';}catch(e){out.textContent=checks.join('\n')+'\nFAIL '+e.message;}finally{frame.remove();}})();
 })();
 </script>
 </body></html>
