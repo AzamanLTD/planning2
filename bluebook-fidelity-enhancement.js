@@ -58,10 +58,26 @@
     const email = document.getElementById('email');
     const password = document.getElementById('password');
     const button = document.getElementById('signinBtn');
+    const student = document.getElementById('student');
     if (!email || !password || !button) return;
+
+    // Bluebook's student-account surface asks for email/password. The core
+    // state engine keeps a student field for existing smoke compatibility,
+    // but the field is intentionally hidden from the student-facing surface.
+    const studentField = student?.closest('.field');
+    if (studentField) studentField.style.display = 'none';
+    if (student) student.setAttribute('aria-hidden', 'true');
+    button.textContent = 'Sign In';
 
     const sync = () => {
       button.disabled = !(email.value.trim() && password.value.trim());
+      if (student && !student.value.trim()) {
+        const local = email.value.trim().split('@')[0].replace(/[._-]+/g, ' ').trim();
+        if (local) {
+          student.value = local;
+          student.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      }
     };
     if (email.dataset.refLoginReady !== '1') {
       email.dataset.refLoginReady = '1';
@@ -72,8 +88,13 @@
   }
 
   function hideDashboardExtras() {
-    if (!document.querySelector('.yourtests-page')) return;
-    document.querySelector('.yourtests-page .meta-row:nth-child(4)')?.classList.add('ref-hidden');
+    const page = document.querySelector('.yourtests-page');
+    if (!page) return;
+    page.querySelector('.meta-row:nth-child(4)')?.classList.add('ref-hidden');
+    const name = page.querySelector('.test-name');
+    if (name && /^(SAT|Digital SAT)$/i.test(name.textContent.trim())) {
+      name.textContent = 'Digital SAT March 2023';
+    }
   }
 
   function addExitItem() {
