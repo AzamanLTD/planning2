@@ -2,6 +2,8 @@
   'use strict';
 
   const getState = () => window.AZAMAN_APP?.getState?.();
+  const save = () => window.AZAMAN_APP?.save?.();
+  const render = () => window.AZAMAN_APP?.render?.();
   let directionsTimer = null;
 
   function syncModeClass() {
@@ -39,7 +41,7 @@
     if (!state.endAt && !state.completed?.[moduleId]) {
       state.endAt = Date.now() + minutes * 60 * 1000;
       state.qi = 0;
-      window.AZAMAN_APP?.save?.();
+      save();
     }
 
     const update = () => {
@@ -51,7 +53,7 @@
       if (seconds <= 0 && current.endAt) {
         if (directionsTimer) window.clearInterval(directionsTimer);
         directionsTimer = null;
-        window.AZAMAN_APP?.render?.();
+        render();
       }
     };
 
@@ -86,6 +88,18 @@
     syncDirectionsTimer();
   }
 
+  function actualModeDirectionsContinue(event) {
+    const state = getState();
+    const button = event.target?.closest?.('#beginModuleBtn');
+    if (!state || state.harness || !button || state.screen !== 'directions') return;
+    if (!state.endAt || state.endAt <= Date.now()) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    state.qi = 0;
+    save();
+    render();
+  }
+
   function actualModeReviewCopy() {
     const state = getState();
     if (!state || state.harness) return;
@@ -117,6 +131,7 @@
     window.setTimeout(() => n.remove(), 2200);
   }
 
+  document.addEventListener('click', actualModeDirectionsContinue, true);
   document.addEventListener('click', actualModeAdvanceGuard, true);
 
   const observer = new MutationObserver(() => {
