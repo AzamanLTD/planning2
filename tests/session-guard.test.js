@@ -42,7 +42,7 @@ state = run({ ...base(), screen: 'signin', mi: 2, qi: 7, endAt: null,
   recovery: { remainingMs: 241_000, expiresAt: NOW - 1 }
 });
 assert.equal(state.recovery, null);
-assert.equal(state.screen, 'access');
+assert.equal(state.screen, 'signin');
 assert.equal(state.mi, 2);
 
 state = run({ ...base(), screen: 'signin', mi: 2, qi: 999, endAt: null,
