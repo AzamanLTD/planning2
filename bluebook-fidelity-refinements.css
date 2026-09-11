@@ -16,517 +16,127 @@
   --ref2-exam-top: #eaf2fb;
 }
 
-/* ---------- Shared application surface ---------- */
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  color: var(--ref2-text);
-}
-
-/* ---------- Sign-in: move the brand to the application chrome ---------- */
-.ref2-access-brand {
-  position: absolute;
-  top: 28px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 25;
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  color: #fff;
-  font-weight: 800;
-  font-size: 27px;
-  letter-spacing: .005em;
-  pointer-events: none;
-}
-
-.ref2-access-brand .ref2-logo {
-  width: 31px;
-  height: 31px;
-  flex: none;
-}
-
-.access-page .signin-brand {
-  display: none !important;
-}
-
-.access-page .signin-modal {
-  width: min(430px, calc(100vw - 32px));
-  max-width: 430px;
-  margin-top: 34px;
-  padding: 28px 36px 30px;
-  border-radius: 12px;
-}
-
-.access-page .signin-modal h1 {
-  margin-bottom: 22px;
-  font-size: 25px;
-  line-height: 1.2;
-}
-
-.access-page .signin-modal .field {
-  margin: 18px 0;
-}
-
-.access-page .signin-modal .field label {
-  font-size: 15px;
-  margin-bottom: 7px;
-}
-
-.access-page .signin-modal .text-input {
-  min-height: 44px;
-}
-
-.access-page .signin-links {
-  margin-top: 20px;
-}
-
-.access-page .signin-links .btn {
-  color: #f7f8ff;
-}
-
-.access-page .signin-links .btn:hover {
-  color: #ffffff;
-}
-
-#deviceTestBtn {
-  min-height: 44px;
-  top: 17px;
-  right: 24px;
-  padding: 0 22px;
-  border-radius: 23px;
-  background: rgba(255,255,255,.92);
-  box-shadow: 0 2px 8px rgba(0,0,0,.12);
-}
-
-/* ---------- Your Tests: match the sparse reference composition ---------- */
-.yourtests-page {
-  background: var(--ref2-page);
-}
-
-.yt-wrap {
-  max-width: 910px;
-  padding: 32px 34px 70px;
-}
-
-.yt-head {
-  justify-content: flex-start;
-  gap: 18px;
-  margin-bottom: 20px;
-}
-
-.yt-head h2 {
-  font-size: 28px;
-  line-height: 1.1;
-}
-
-.tab-toggle {
-  border-radius: 11px;
-}
-
-.tab-pill {
-  min-width: 70px;
-  padding: 9px 16px;
-  font-size: 16px;
-}
-
-.tab-pill.active {
-  background: #4a4a4a;
-}
-
-.test-card {
-  max-width: 760px;
-  padding: 30px 32px 25px;
-  border-radius: 18px;
-  box-shadow: 0 7px 26px rgba(0,0,0,.10);
-}
-
-.test-name {
-  font-size: 23px;
-  margin-bottom: 17px;
-}
-
-.test-meta {
-  font-size: 16px;
-  line-height: 1.3;
-}
-
-.test-acc {
-  margin: 74px 0 36px;
-  font-size: 16px;
-}
-
-.test-divider {
-  margin-bottom: 18px;
-}
-
-.test-ready {
-  min-height: 52px;
-}
-
-.ready-note {
-  font-size: 16px;
-}
-
-.test-ready .cta-yellow {
-  min-width: 198px;
-  min-height: 50px;
-  font-size: 16px;
-}
-
-/* ---------- Check-in wizard ---------- */
-.wizard-page {
-  background: #fff;
-}
-
-.wiz-head {
-  min-height: 60px;
-  padding: 0 56px;
-}
-
-.wiz-body {
-  min-height: 0;
-  padding: 48px 20px 28px;
-}
-
-.wiz-card {
-  max-width: 720px;
-  padding: 0 18px;
-}
-
-.wiz-card h1 {
-  font-size: 31px;
-  line-height: 1.16;
-  margin: 16px 0 24px;
-}
-
-.wiz-card > p {
-  font-size: 20px;
-  line-height: 1.45;
-}
-
-.code-row {
-  gap: 19px;
-  margin: 28px auto 16px;
-}
-
-.code-input {
-  width: 54px;
-  height: 61px;
-  border-radius: 11px;
-  background: #fafafa;
-  font-size: 27px;
-}
-
-.wiz-foot {
-  min-height: 106px;
-  padding: 14px 56px 19px;
-}
-
-.wiz-foot .pill-outline,
-.wiz-foot .cta-yellow {
-  min-width: 160px;
-  min-height: 54px;
-  font-size: 18px;
-}
-
-.wiz-progress {
-  width: min(625px, 46vw);
-}
-
-.wiz-step-label {
-  font-size: 18px;
-  margin-bottom: 12px;
-}
-
-/* Make the progress indicator read as one continuous application bar. */
-.seg-bar {
-  height: 8px;
-  background: #e5ebf6;
-  border-radius: 999px;
-}
-
-.seg {
-  height: 8px;
-}
-
-.seg.fill {
-  background: #3858cf;
-}
-
-/* ---------- Exam shell geometry ---------- */
-.test-top {
-  height: 70px;
-  padding: 0 29px;
-  background: var(--ref2-exam-top);
-}
-
-.test-main {
-  height: calc(100vh - 162px);
-  min-height: 0;
-  grid-template-columns: 48% 52%;
-}
-
-.source-panel,
-.question-panel {
-  min-height: 0;
-  background: #fff;
-}
-
-.source-panel {
-  padding: 32px 34px;
-  border-right: 1px solid #cfd3d8;
-}
-
-.question-panel {
-  padding: 32px 36px;
-}
-
-.question-card {
-  max-width: 730px;
-}
-
-.q-head {
-  margin-bottom: 18px;
-}
-
-.q-number {
-  width: 34px;
-  height: 34px;
-  border-radius: 5px;
-}
-
-.q-prompt {
-  font-size: 18px;
-  line-height: 1.52;
-}
-
-.choice-wrap {
-  margin: 9px 0;
-}
-
-.choice {
-  min-height: 57px;
-  border-radius: 8px;
-  padding: 12px 16px;
-  background: #fafafa;
-}
-
-.choice.selected {
-  background: #eef3ff;
-}
-
-.test-footer {
-  min-height: 72px;
-  border-top: 1px dashed #9199a3;
-  background: #eaf2fb;
-  padding: 0 23px;
-}
-
-.pill-blue {
-  min-width: 94px;
-  min-height: 44px;
-  background: #355bd5;
-}
-
-/* ---------- Review modal ---------- */
-#reviewModal .modal {
-  width: min(760px, calc(100vw - 36px));
-  padding: 28px 30px 26px;
-  border-radius: 9px;
-}
-
-#reviewModal .review-card {
-  margin-top: 24px;
-}
-
-#reviewModal .review-head {
-  align-items: center;
-}
-
-#reviewModal .review-grid {
-  gap: 9px;
-}
-
-/* ---------- Accessibility rail ---------- */
-.azm-a11y-rail {
-  right: 20px;
-  gap: 14px;
-}
-
-.azm-a11y-rail button {
-  width: 72px;
-  border-radius: 16px;
-}
-
-.azm-a11y-rail .rail-volume {
-  height: 378px;
-  align-content: end;
-  padding: 14px;
-}
-
-.azm-a11y-rail .rail-level {
-  top: 22px;
-  bottom: 88px;
-  right: 25px;
-  width: 7px;
-}
-
-.azm-a11y-rail .rail-speaker,
-.azm-a11y-rail .rail-bell {
-  display: block;
-  font-size: 0;
-}
-
-.azm-a11y-rail .rail-speaker svg,
-.azm-a11y-rail .rail-bell svg {
-  width: 28px;
-  height: 28px;
-}
-
-.azm-a11y-rail #railBell {
-  height: 82px;
-}
-
-#azmVolumePanel {
-  z-index: 121;
-}
-
-/* ---------- Assistive Technology dialog ---------- */
-#atModal .modal {
-  width: min(830px, calc(100vw - 40px));
-  border-radius: 13px;
-}
-
-#atModal .at-tools-bar {
-  padding: 11px 28px 12px;
-}
-
-#atModal .at-tools-bar .btn {
-  color: #2b51b5;
-}
-
-#atModal .at-body {
-  padding: 0 28px 14px;
-}
-
-#atModal details {
-  padding: 16px 0;
-}
-
-#atModal summary {
-  font-size: 16px;
-}
-
-#atModal .at-copy {
-  font-size: 15px;
-  line-height: 1.52;
-}
-
-#atModal .modal-actions {
-  padding: 10px 28px 18px;
-}
-
-#atModal #atReferenceDone {
-  min-width: 88px;
-  min-height: 44px;
-  border-radius: 24px;
-  border: 1.5px solid #252525;
-  background: #ffd400;
-}
-
-/* ---------- Module transition ---------- */
-.azm-module-transition {
-  z-index: 500;
-}
-
-.azm-module-transition h1 {
-  font-size: 31px;
-  line-height: 1.15;
-}
-
-.azm-module-transition p {
-  font-size: 16px;
-}
-
-/* ---------- More menu ---------- */
-.tool-popover {
-  width: 262px;
-  right: 24px;
-  border-radius: 10px;
-  padding: 6px;
-}
-
-.tool-item {
-  min-height: 43px;
-  padding: 9px 11px;
-  font-size: 15px;
-}
-
-/* ---------- Small viewports ---------- */
-@media (max-width: 760px) {
-  .ref2-access-brand {
-    top: 16px;
-    font-size: 22px;
-  }
-
-  #deviceTestBtn {
-    top: 9px;
-    right: 10px;
-    min-height: 39px;
-    padding: 0 13px;
-    font-size: 13px;
-  }
-
-  .yt-wrap {
-    padding: 22px 14px 42px;
-  }
-
-  .yt-head {
-    gap: 10px;
-  }
-
-  .yt-head h2 {
-    font-size: 24px;
-  }
-
-  .test-main {
-    height: calc(100vh - 162px);
-    grid-template-columns: 1fr;
-  }
-
-  .source-panel {
-    max-height: 39vh;
-    padding: 21px;
-  }
-
-  .question-panel {
-    padding: 20px;
-  }
-
-  .test-footer {
-    padding: 0 12px;
-  }
-
-  .wiz-head {
-    padding: 0 18px;
-  }
-
-  .wiz-foot {
-    padding: 12px 16px 16px;
-    min-height: 96px;
-  }
-
-  .wiz-progress {
-    width: min(360px, 48vw);
-  }
-
-  .code-row {
-    gap: 10px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .azm-loading-dots span {
-    animation: none;
-  }
-}
+body { font-family: Arial, Helvetica, sans-serif; color: var(--ref2-text); }
+
+.ref2-access-brand { position:absolute; top:28px; left:50%; transform:translateX(-50%); z-index:25; display:inline-flex; align-items:center; gap:9px; color:#fff; font-weight:800; font-size:27px; letter-spacing:.005em; pointer-events:none; }
+.ref2-access-brand .ref2-logo { width:31px; height:31px; flex:none; }
+.access-page .signin-brand { display:none!important; }
+.access-page .signin-modal { width:min(430px,calc(100vw - 32px)); max-width:430px; margin-top:34px; padding:28px 36px 30px; border-radius:12px; }
+.access-page .signin-modal h1 { margin-bottom:22px; font-size:25px; line-height:1.2; }
+.access-page .signin-modal .field { margin:18px 0; }
+.access-page .signin-modal .field label { font-size:15px; margin-bottom:7px; }
+.access-page .signin-modal .text-input { min-height:44px; }
+.access-page .signin-links { margin-top:20px; }
+.access-page .signin-links .btn { color:#f7f8ff; }
+.access-page .signin-links .btn:hover { color:#fff; }
+#deviceTestBtn { min-height:44px; top:17px; right:24px; padding:0 22px; border-radius:23px; background:rgba(255,255,255,.92); box-shadow:0 2px 8px rgba(0,0,0,.12); }
+
+.yourtests-page { background:var(--ref2-page); }
+.yt-wrap { max-width:910px; padding:32px 34px 70px; }
+.yt-head { justify-content:flex-start; gap:18px; margin-bottom:20px; }
+.yt-head h2 { font-size:28px; line-height:1.1; }
+.tab-toggle { border-radius:11px; }
+.tab-pill { min-width:70px; padding:9px 16px; font-size:16px; }
+.tab-pill.active { background:#4a4a4a; }
+.test-card { max-width:760px; padding:30px 32px 25px; border-radius:18px; box-shadow:0 7px 26px rgba(0,0,0,.10); }
+.test-name { font-size:23px; margin-bottom:17px; }
+.test-meta { font-size:16px; line-height:1.3; }
+.test-acc { margin:74px 0 36px; font-size:16px; }
+.test-divider { margin-bottom:18px; }
+.test-ready { min-height:52px; }
+.ready-note { font-size:16px; }
+.test-ready .cta-yellow { min-width:198px; min-height:50px; font-size:16px; }
+
+.wizard-page { background:#fff; }
+.wiz-head { min-height:60px; padding:0 56px; }
+.wiz-body { min-height:0; padding:48px 20px 28px; }
+.wiz-card { max-width:720px; padding:0 18px; }
+.wiz-card h1 { font-size:31px; line-height:1.16; margin:16px 0 24px; }
+.wiz-card>p { font-size:20px; line-height:1.45; }
+.code-row { gap:19px; margin:28px auto 16px; }
+.code-input { width:54px; height:61px; border-radius:11px; background:#fafafa; font-size:27px; }
+.wiz-foot { min-height:106px; padding:14px 56px 19px; }
+.wiz-foot .pill-outline,.wiz-foot .cta-yellow { min-width:160px; min-height:54px; font-size:18px; }
+.wiz-progress { width:min(625px,46vw); }
+.wiz-step-label { font-size:18px; margin-bottom:12px; }
+.seg-bar { height:8px; background:#e5ebf6; border-radius:999px; }
+.seg { height:8px; }
+.seg.fill { background:#3858cf; }
+
+.test-top { height:70px; padding:0 29px; background:var(--ref2-exam-top); }
+.test-main { height:calc(100vh - 162px); min-height:0; grid-template-columns:48% 52%; }
+.source-panel,.question-panel { min-height:0; background:#fff; }
+.source-panel { padding:32px 34px; border-right:1px solid #cfd3d8; }
+.question-panel { padding:32px 36px; }
+.question-card { max-width:730px; }
+.q-head { margin-bottom:18px; }
+.q-number { width:34px; height:34px; border-radius:5px; }
+.q-prompt { font-size:18px; line-height:1.52; }
+.choice-wrap { margin:9px 0; }
+.choice { min-height:57px; border-radius:8px; padding:12px 16px; background:#fafafa; }
+.choice.selected { background:#eef3ff; }
+.test-footer { min-height:72px; border-top:1px dashed #9199a3; background:#eaf2fb; padding:0 23px; }
+.pill-blue { min-width:94px; min-height:44px; background:#355bd5; }
+
+/* ---------- Check Your Work: screenshot-sized confirmation/navigation card ---------- */
+#reviewModal .modal { width:min(550px,calc(100vw - 32px)); padding:18px 20px 16px; border-radius:5px; box-shadow:0 5px 18px rgba(0,0,0,.16); }
+#reviewModal .modal h2 { margin:0; font-size:19px; line-height:1.2; font-weight:500; text-align:center; }
+#reviewModal .modal>p.small { margin:10px auto 0; max-width:470px; font-size:9px; line-height:1.45; text-align:center; color:#60656b; }
+#reviewModal .review-card { margin-top:15px; border:1px solid #e0e2e5; border-radius:2px; padding:10px 12px 11px; background:#fff; }
+#reviewModal .review-head { align-items:center; gap:12px; }
+#reviewModal .review-head h3 { margin:0; font-size:11px; line-height:1.2; font-weight:700; }
+#reviewModal .review-legend { gap:9px; font-size:8px; }
+#reviewModal .legend-box { width:8px; height:8px; }
+#reviewModal .legend-ribbon { width:8px; height:8px; }
+#reviewModal .review-grid { grid-template-columns:repeat(8,1fr); gap:8px; margin-top:10px; }
+#reviewModal .review-q { width:27px; min-height:27px; height:27px; padding:0; border-radius:2px; font-size:11px; font-weight:600; justify-self:center; }
+#reviewModal .modal-actions { gap:8px; margin-top:14px; }
+#reviewModal .modal-actions .btn { min-width:57px; min-height:30px; height:30px; padding:0 12px; border-radius:16px; font-size:9px; }
+
+.azm-a11y-rail { right:20px; gap:14px; }
+.azm-a11y-rail button { width:72px; border-radius:16px; }
+.azm-a11y-rail .rail-volume { height:378px; align-content:end; padding:14px; }
+.azm-a11y-rail .rail-level { top:22px; bottom:88px; right:25px; width:7px; }
+.azm-a11y-rail .rail-speaker,.azm-a11y-rail .rail-bell { display:block; font-size:0; }
+.azm-a11y-rail .rail-speaker svg,.azm-a11y-rail .rail-bell svg { width:28px; height:28px; }
+.azm-a11y-rail #railBell { height:82px; }
+#azmVolumePanel { z-index:121; }
+
+/* ---------- Assistive Technology: match the supplied centered dialog ---------- */
+#atModal .modal { width:min(650px,calc(100vw - 34px)); max-height:min(525px,calc(100vh - 48px)); border-radius:4px; overflow:hidden; box-shadow:0 6px 22px rgba(0,0,0,.22); }
+#atModal .modal .modal-head { min-height:45px; padding:0 16px; }
+#atModal .modal-head h3 { font-size:15px; font-weight:500; }
+#atModal .at-tools-bar { padding:9px 16px 8px; border-top:1px solid #e2e4e7; border-bottom:1px solid #e2e4e7; justify-content:flex-end; }
+#atModal .at-tools-bar .btn { color:#2b51b5; font-size:9px; padding:0 6px; }
+#atModal .at-body { padding:0 16px 6px; max-height:395px; overflow:auto; }
+#atModal details { padding:10px 0; border-bottom:1px solid #e5e7e9; }
+#atModal summary { font-size:9px; }
+#atModal .at-copy { font-size:9px; line-height:1.45; }
+#atModal .at-copy p { margin:7px 0; }
+#atModal .at-copy ul { margin:5px 0; padding-left:18px; }
+#atModal .at-copy li { margin:3px 0; }
+#atModal .modal-actions { padding:8px 16px 12px; justify-content:center; border-top:1px solid #e5e7e9; }
+#atModal #atReferenceDone,#atModal #atRef2Done { min-width:50px; min-height:28px; height:28px; border-radius:15px; border:1.5px solid #252525; background:#ffd400; font-size:9px; }
+
+.azm-module-transition { z-index:500; }
+.azm-module-transition h1 { font-size:31px; line-height:1.15; }
+.azm-module-transition p { font-size:16px; }
+.tool-popover { width:262px; right:24px; border-radius:10px; padding:6px; }
+.tool-item { min-height:43px; padding:9px 11px; font-size:15px; }
+
+@media(max-width:760px) {
+  .ref2-access-brand { top:16px; font-size:22px; }
+  #deviceTestBtn { top:9px; right:10px; min-height:39px; padding:0 13px; font-size:13px; }
+  .yt-wrap { padding:22px 14px 42px; }
+  .yt-head { gap:10px; }
+  .yt-head h2 { font-size:24px; }
+  .test-main { height:calc(100vh - 162px); grid-template-columns:1fr; }
+  .source-panel { max-height:39vh; padding:21px; }
+  .question-panel { padding:20px; }
+  .test-footer { padding:0 12px; }
+  .wiz-head { padding:0 18px; }
+  .wiz-foot { padding:12px 16px 16px; min-height:96px; }
+  .wiz-progress { width:min(360px,48vw); }
+  .code-row { gap:10px; }
+}
+@media(prefers-reduced-motion:reduce) { .azm-loading-dots span { animation:none; } }
