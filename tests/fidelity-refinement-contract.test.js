@@ -59,11 +59,14 @@ if (!examJs.includes('actualModeAdvanceGuard') || !examJs.includes('Review modul
 if (!sw.includes('bluebook-fidelity-refinements.css') || !sw.includes('bluebook-exam-mode.js')) {
   throw new Error('offline cache is missing fidelity assets');
 }
-if (!sw.includes("const CACHE_NAME = 'azaman-bluebook-v3'")) {
+if (!sw.includes("const CACHE_NAME = 'azaman-bluebook-v4'")) {
   throw new Error('offline cache version was not bumped');
 }
 if (!sw.includes('caches.match(request).then((cached) =>')) {
   throw new Error('service worker is not cache-first');
+}
+if (sw.includes('fetch(request)')) {
+  throw new Error('exam service worker must not depend on a runtime network fallback');
 }
 
 new Function(js);
