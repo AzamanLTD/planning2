@@ -34,6 +34,10 @@
           out.textContent = `PASS Line Reader focus band initialized at ${Math.round(top)}px\nLINE READER SMOKE COMPLETE`;
         } catch (error) {
           out.textContent = `FAIL ${error.message || error}`;
+        } finally {
+          // The iframe application owns live timers/observers. Tear it down once the
+          // smoke result is recorded so headless Chromium can terminate deterministically.
+          frame.remove();
         }
       }, 250));
     })();
