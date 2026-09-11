@@ -62,7 +62,14 @@ The supplied reference pack establishes the following non-negotiable surface cha
 - Module completion is a dedicated white full-screen message with a small animated loader.
 - Assistive Technology is a large scrollable dialog with Expand All / Collapse All, speech-to-text guidance and an accompanying accessibility rail.
 
-## 5. Behavior requirements
+## 5. Platform and keyboard requirements
+
+- **ChromeOS** is a first-class keyboard target; the shortcut list opens with **Control + Search + S**.
+- **Windows**, **macOS**, and **iPad** have platform-specific modifier mappings for the shared exam actions.
+- **iPad** Help uses the dedicated **Command + Control + P** mapping.
+- The setup/check-in state must preserve focus order and keyboard operation across all ten check-in steps.
+
+## 6. Behavior requirements
 
 - Timer counts down per module and survives page refresh using an absolute deadline.
 - At the configured warning threshold the timer must remain visible and the warning state must not be bypassed by hiding the timer.
@@ -72,21 +79,21 @@ The supplied reference pack establishes the following non-negotiable surface cha
 - After a module expires, its state is locked and the application displays the module-transition surface before advancing.
 - Refresh/reopen repairs stale/corrupt persisted session state and never reopens a completed module.
 - Unscheduled breaks do not pause the module deadline.
-- Keyboard shortcuts mirror the documented platform action families used by the simulator, including **Control + Search + S** for opening keyboard shortcuts on ChromeOS.
+- Keyboard shortcuts mirror the documented platform action families used by the simulator.
 - Accessibility remains keyboard navigable, semantically labeled and reduced-motion aware.
 
-## 6. Offline boundary
+## 7. Offline boundary
 
 The exam model is self-contained after installation. The service worker precaches the complete runtime and serves installed assets from cache without a runtime network fallback. The app must not fabricate test-center SSID checks, remote proctoring state or network authorization inside the local browser exam engine.
 
-## 7. Non-goals
+## 8. Non-goals
 
 - Do not reproduce real College Board questions, passages or confidential answer keys.
 - Do not claim affiliation with College Board.
 - Do not invent undocumented exam controls merely to make the interface feel more sophisticated.
 - Do not make the practice/QA harness the visible default exam experience.
 
-## 8. Current verification references
+## 9. Current verification references
 
 - College Board public Bluebook student/test-admin materials for timing, tools and accessibility.
 - Owner-supplied reference screenshots in the current conversation, recorded in `docs/captures/INDEX.md`.
