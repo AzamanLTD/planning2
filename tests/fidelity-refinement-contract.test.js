@@ -37,38 +37,17 @@ for (const asset of [
   }
 }
 
-const requiredCss = [
-  '.ref2-access-brand',
-  '.test-main',
-  '.test-footer',
-  '.azm-a11y-rail',
-  '#atModal',
-  '.azm-module-transition',
-];
+const requiredCss = ['.ref2-access-brand','.test-main','.test-footer','.azm-a11y-rail','#atModal','.azm-module-transition'];
 requiredCss.forEach((selector) => {
   if (!css.includes(selector)) throw new Error(`missing fidelity selector: ${selector}`);
 });
 
-const requiredPixelCss = [
-  '.test-top',
-  '.timer-block',
-  '.question-nav',
-  '.test-footer',
-  '.test-main',
-  '.code-input',
-];
+const requiredPixelCss = ['.test-top','.timer-block','.question-nav','.test-footer','.test-main','.code-input','.azm-break-device-status'];
 requiredPixelCss.forEach((selector) => {
   if (!pixelCss.includes(selector)) throw new Error(`missing pixel calibration selector: ${selector}`);
 });
 
-const requiredJs = [
-  'Test Your Device',
-  'Assistive Technology',
-  'This Module Is Over',
-  'Expand All',
-  'Collapse All',
-  'moduleTransitions',
-];
+const requiredJs = ['Test Your Device','Assistive Technology','This Module Is Over','Expand All','Collapse All','moduleTransitions'];
 requiredJs.forEach((text) => {
   if (!js.includes(text)) throw new Error(`missing fidelity behavior: ${text}`);
 });
@@ -76,6 +55,7 @@ requiredJs.forEach((text) => {
 for (const [text, source] of [
   ['Take a Break: Do Not Close Your Device', breakCss + breakJs],
   ['Resume Testing Now', breakCss + breakJs],
+  ['Follow these rules during the break:', breakJs],
   ['This Module Is Over', transitionJs],
   ['moduleSec', mvpJs],
   ['Congratulations!', finalizationJs],
@@ -84,36 +64,16 @@ for (const [text, source] of [
   if (!source.includes(text)) throw new Error(`missing MVP runtime behavior: ${text}`);
 }
 
-if (!examCss.includes('body:not(.azm-harness) .preview-banner')) {
-  throw new Error('actual exam model must suppress preview-only chrome outside QA harness');
-}
-if (!examJs.includes('actualModeAdvanceGuard') || !examJs.includes('Review module')) {
-  throw new Error('actual exam model must gate early module advance');
-}
-if (!finalizationJs.includes('isActualRuntime') || !finalizationJs.includes('mountRecoveryNotice')) {
-  throw new Error('actual runtime recovery/finalization layer is missing');
-}
-if (!sw.includes('bluebook-fidelity-refinements.css') || !sw.includes('bluebook-exam-mode.js')) {
-  throw new Error('offline cache is missing fidelity assets');
-}
-for (const asset of ['bluebook-break-fidelity.css', 'bluebook-break-fidelity.js', 'bluebook-module-transition.js', 'bluebook-mvp-runtime.js', 'bluebook-pixel-fidelity.css']) {
+if (!examCss.includes('body:not(.azm-harness) .preview-banner')) throw new Error('actual exam model must suppress preview-only chrome outside QA harness');
+if (!examJs.includes('actualModeAdvanceGuard') || !examJs.includes('Review module')) throw new Error('actual exam model must gate early module advance');
+if (!finalizationJs.includes('isActualRuntime') || !finalizationJs.includes('mountRecoveryNotice')) throw new Error('actual runtime recovery/finalization layer is missing');
+if (!sw.includes('bluebook-fidelity-refinements.css') || !sw.includes('bluebook-exam-mode.js')) throw new Error('offline cache is missing fidelity assets');
+for (const asset of ['bluebook-break-fidelity.css','bluebook-break-fidelity.js','bluebook-module-transition.js','bluebook-mvp-runtime.js','bluebook-pixel-fidelity.css']) {
   if (!sw.includes(asset)) throw new Error(`offline cache is missing MVP asset: ${asset}`);
 }
-if (!sw.includes("const CACHE_NAME = 'azaman-bluebook-v8'")) {
-  throw new Error('offline cache version does not match current precache generation');
-}
-if (!sw.includes('caches.match(request).then((cached) =>')) {
-  throw new Error('service worker is not cache-first');
-}
-if (sw.includes('fetch(request)')) {
-  throw new Error('exam service worker must not depend on a runtime network fallback');
-}
+if (!sw.includes("const CACHE_NAME = 'azaman-bluebook-v9'")) throw new Error('offline cache version does not match current precache generation');
+if (!sw.includes('caches.match(request).then((cached) =>')) throw new Error('service worker is not cache-first');
+if (sw.includes('fetch(request)')) throw new Error('exam service worker must not depend on a runtime network fallback');
 
-new Function(js);
-new Function(examJs);
-new Function(finalizationJs);
-new Function(breakJs);
-new Function(mvpJs);
-new Function(transitionJs);
-
+new Function(js);new Function(examJs);new Function(finalizationJs);new Function(breakJs);new Function(mvpJs);new Function(transitionJs);
 console.log('FIDELITY REFINEMENT CONTRACT PASS');
