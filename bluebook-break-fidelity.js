@@ -22,20 +22,20 @@
     const remaining = state.breakEndAt ? Math.max(0, Math.ceil((state.breakEndAt - Date.now()) / 1000)) : 0;
     readyShown = !state.breakEndAt || remaining <= 0;
     app.innerHTML = `<main id="azmBreakPage" class="azm-break-page" aria-labelledby="azmBreakTitle">
-      <section class="azm-break-timer" aria-label="Scheduled break timer">
-        <div class="azm-break-label">Time remaining</div>
+      <section class="azm-break-timer" aria-label="Remaining Break Time">
+        <div class="azm-break-label">Remaining Break Time:</div>
         <div id="breakClock" class="azm-break-clock">${fmt(remaining)}</div>
       </section>
       <section class="azm-break-content">
         <h1 id="azmBreakTitle">Take a Break: Do Not Close Your Device</h1>
-        <p class="lead">You have 10 minutes for your break. You must stay in the testing room. When the break is over, you'll be able to resume testing.</p>
-        <h2>During your break:</h2>
+        <p class="lead">After the break, a Resume Testing Now button will appear and you'll start the next section.</p>
+        <h2>Follow these rules during the break:</h2>
         <ol>
-          <li>Keep your testing device with you.</li>
-          <li>You may have a snack or drink.</li>
-          <li>Do not access your phone or other prohibited devices.</li>
-          <li>Do not leave the testing room unless your proctor gives you permission.</li>
-          <li>Return to your seat before the break ends.</li>
+          <li>Do not disturb students who are still testing.</li>
+          <li>Do not exit the app or close your laptop.</li>
+          <li>Do not access phones, smartwatches, textbooks, notes, or the internet.</li>
+          <li>Do not eat or drink near any testing device.</li>
+          <li>Do not speak in the test room; outside the test room, do not discuss the exam with anyone.</li>
         </ol>
         <div class="azm-break-ready" ${readyShown ? '' : 'hidden'}>
           <button id="azmResumeBtn" class="btn">Resume Testing Now</button>
@@ -58,7 +58,8 @@
   function bindResume() {
     const state = getState();
     const btn = document.getElementById('azmResumeBtn');
-    if (!btn || !state || state.breakEndAt) return;
+    if (!btn || !state || state.breakEndAt || btn.dataset.bound === '1') return;
+    btn.dataset.bound = '1';
     btn.focus();
     btn.addEventListener('click', () => {
       const current = getState();
@@ -67,6 +68,7 @@
       current.qi = 0;
       current.breakEndAt = null;
       current.endAt = null;
+      current.screen = 'directions';
       save();
       wasBreak = false;
       readyShown = false;
@@ -79,12 +81,8 @@
     const state = getState();
     if (!state) return;
 
-    // app.js historically auto-routes from break -> directions at 00:00.
-    // Convert that internal routing into the Bluebook-style paused handoff
-    // so the student explicitly presses Resume Testing Now.
     if (wasBreak && state.screen === 'directions' && state.mi === 2 && state.completed?.rw2 && !state.breakEndAt) {
       state.screen = 'break';
-      state.breakEndAt = null;
       save();
       readyShown = true;
       render();
@@ -121,5 +119,6 @@
 
   const observer = new MutationObserver(maintain);
   observer.observe(document.body, { childList: true, subtree: true });
+  window.setInterval(maintain, 250);
   maintain();
 })();
