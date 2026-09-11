@@ -14,15 +14,17 @@ for (const phrase of [
   'Review module',
 ]) assert(source.includes(phrase), `navigation accessibility contract missing: ${phrase}`);
 
-const regionPatterns = [
-  /(?:const\s+source\s*=.*?;\s*)?source\?\.setAttribute\('role', 'region'\)/s,
-  /source\?\.setAttribute\('aria-label', '(?:Source|Passage or Source)'\)/,
-  /(?:const\s+question\s*=.*?;\s*)?question\?\.setAttribute\('role', 'region'\)/s,
-  /question\?\.setAttribute\('aria-label', '(?:Question|Question and Answer)'\)/,
-  /(?:const\s+footer\s*=.*?;\s*)?footer\?\.setAttribute\('role', 'contentinfo'\)/s,
-  /footer\?\.setAttribute\('aria-label', 'Question Navigation'\)/,
+const landmarkContracts = [
+  [/source\?\.setAttribute\('role', 'region'\)/, /const\s+source\s*=.*?;\s*if\s*\(source\)\s*\{\s*source\.setAttribute\('role', 'region'\)/s],
+  [/source\?\.setAttribute\('aria-label', '(?:Source|Passage or Source)'\)/, /const\s+source\s*=.*?;\s*if\s*\(source\)\s*\{.*?source\.setAttribute\('aria-label', '(?:Source|Passage or Source)'\)/s],
+  [/question\?\.setAttribute\('role', 'region'\)/, /const\s+question\s*=.*?;\s*if\s*\(question\)\s*\{\s*question\.setAttribute\('role', 'region'\)/s],
+  [/question\?\.setAttribute\('aria-label', '(?:Question|Question and Answer)'\)/, /const\s+question\s*=.*?;\s*if\s*\(question\)\s*\{.*?question\.setAttribute\('aria-label', '(?:Question|Question and Answer)'\)/s],
+  [/footer\?\.setAttribute\('role', 'contentinfo'\)/, /const\s+footer\s*=.*?;\s*if\s*\(footer\)\s*\{\s*footer\.setAttribute\('role', 'contentinfo'\)/s],
+  [/footer\?\.setAttribute\('aria-label', 'Question Navigation'\)/, /const\s+footer\s*=.*?;\s*if\s*\(footer\)\s*\{.*?footer\.setAttribute\('aria-label', 'Question Navigation'\)/s],
 ];
-regionPatterns.forEach((pattern, index) => assert(pattern.test(source), `navigation landmark contract missing: ${index + 1}`));
+landmarkContracts.forEach(([optionalChaining, guardedBlock], index) => {
+  assert(optionalChaining.test(source) || guardedBlock.test(source), `navigation landmark contract missing: ${index + 1}`);
+});
 
 assert(source.includes('childList: true, subtree: true'), 'navigation observer must react to rendered state changes');
 assert(!source.includes("attributeFilter: ['class', 'aria-pressed']"), 'navigation observer must not observe its own state attributes');
