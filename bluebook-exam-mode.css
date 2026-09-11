@@ -1,0 +1,53 @@
+/* Actual exam-model surface: keep the practice harness available to QA while
+   removing preview-only indicators from normal student runs. */
+body:not(.azm-harness) .preview-banner {
+  display: none;
+}
+
+body:not(.azm-harness) .access-foot {
+  display: none !important;
+}
+
+body:not(.azm-harness) #reviewModal .small {
+  display: none;
+}
+
+/* The review grid remains a navigation tool; submission is timer-gated in
+   actual exam mode. */
+body:not(.azm-harness) #reviewModal #submitModule {
+  display: none !important;
+}
+
+.ref2-device-dialog .modal-actions .cta-yellow {
+  min-width: 92px;
+}
+
+.ref2-device-list {
+  margin: 20px 0;
+  border: 1px solid #d7dade;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ref2-device-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 34px;
+  gap: 10px;
+  align-items: center;
+  padding: 11px 14px;
+  border-bottom: 1px solid #e5e7e9;
+}
+
+.ref2-device-row:last-child {
+  border-bottom: 0;
+}
+
+.ref2-device-row strong {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #1d7b44;
+  background: #e7f4ec;
+}
