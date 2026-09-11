@@ -3,7 +3,7 @@
 // The exam model is intentionally self-contained. Every runtime asset needed
 // by the browser is precached during installation; after installation the
 // service worker never reaches the network.
-const CACHE_NAME = 'azaman-bluebook-v7';
+const CACHE_NAME = 'azaman-bluebook-v8';
 const PRECACHE_URLS = [
   './',
   'index.html',
@@ -21,6 +21,7 @@ const PRECACHE_URLS = [
   'bluebook-exam-mode.css',
   'bluebook-exam-finalization.css',
   'bluebook-break-fidelity.css',
+  'bluebook-pixel-fidelity.css',
   'data/questions.js',
   'data/rw2-easy.js',
   'data/rw-source-overrides.js',
