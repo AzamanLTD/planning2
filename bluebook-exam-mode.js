@@ -13,7 +13,8 @@
     if (!state || state.harness) return;
     const modal = document.getElementById('reviewModal');
     const copy = modal?.querySelector('.modal > p.small');
-    if (copy) copy.textContent = 'You can return to any question in this module. The module ends automatically when time expires.';
+    const text = 'You can return to any question in this module. The module ends automatically when time expires.';
+    if (copy && copy.textContent !== text) copy.textContent = text;
   }
 
   function actualModeAdvanceGuard(event) {

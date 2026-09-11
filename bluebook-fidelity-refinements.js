@@ -97,8 +97,10 @@
 
     const emailLabel = email.closest('.field')?.querySelector('label');
     const passwordLabel = password.closest('.field')?.querySelector('label');
-    if (emailLabel) emailLabel.textContent = 'Email Address';
-    if (passwordLabel) passwordLabel.textContent = 'Password';
+    const emailText = 'Email Address';
+    const passwordText = 'Password';
+    if (emailLabel && emailLabel.textContent !== emailText) emailLabel.textContent = emailText;
+    if (passwordLabel && passwordLabel.textContent !== passwordText) passwordLabel.textContent = passwordText;
 
     const syncStudent = () => {
       if (student.value.trim()) return;
