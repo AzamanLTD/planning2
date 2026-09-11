@@ -11,6 +11,20 @@
   const base={v:3,screen:'test',student:'Actual Smoke Student',email:'actual@example.com',password:'',accessCode:'SAT26',roomCode:'AZM24',startCode:'492776',step:10,setupStep:1,setupDone:true,infoCorrect:'yes',deviceOk:'yes',infoOk:true,roomOk:true,rulesOk:true,checkinRules:true,aids:{},pledge:'',mi:0,qi:0,endAt:Date.now()+600000,breakEndAt:null,answers:{},marked:{},eliminated:{},notes:{},highlights:{},completed:{},submitted:false,adaptive:{rw:'easy',math:'easy'},timerHidden:false,lineReader:false,rules:true,desk:true,warning:{},harness:false};
   const state=()=>JSON.parse(localStorage.getItem(KEY)||'null'); const write=(x)=>localStorage.setItem(KEY,JSON.stringify(x));
   async function load(){ await wait(350); return [frame.contentWindow,frame.contentDocument]; }
+  async function phaseStartFlow(){
+    write({...base,screen:'checkin',step:8,mi:0,endAt:null});
+    frame.src='../index.html?actual-start='+Date.now(); const [win,doc]=await load();
+    check('start code surface renders',!!doc.getElementById('azmStartCodePage'));
+    check('start code shows numbers-only instruction',/numbers only/i.test(doc.getElementById('azmStartCodePage').textContent));
+    check('start code has six input boxes',doc.querySelectorAll('.azm-start-digit').length===6);
+    check('start test control renders',!!doc.getElementById('azmStartTest'));
+    check('start flow uses official continue wording',/review the instructions/i.test(doc.getElementById('azmStartCodePage').textContent));
+    doc.querySelectorAll('.azm-start-digit').forEach((b,i)=>{b.value=base.startCode[i];b.dispatchEvent(new Event('input',{bubbles:true}));});
+    doc.getElementById('azmStartTest').click(); await wait(80);
+    check('start test enters section directions',state().screen==='directions' && state().mi===0);
+    check('directions surface renders',!!doc.getElementById('azmDirectionsPage'));
+    check('directions uses continue control',!!doc.getElementById('beginModuleBtn'));
+  }
   async function phaseRecovery(){
     write({...base,screen:'signin',mi:2,qi:7,endAt:Date.now()+241000,recovery:{remainingMs:241000,expiresAt:Date.now()+600000},answers:{'rw1-0':'A'}});
     frame.src='../index.html?actual-recovery='+Date.now(); const [win,doc]=await load();
@@ -39,7 +53,7 @@
     frame.src='../index.html?actual-break='+Date.now(); const [win,doc]=await load();
     await wait(2050);
     check('scheduled break surface renders',!!doc.getElementById('azmBreakPage'));
-    check('scheduled break shows break rules',/During your break/i.test(doc.getElementById('azmBreakPage').textContent));
+    check('scheduled break shows break rules',/Follow these rules during the break/i.test(doc.getElementById('azmBreakPage').textContent));
     check('break waits for explicit resume control',!!doc.getElementById('azmResumeBtn'));
     check('resume control is enabled after break time',!doc.getElementById('azmResumeBtn').disabled);
     doc.getElementById('azmResumeBtn').click(); await wait(80); const s=state();
@@ -54,7 +68,7 @@
     check('proctor instruction is present',/proctor/i.test(doc.querySelector('.azm-congrats-copy')?.textContent||''));
     check('return-home control is present',!!doc.getElementById('azmReturnHome'));
   }
-  (async()=>{try{await phaseRecovery();await phaseGate();await phaseBreak();await phaseSubmission();out.textContent=checks.join('\n')+'\nACTUAL EXAM SMOKE COMPLETE';}catch(e){out.textContent=checks.join('\n')+'\nFAIL '+e.message;}finally{frame.remove();}})();
+  (async()=>{try{await phaseStartFlow();await phaseRecovery();await phaseGate();await phaseBreak();await phaseSubmission();out.textContent=checks.join('\n')+'\nACTUAL EXAM SMOKE COMPLETE';}catch(e){out.textContent=checks.join('\n')+'\nFAIL '+e.message;}finally{frame.remove();}})();
 })();
 </script>
 </body></html>
