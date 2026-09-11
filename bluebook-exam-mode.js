@@ -2,6 +2,7 @@
   'use strict';
 
   const getState = () => window.AZAMAN_APP?.getState?.();
+  let directionsTimer = null;
 
   function syncModeClass() {
     const state = getState();
@@ -19,6 +20,43 @@
     if (title.textContent.trim() !== text) title.textContent = text;
   }
 
+  function fmt(seconds) {
+    seconds = Math.max(0, Math.ceil(seconds));
+    return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+  }
+
+  function syncDirectionsTimer() {
+    const state = getState();
+    const timer = document.querySelector('#azmDirectionsPage .azm-directions-timer');
+    if (!state || state.harness || state.screen !== 'directions' || !timer) {
+      if (directionsTimer) window.clearInterval(directionsTimer);
+      directionsTimer = null;
+      return;
+    }
+
+    if (state.mi === 0 && state.step === 10 && !state.endAt && !state.completed?.rw1) {
+      state.endAt = Date.now() + 32 * 60 * 1000;
+      state.qi = 0;
+      window.AZAMAN_APP?.save?.();
+    }
+
+    const update = () => {
+      const current = getState();
+      if (!current || current.screen !== 'directions') return;
+      const seconds = current.endAt ? Math.max(0, Math.ceil((current.endAt - Date.now()) / 1000)) : (current.mi >= 2 ? 35 * 60 : 32 * 60);
+      const textNode = [...timer.childNodes].find((node) => node.nodeType === Node.TEXT_NODE);
+      if (textNode) textNode.nodeValue = `${fmt(seconds)} `;
+      if (seconds <= 0 && current.endAt) {
+        if (directionsTimer) window.clearInterval(directionsTimer);
+        directionsTimer = null;
+        window.AZAMAN_APP?.render?.();
+      }
+    };
+
+    if (!directionsTimer) directionsTimer = window.setInterval(update, 250);
+    update();
+  }
+
   function actualModeDirections() {
     const state = getState();
     const page = document.getElementById('azmDirectionsPage');
@@ -31,25 +69,19 @@
     const heading = panel.querySelector('h2');
     if (heading) heading.textContent = `Section ${section}, Module ${module}: ${name}`;
 
-    const bullets = index < 2
-      ? [
-          'This module is made up of multiple-choice questions.',
-          'You can move back and forth between questions until time expires.',
-          'At the end of the module, you can review your answers until time expires.',
-          'Once the next module begins, you cannot return to these questions.'
-        ]
-      : [
-          'This module is made up of multiple-choice questions.',
-          'You can move back and forth between questions until time expires.',
-          'At the end of the module, you can review your answers until time expires.',
-          'Once the next module begins, you cannot return to these questions.'
-        ];
+    const bullets = [
+      'This module is made up of multiple-choice questions.',
+      'You can move back and forth between questions until time expires.',
+      'At the end of the module, you can review your answers until time expires.',
+      'Once the next module begins, you cannot return to these questions.'
+    ];
     const list = panel.querySelector('ul');
     if (list) {
       const html = bullets.map((text) => `<li>${text}</li>`).join('');
       if (list.innerHTML !== html) list.innerHTML = html;
     }
     panel.querySelector('.azm-official-directions-copy')?.remove();
+    syncDirectionsTimer();
   }
 
   function actualModeReviewCopy() {
@@ -67,6 +99,7 @@
     if (!state || state.harness || !button || state.screen !== 'test') return;
     if (!/Review module/i.test(button.textContent || '')) return;
     if (!state.endAt || state.endAt <= Date.now()) return;
+
     event.preventDefault();
     event.stopImmediatePropagation();
     showBlockedMessage();
