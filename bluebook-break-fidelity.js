@@ -16,13 +16,11 @@
     const state = getState();
     if (!actual() || state.screen !== 'break' || document.querySelector('.azm-module-transition')) return;
     const app = document.getElementById('app');
-    if (!app) return;
-    if (document.getElementById('azmBreakPage')) return;
+    if (!app || document.getElementById('azmBreakPage')) return;
 
     wasBreak = true;
     const remaining = state.breakEndAt ? Math.max(0, Math.ceil((state.breakEndAt - Date.now()) / 1000)) : 0;
-    const ready = !state.breakEndAt || remaining <= 0;
-    readyShown = ready;
+    readyShown = !state.breakEndAt || remaining <= 0;
     app.innerHTML = `<main id="azmBreakPage" class="azm-break-page" aria-labelledby="azmBreakTitle">
       <section class="azm-break-timer" aria-label="Scheduled break timer">
         <div class="azm-break-label">Time remaining</div>
@@ -39,7 +37,7 @@
           <li>Do not leave the testing room unless your proctor gives you permission.</li>
           <li>Return to your seat before the break ends.</li>
         </ol>
-        <div class="azm-break-ready" ${ready ? '' : 'hidden'}>
+        <div class="azm-break-ready" ${readyShown ? '' : 'hidden'}>
           <button id="azmResumeBtn" class="btn">Resume Testing Now</button>
         </div>
       </section>
@@ -70,6 +68,7 @@
       current.breakEndAt = null;
       current.endAt = null;
       save();
+      wasBreak = false;
       readyShown = false;
       render();
     });
@@ -121,6 +120,5 @@
 
   const observer = new MutationObserver(maintain);
   observer.observe(document.body, { childList: true, subtree: true });
-  window.setInterval(maintain, 250);
   maintain();
 })();
