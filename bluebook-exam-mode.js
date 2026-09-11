@@ -13,10 +13,9 @@
     const title = document.querySelector('.test-top .test-title');
     if (!state || state.harness || state.screen !== 'test' || !title) return;
     const index = Math.max(0, Math.min(3, Number(state.mi) || 0));
-    const section = index < 2 ? 'I' : 'II';
-    const module = (index % 2) + 1;
+    const section = index < 2 ? '1' : '2';
     const name = index < 2 ? 'Reading and Writing' : 'Math';
-    const text = `Section ${section}, Module ${module}: ${name}`;
+    const text = `Section ${section}: ${name}`;
     if (title.textContent.trim() !== text) title.textContent = text;
   }
 
@@ -26,24 +25,31 @@
     const panel = page?.querySelector('.azm-directions-panel');
     if (!state || state.harness || state.screen !== 'directions' || !page || !panel) return;
     const index = Math.max(0, Math.min(3, Number(state.mi) || 0));
-    const section = index < 2 ? 'I' : 'II';
+    const section = index < 2 ? '1' : '2';
     const module = (index % 2) + 1;
     const name = index < 2 ? 'Reading and Writing' : 'Math';
     const heading = panel.querySelector('h2');
     if (heading) heading.textContent = `Section ${section}, Module ${module}: ${name}`;
 
-    const prose = index < 2
-      ? '<p>The questions in this section address a number of important reading and writing skills. Each question includes one or more passages, which may include a table or graph. Read each passage and question carefully, and then choose the best answer to the question based on the passage(s).</p><p>All questions in this section are multiple-choice with four answer choices. Each question has a single best answer.</p>'
-      : '<p>The questions in this section address a number of important math skills. Use of a calculator is permitted for all questions. A reference sheet, calculator, and these directions can be accessed throughout the test.</p><p>Some questions ask you to enter your answer. For these questions, solve the problem and enter your answer in the response field.</p>';
-    let content = panel.querySelector('.azm-official-directions-copy');
-    if (!content) {
-      content = document.createElement('div');
-      content.className = 'azm-official-directions-copy';
-      const button = panel.querySelector('#beginModuleBtn');
-      panel.insertBefore(content, button || null);
+    const bullets = index < 2
+      ? [
+          'This module is made up of multiple-choice questions.',
+          'You can move back and forth between questions until time expires.',
+          'At the end of the module, you can review your answers until time expires.',
+          'Once the next module begins, you cannot return to these questions.'
+        ]
+      : [
+          'This module is made up of multiple-choice questions.',
+          'You can move back and forth between questions until time expires.',
+          'At the end of the module, you can review your answers until time expires.',
+          'Once the next module begins, you cannot return to these questions.'
+        ];
+    const list = panel.querySelector('ul');
+    if (list) {
+      const html = bullets.map((text) => `<li>${text}</li>`).join('');
+      if (list.innerHTML !== html) list.innerHTML = html;
     }
-    if (content.innerHTML !== prose) content.innerHTML = prose;
-    panel.querySelector('ul')?.remove();
+    panel.querySelector('.azm-official-directions-copy')?.remove();
   }
 
   function actualModeReviewCopy() {
@@ -61,7 +67,6 @@
     if (!state || state.harness || !button || state.screen !== 'test') return;
     if (!/Review module/i.test(button.textContent || '')) return;
     if (!state.endAt || state.endAt <= Date.now()) return;
-
     event.preventDefault();
     event.stopImmediatePropagation();
     showBlockedMessage();
