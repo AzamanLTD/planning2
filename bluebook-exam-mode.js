@@ -34,8 +34,10 @@
       return;
     }
 
-    if (state.mi === 0 && state.step === 10 && !state.endAt && !state.completed?.rw1) {
-      state.endAt = Date.now() + 32 * 60 * 1000;
+    const minutes = state.mi >= 2 ? 35 : 32;
+    const moduleId = state.mi === 0 ? 'rw1' : state.mi === 1 ? 'rw2' : state.mi === 2 ? 'math1' : 'math2';
+    if (!state.endAt && !state.completed?.[moduleId]) {
+      state.endAt = Date.now() + minutes * 60 * 1000;
       state.qi = 0;
       window.AZAMAN_APP?.save?.();
     }
@@ -43,7 +45,7 @@
     const update = () => {
       const current = getState();
       if (!current || current.screen !== 'directions') return;
-      const seconds = current.endAt ? Math.max(0, Math.ceil((current.endAt - Date.now()) / 1000)) : (current.mi >= 2 ? 35 * 60 : 32 * 60);
+      const seconds = current.endAt ? Math.max(0, Math.ceil((current.endAt - Date.now()) / 1000)) : minutes * 60;
       const textNode = [...timer.childNodes].find((node) => node.nodeType === Node.TEXT_NODE);
       if (textNode) textNode.nodeValue = `${fmt(seconds)} `;
       if (seconds <= 0 && current.endAt) {
