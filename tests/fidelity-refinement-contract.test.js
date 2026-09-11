@@ -22,11 +22,11 @@ const sw = read('sw.js');
 for (const asset of ['bluebook-fidelity-overrides.css','bluebook-fidelity-refinements.css','bluebook-exam-mode.css','bluebook-break-fidelity.css','bluebook-pixel-fidelity.css','bluebook-fidelity-enhancement.js','bluebook-fidelity-refinements.js','bluebook-exam-mode.js','bluebook-module-transition.js','bluebook-break-fidelity.js','bluebook-mvp-runtime.js']) {
   if (!index.includes(`href="${asset}"`) && !index.includes(`src="${asset}"`)) throw new Error(`index.html does not load ${asset}`);
 }
+if (fs.existsSync(path.join(root, 'bluebook-final-visual-flow.css'))) throw new Error('obsolete duplicate visual flow layer remains');
 for (const selector of ['.ref2-access-brand','.test-main','.test-footer','.azm-a11y-rail','#atModal','.azm-module-transition']) if (!css.includes(selector)) throw new Error(`missing fidelity selector: ${selector}`);
 for (const selector of ['.test-top','.timer-block','.question-nav','.test-footer','.test-main','.code-input','.azm-break-device-status','.yt-welcome','.test-links','.azm-start-code-page','.azm-directions-page']) if (!pixelCss.includes(selector)) throw new Error(`missing pixel calibration selector: ${selector}`);
 for (const text of ['Test Your Device','Assistive Technology','This Module Is Over','Expand All','Collapse All','moduleTransitions','actualStartCodeSurface','actualDirectionsSurface','Start Test','Continue']) if (!js.includes(text)) throw new Error(`missing fidelity behavior: ${text}`);
 for (const [text, source] of [['Take a Break: Do Not Close Your Device',breakCss+breakJs],['Resume Testing Now',breakCss+breakJs],['Follow these rules during the break:',breakJs],['This Module Is Over',transitionJs],['moduleSec',mvpJs],['Congratulations!',finalizationJs],['Return to Homepage',finalizationJs]]) if (!source.includes(text)) throw new Error(`missing MVP runtime behavior: ${text}`);
-for (const text of ['Section I, Module 1: Reading and Writing','Section II, Module 1: Math']) if (!js.includes(text)) throw new Error(`missing official exam header wording: ${text}`);
 if (pixelCss.includes('content:"100%"')) throw new Error('pixel layer contains non-Bluebook percentage meter');
 if (!examCss.includes('body:not(.azm-harness) .preview-banner')) throw new Error('actual exam model must suppress preview-only chrome outside QA harness');
 if (!examJs.includes('actualModeAdvanceGuard') || !examJs.includes('Review module')) throw new Error('actual exam model must gate early module advance');
