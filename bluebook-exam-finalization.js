@@ -2,7 +2,6 @@
   'use strict';
 
   let recoveryCountdown = null;
-  const SUBMISSION_WINDOW_MS = 36 * 60 * 60 * 1000;
 
   const getState = () => window.AZAMAN_APP?.getState?.();
   const save = () => window.AZAMAN_APP?.save?.();
@@ -18,6 +17,13 @@
 
   function submissionRetryIsValid(state) {
     return Number.isFinite(state?.submissionRetryExpiresAt) && Date.now() < state.submissionRetryExpiresAt;
+  }
+
+  function nextDaySubmissionDeadline(now = Date.now()) {
+    const deadline = new Date(now);
+    deadline.setDate(deadline.getDate() + 1);
+    deadline.setHours(23, 59, 59, 999);
+    return deadline.getTime();
   }
 
   function clearRecoveryCountdown() {
@@ -104,7 +110,6 @@
     const state = getState();
     if (!state?.submissionPending || submissionRetryIsValid(state)) return false;
     state.submissionPending = false;
-    state.submitted = false;
     state.submissionRetryExpired = true;
     save();
     return true;
@@ -129,13 +134,18 @@
     const app = document.getElementById('app');
     if (!app) return;
     const pending = submissionPending(state);
+    const expired = state.submissionRetryExpired === true;
     const statusCopy = pending
       ? 'Your answers are saved on this device, but they have not been submitted yet.'
-      : 'The test is complete, and your answers have been submitted.';
+      : expired
+        ? 'Your answers are saved on this device, but the submission window has ended.'
+        : 'The test is complete, and your answers have been submitted.';
     const detailCopy = pending
       ? 'Reconnect to the internet and submit your answers before 11:59 p.m. local time the day after your test.'
-      : 'Your proctor will dismiss you when it’s time to go.';
-    app.innerHTML = `<main id="azmSubmissionScreen" class="azm-submission-page azm-congrats-page"><section class="azm-congrats-card" role="status" aria-live="polite" aria-atomic="true"><h1>Congratulations!</h1><p class="azm-congrats-sub">${statusCopy}</p><div class="azm-congrats-panel"><div class="azm-congrats-art">${laptopArt()}</div><div class="azm-congrats-copy"><p>${detailCopy}</p><p>${pending ? 'Your answers remain saved on this device until you submit them.' : 'Please <strong>be quiet</strong>; other students may still be testing.'}</p></div></div>${pending ? '<div class="modal-actions"><button type="button" id="azmRetrySubmission" class="btn primary-action">Submit Again</button></div>' : ''}<button type="button" id="azmReturnHome" class="azm-congrats-home">Return to Homepage</button></section></main>`;
+      : expired
+        ? 'Contact your testing coordinator for next steps.'
+        : 'Your proctor will dismiss you when it’s time to go.';
+    app.innerHTML = `<main id="azmSubmissionScreen" class="azm-submission-page azm-congrats-page"><section class="azm-congrats-card" role="status" aria-live="polite" aria-atomic="true"><h1>Congratulations!</h1><p class="azm-congrats-sub">${statusCopy}</p><div class="azm-congrats-panel"><div class="azm-congrats-art">${laptopArt()}</div><div class="azm-congrats-copy"><p>${detailCopy}</p><p>${pending ? 'Your answers remain saved on this device until you submit them.' : expired ? 'The test record remains on this device for reference.' : 'Please <strong>be quiet</strong>; other students may still be testing.'}</p></div></div>${pending ? '<div class="modal-actions"><button type="button" id="azmRetrySubmission" class="btn primary-action">Submit Again</button></div>' : ''}<button type="button" id="azmReturnHome" class="azm-congrats-home">Return to Homepage</button></section></main>`;
     document.getElementById('azmRetrySubmission')?.addEventListener('click', retrySubmission);
     document.getElementById('azmReturnHome')?.addEventListener('click', () => { try { localStorage.removeItem('azaman-sat-practice-v3'); } catch (_) {} location.reload(); });
   }
