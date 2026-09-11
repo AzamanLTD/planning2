@@ -1,14 +1,14 @@
 /* Final screenshot calibration for current Bluebook training surfaces. */
+#ref2DeviceDialog,#deviceTestDialog{background:#3157d1}
 .bb-final-device-card{width:min(430px,calc(100vw - 32px));max-height:calc(100vh - 48px);overflow:hidden;border-radius:6px;padding:30px 32px 24px;background:#fff;box-shadow:0 7px 28px rgba(0,0,0,.22)}
-#ref2DeviceDialog{background:#3157d1}
 .bb-final-device-card .modal-head{display:none}
-.bb-final-device-card .ref2-device-result{margin:0 0 10px;font-size:25px;line-height:1.2;font-weight:500;text-align:left;color:#202124}
-.bb-final-device-card .ref2-device-lead{margin:0 0 24px;font-size:14px;line-height:1.45;color:#5f6368}
+.bb-final-device-title{margin:0 0 10px;font-size:25px;line-height:1.2;font-weight:500;color:#202124}
+.bb-final-device-card .bb-final-device-lead{margin:0 0 24px;font-size:14px;line-height:1.45;color:#5f6368}
 .bb-final-device-card .ref2-device-list{display:grid;gap:0;margin:0;border-top:1px solid #eceff1}
 .bb-final-device-card .bb-final-device-row{min-height:48px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #eceff1;font-size:15px;color:#202124}
 .bb-final-device-card .bb-final-device-row strong{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;font-size:17px;color:#177245;background:#e3f4ea}
 .bb-final-device-card .modal-actions{justify-content:flex-start;padding:24px 0 0;border-top:0}
-.bb-final-device-card #ref2DeviceDone{min-width:78px;min-height:40px;border-radius:22px;border:1.5px solid #171717;background:#ffd400;color:#171717;font-size:14px;font-weight:700}
+.bb-final-device-card #bbFinalDeviceDone{min-width:78px;min-height:40px;border-radius:22px;border:1.5px solid #171717;background:#ffd400;color:#171717;font-size:14px;font-weight:700}
 .bb-final-at-card{width:min(650px,calc(100vw - 34px));max-height:min(560px,calc(100vh - 44px));overflow:hidden;border-radius:4px;box-shadow:0 6px 22px rgba(0,0,0,.22)}
 .bb-final-at-card .modal-head{min-height:45px;padding:0 16px;border-bottom:0}
 .bb-final-at-card .modal-head h3{font-size:15px;font-weight:500}
@@ -22,4 +22,4 @@
 .bb-final-at-card .at-copy ul{margin:6px 0;padding-left:18px}
 .bb-final-at-card .modal-actions{padding:8px 16px 12px;justify-content:center;border-top:1px solid #e5e7e9}
 .bb-final-at-card #atFinalDone{min-width:54px;min-height:28px;height:28px;border-radius:15px;border:1.5px solid #252525;background:#ffd400;font-size:9px}
-@media(max-width:760px){.bb-final-device-card{padding:24px 20px 20px}.bb-final-device-card .ref2-device-result{font-size:22px}.bb-final-at-card{max-height:calc(100vh - 24px)}.bb-final-at-card .at-body{max-height:calc(100vh - 170px)}}
+@media(max-width:760px){.bb-final-device-card{padding:24px 20px 20px}.bb-final-device-title{font-size:22px}.bb-final-at-card{max-height:calc(100vh - 24px)}.bb-final-at-card .at-body{max-height:calc(100vh - 170px)}}
