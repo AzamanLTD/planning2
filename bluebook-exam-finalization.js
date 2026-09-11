@@ -91,12 +91,35 @@
     </svg>`;
   }
 
+  function submissionPending(state) {
+    return state.submissionPending === true;
+  }
+
+  function retrySubmission() {
+    const state = getState();
+    if (!state || !isActualRuntime() || state.screen !== 'finish' || !submissionPending(state)) return;
+    if (navigator.onLine === false) return;
+    state.submissionPending = false;
+    state.submissionAttemptedAt = Date.now();
+    state.submitted = true;
+    save();
+    window.AZAMAN_APP?.render?.();
+  }
+
   function mountSubmissionScreen() {
     const state = getState();
     if (!isActualRuntime() || state.screen !== 'finish' || document.getElementById('azmSubmissionScreen')) return;
     const app = document.getElementById('app');
     if (!app) return;
-    app.innerHTML = `<main id="azmSubmissionScreen" class="azm-submission-page azm-congrats-page"><section class="azm-congrats-card" role="status" aria-live="polite" aria-atomic="true"><h1>Congratulations!</h1><p class="azm-congrats-sub">The test is complete, and your answers have been submitted.</p><div class="azm-congrats-panel"><div class="azm-congrats-art">${laptopArt()}</div><div class="azm-congrats-copy"><p>Your proctor will dismiss you when it’s time to go.</p><p>Please <strong>be quiet</strong>; other students may still be testing.</p></div></div><button type="button" id="azmReturnHome" class="azm-congrats-home">Return to Homepage</button></section></main>`;
+    const pending = submissionPending(state);
+    const statusCopy = pending
+      ? 'Your answers are saved on this device, but they have not been submitted yet.'
+      : 'The test is complete, and your answers have been submitted.';
+    const detailCopy = pending
+      ? 'Reconnect to the internet and submit your answers before 11:59 p.m. local time the day after your test.'
+      : 'Your proctor will dismiss you when it’s time to go.';
+    app.innerHTML = `<main id="azmSubmissionScreen" class="azm-submission-page azm-congrats-page"><section class="azm-congrats-card" role="status" aria-live="polite" aria-atomic="true"><h1>Congratulations!</h1><p class="azm-congrats-sub">${statusCopy}</p><div class="azm-congrats-panel"><div class="azm-congrats-art">${laptopArt()}</div><div class="azm-congrats-copy"><p>${detailCopy}</p><p>${pending ? 'Your answers remain saved on this device until you submit them.' : 'Please <strong>be quiet</strong>; other students may still be testing.'}</p></div></div>${pending ? '<div class="modal-actions"><button type="button" id="azmRetrySubmission" class="btn primary-action">Submit Again</button></div>' : ''}<button type="button" id="azmReturnHome" class="azm-congrats-home">Return to Homepage</button></section></main>`;
+    document.getElementById('azmRetrySubmission')?.addEventListener('click', retrySubmission);
     document.getElementById('azmReturnHome')?.addEventListener('click', () => { try { localStorage.removeItem('azaman-sat-practice-v3'); } catch (_) {} location.reload(); });
   }
 
