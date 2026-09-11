@@ -23,7 +23,7 @@ const lineReaderJs = read('line-reader-enhancement.js');
 const sw = read('sw.js');
 
 for (const asset of ['bluebook-fidelity-overrides.css','bluebook-fidelity-refinements.css','bluebook-exam-mode.css','bluebook-break-fidelity.css','bluebook-pixel-fidelity.css','bluebook-final-calibration.css','bluebook-fidelity-enhancement.js','bluebook-fidelity-refinements.js','bluebook-exam-mode.js','bluebook-module-transition.js','bluebook-break-fidelity.js','bluebook-mvp-runtime.js','bluebook-final-calibration.js']) {
-  if (!index.includes(`href="${asset}"`) && !index.includes(`src="${asset}"`)) throw new Error(`index.html does not load ${asset}`);
+  if (!index.includes(`href="${asset}"`) && !index.includes(`href="${asset}?`) && !index.includes(`src="${asset}"`) && !index.includes(`src="${asset}?`)) throw new Error(`index.html does not load ${asset}`);
 }
 if (index.includes('bluebook-final-visual-flow.css')) throw new Error('obsolete duplicate visual flow layer is still loaded');
 for (const selector of ['.ref2-access-brand','.test-main','.test-footer','#atModal','.azm-module-transition']) if (!css.includes(selector)) throw new Error(`missing fidelity selector: ${selector}`);
@@ -41,7 +41,7 @@ if (!finalizationJs.includes('isActualRuntime') || !finalizationJs.includes('mou
 if (!lineReaderJs.includes('state.cleanup') || !lineReaderJs.includes('removeEventListener')) throw new Error('Line Reader enhancement must clean up listeners across rerenders');
 if (!sw.includes('bluebook-fidelity-refinements.css') || !sw.includes('bluebook-exam-mode.js')) throw new Error('offline cache is missing fidelity assets');
 for (const asset of ['bluebook-break-fidelity.css','bluebook-break-fidelity.js','bluebook-module-transition.js','bluebook-mvp-runtime.js','bluebook-pixel-fidelity.css','line-reader-enhancement.js','bluebook-final-calibration.css','bluebook-final-calibration.js']) if (!sw.includes(asset)) throw new Error(`offline cache is missing MVP asset: ${asset}`);
-if (!sw.includes("const CACHE_NAME='azaman-bluebook-v20'")) throw new Error('offline cache version does not match current precache generation');
+if (!sw.includes("const CACHE_NAME='azaman-bluebook-v21'")) throw new Error('offline cache version does not match current precache generation');
 if (!sw.includes('caches.match(r).then(c=>')) throw new Error('service worker is not cache-first');
 if (sw.includes('fetch(request)')) throw new Error('exam service worker must not depend on a runtime network fallback');
 new Function(js);new Function(finalJs);new Function(examJs);new Function(finalizationJs);new Function(breakJs);new Function(mvpJs);new Function(transitionJs);new Function(lineReaderJs);

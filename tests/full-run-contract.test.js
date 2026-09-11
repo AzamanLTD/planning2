@@ -4,7 +4,7 @@ const assert = require('assert');
 const smoke = fs.readFileSync('tests/full-run-smoke.html', 'utf8');
 const ci = fs.readFileSync('.github/workflows/ci.yml', 'utf8');
 const docs = fs.readFileSync('docs/full-run-verification.md', 'utf8');
-const index = fs.readFileSync('index.html', 'utf8');
+const index = fs.readFileSync('index.html', 'utf8').replace(/\?v=\d+/g, '')
 
 assert(smoke.includes('FULL RUN SMOKE COMPLETE'), 'full-run smoke must expose a completion marker');
 assert(smoke.includes("const bank = win.SAT_QUESTIONS.rw1"), 'full-run smoke must load effective R&W Module 1 questions');

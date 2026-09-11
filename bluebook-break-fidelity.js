@@ -57,12 +57,15 @@
   }
 
   function bindResume() {
-    const state = getState();
     const btn = document.getElementById('azmResumeBtn');
-    if (!btn || !state || (state.breakEndAt && state.breakEndAt > Date.now()) || btn.dataset.bound === '1') return;
-    btn.dataset.bound = '1';
-    btn.focus();
-    btn.addEventListener('click', () => {
+    if (btn) btn.focus();
+  }
+
+  function delegateResume() {
+    if (delegateResume.bound) return;
+    delegateResume.bound = true;
+    document.addEventListener('click', (event) => {
+      if (!event.target?.closest?.('#azmResumeBtn')) return;
       const current = getState();
       if (!current || current.harness || current.screen !== 'break') return;
       current.mi = 2;
@@ -74,7 +77,7 @@
       wasBreak = false;
       readyShown = false;
       render();
-    });
+    }, true);
   }
 
   function maintain() {
@@ -117,6 +120,8 @@
       bindResume();
     }
   }
+
+  delegateResume();
 
   const observer = new MutationObserver(maintain);
   observer.observe(document.body, { childList: true, subtree: true });

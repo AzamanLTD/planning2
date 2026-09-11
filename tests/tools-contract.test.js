@@ -4,7 +4,7 @@ const assert = require('assert');
 const tools = fs.readFileSync('tools-enhancement.js', 'utf8');
 const app = fs.readFileSync('app.js', 'utf8');
 const keyboard = fs.readFileSync('keyboard.js', 'utf8');
-const index = fs.readFileSync('index.html', 'utf8');
+const index = fs.readFileSync('index.html', 'utf8').replace(/\?v=\d+/g, '')
 const unscheduledBreak = fs.readFileSync('unscheduled-break-enhancement.js', 'utf8');
 
 for (const formula of ['A = πr²', 'C = 2πr', 'A = lw', 'A = ½bh', 'c² = a² + b²', 'x√3', 's√2', 'V = lwh', 'V = πr²h', 'V = 4/3πr³', 'V = 1/3πr²h', '360° = 2π radians', '180°']) {

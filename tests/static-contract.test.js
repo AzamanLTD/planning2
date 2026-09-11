@@ -2,7 +2,7 @@ const fs = require('fs');
 const assert = require('assert');
 
 const read = (p) => fs.readFileSync(p, 'utf8');
-const html = read('index.html');
+const html = read('index.html').replace(/\?v=\d+/g, '')
 const app = read('app.js');
 const guard = read('session-guard.js');
 const keyboard = read('keyboard.js');

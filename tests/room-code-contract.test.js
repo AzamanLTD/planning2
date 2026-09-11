@@ -3,7 +3,7 @@ const assert = require('assert');
 
 const source = fs.readFileSync('room-code-enhancement.js', 'utf8');
 const app = fs.readFileSync('app.js', 'utf8');
-const index = fs.readFileSync('index.html', 'utf8');
+const index = fs.readFileSync('index.html', 'utf8').replace(/\?v=\d+/g, '')
 const smoke = fs.readFileSync('tests/room-code-smoke.html', 'utf8');
 
 for (const phrase of [

@@ -6,7 +6,7 @@ assert(!fs.existsSync('app'), 'legacy React/Vite prototype must not return');
 assert(!fs.existsSync('app/package.json'), 'legacy React package manifest must not return');
 assert(!fs.existsSync('app/src'), 'legacy React source tree must not return');
 
-const html = fs.readFileSync('index.html', 'utf8');
+const html = fs.readFileSync('index.html', 'utf8').replace(/\?v=\d+/g, '')
 assert(html.includes('<div id="app" aria-live="polite"></div>'), 'root app mount must remain canonical');
 assert(html.includes('src="app.js"'), 'canonical root runtime must be loaded');
 assert(!html.includes('src="app/src/'), 'root entrypoint must not reference the deleted React prototype');

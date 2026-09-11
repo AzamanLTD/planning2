@@ -2,7 +2,7 @@ const fs = require('fs');
 const assert = require('assert');
 
 const source = fs.readFileSync('unscheduled-break-enhancement.js', 'utf8');
-const index = fs.readFileSync('index.html', 'utf8');
+const index = fs.readFileSync('index.html', 'utf8').replace(/\?v=\d+/g, '')
 
 for (const phrase of [
   "id = 'unscheduledBreakTool'",
