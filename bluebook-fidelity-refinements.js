@@ -15,16 +15,11 @@
     return `<svg class="ref2-logo" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 1.5l3.1 12.4L35.5 17 23.1 20 20 32.5 16.9 20 4.5 17l12.4-3.1z" fill="currentColor"/><path d="M31 4l.9 3.1L35 8l-3.1.9L31 12l-.9-3.1L27 8l3.1-.9z" fill="currentColor"/></svg>`;
   }
 
-  function speakerSvg() {
-    return `<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M5 13h6l7-6v18l-7-6H5z" fill="currentColor"/><path d="M22 11c2 2 2 8 0 10M25 8c4 4 4 12 0 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
-  }
-
-  function bellSvg() {
-    return `<svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M8 22h16l-2.2-3V13a5.8 5.8 0 0 0-11.6 0v6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M13 25c1.8 1.8 4.2 1.8 6 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
-  }
-
   function deviceButton() {
-    if (!document.querySelector('.access-page') || document.getElementById('deviceTestBtn')) return;
+    const onAccess = !!document.querySelector('.access-page');
+    const existing = document.getElementById('deviceTestBtn');
+    if (existing && !onAccess) { existing.remove(); return; }
+    if (!onAccess || existing) return;
     const button = document.createElement('button');
     button.id = 'deviceTestBtn';
     button.type = 'button';
@@ -114,24 +109,6 @@
     if (!page) return;
     const name = page.querySelector('.test-name');
     if (name && name.textContent.trim() === 'SAT') name.textContent = 'Digital SAT';
-  }
-
-  function polishRail() {
-    const rail = document.getElementById('azmA11yRail');
-    if (!rail || rail.dataset.ref2Ready === '1') return;
-    rail.dataset.ref2Ready = '1';
-    rail.querySelector('#railVolume')?.replaceChildren();
-    const volume = rail.querySelector('#railVolume');
-    const bell = rail.querySelector('#railBell');
-    if (volume) {
-      volume.insertAdjacentHTML('beforeend', `<span class="rail-level" aria-hidden="true"></span><span class="rail-speaker">${speakerSvg()}</span>`);
-      volume.setAttribute('aria-label', 'Volume');
-    }
-    if (bell) {
-      bell.replaceChildren();
-      bell.insertAdjacentHTML('beforeend', `<span class="rail-bell">${bellSvg()}</span>`);
-      bell.setAttribute('aria-label', 'Notifications');
-    }
   }
 
   function patchAssistiveTechnology() {
@@ -235,7 +212,6 @@
     deviceButton();
     normalizeAccountForm();
     dashboardPolish();
-    polishRail();
     patchAssistiveTechnology();
     moreExitIcon();
     actualStartCodeSurface();

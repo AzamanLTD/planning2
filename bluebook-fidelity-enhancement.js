@@ -9,12 +9,11 @@
     return !!document.querySelector('.test-shell');
   }
 
-  function isSignIn() {
-    return !!document.getElementById('signinBtn');
-  }
-
   function addDeviceTestButton() {
-    if (!isSignIn() || document.getElementById('deviceTestBtn')) return;
+    const onAccess = !!document.querySelector('.access-page');
+    const existing = document.getElementById('deviceTestBtn');
+    if (existing && !onAccess) { existing.remove(); return; }
+    if (!onAccess || existing) return;
     const button = document.createElement('button');
     button.id = 'deviceTestBtn';
     button.type = 'button';

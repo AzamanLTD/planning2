@@ -64,6 +64,11 @@
   <script>
     const isBrowserSmoke = new URLSearchParams(location.search).has('browser-smoke');
     if ('serviceWorker' in navigator && !isBrowserSmoke) {
+      const hadController = !!navigator.serviceWorker.controller;
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (hadController && !refreshing) { refreshing = true; location.reload(); }
+      });
       window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
     }
   </script>
