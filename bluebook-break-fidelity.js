@@ -104,7 +104,8 @@
     if (!page) return;
     const clock = document.getElementById('breakClock');
     const left = state.breakEndAt ? Math.max(0, Math.ceil((state.breakEndAt - Date.now()) / 1000)) : 0;
-    if (clock) clock.textContent = fmt(left);
+    const text = fmt(left);
+    if (clock && clock.textContent !== text) clock.textContent = text;
 
     if (left <= 0 && !readyShown) {
       readyShown = true;
@@ -113,7 +114,7 @@
         save();
       }
       const ready = page.querySelector('.azm-break-ready');
-      if (ready) ready.hidden = false;
+      if (ready && ready.hidden) ready.hidden = false;
       bindResume();
     }
   }
