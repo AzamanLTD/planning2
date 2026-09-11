@@ -67,7 +67,7 @@
     const studentField = student?.closest('.field');
     if (studentField) studentField.style.display = 'none';
     if (student) student.setAttribute('aria-hidden', 'true');
-    button.textContent = 'Sign In';
+    if (button.textContent !== 'Sign In') button.textContent = 'Sign In';
 
     const sync = () => {
       button.disabled = !(email.value.trim() && password.value.trim());
@@ -92,7 +92,7 @@
     if (!page) return;
     page.querySelector('.meta-row:nth-child(4)')?.classList.add('ref-hidden');
     const name = page.querySelector('.test-name');
-    if (name && /^(SAT|Digital SAT)$/i.test(name.textContent.trim())) {
+    if (name && /^(SAT|Digital SAT)$/i.test(name.textContent.trim()) && name.textContent.trim() !== 'Digital SAT March 2023') {
       name.textContent = 'Digital SAT March 2023';
     }
   }
