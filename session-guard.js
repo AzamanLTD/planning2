@@ -9,7 +9,7 @@
     { id: 'math1', count: 22 },
     { id: 'math2', count: 22 },
   ];
-  const SCREENS = new Set(['access', 'signin', 'yourtests', 'checkin', 'directions', 'test', 'break', 'finish']);
+  const SCREENS = new Set(['access', 'signin', 'yourtests', 'setup', 'checkin', 'directions', 'test', 'break', 'finish']);
 
   const normalizeObject = (value) => (value && typeof value === 'object' && !Array.isArray(value) ? value : {});
   const normalizeBooleanMap = (value) => Object.fromEntries(
@@ -34,6 +34,7 @@
     ])
   );
   const normalizeFiniteTime = (value) => Number.isFinite(value) ? value : null;
+  const validRecovery = (value) => Number.isFinite(value?.remainingMs) && value.remainingMs > 0 && Number.isFinite(value?.expiresAt) && value.expiresAt > Date.now();
 
   function read() {
     try {
@@ -165,6 +166,7 @@
     state.desk = state.desk === true;
     state.endAt = normalizeFiniteTime(state.endAt);
     state.breakEndAt = normalizeFiniteTime(state.breakEndAt);
+    if (state.recovery && !validRecovery(state.recovery)) state.recovery = null;
 
     normalizeCompletionChain(state);
     state.screen = SCREENS.has(state.screen) ? state.screen : 'access';
@@ -173,6 +175,18 @@
     const count = MODULES[state.mi].count;
     state.qi = Number.isInteger(state.qi) ? state.qi : 0;
     state.qi = Math.max(0, Math.min(count - 1, state.qi));
+
+    // A valid technical-recovery record is authoritative for the current
+    // module/question. Keep that checkpoint intact until the user signs in
+    // again; generic completion repair must not jump to the first incomplete
+    // module or consume the saved position.
+    if (validRecovery(state.recovery)) {
+      state.screen = 'signin';
+      state.endAt = null;
+      state.breakEndAt = null;
+      state.submitted = false;
+      return;
+    }
 
     if (allModulesComplete(state)) {
       state.submitted = true;
@@ -184,8 +198,6 @@
       return;
     }
 
-    // A persisted terminal flag is only valid after all four modules are complete.
-    // Reopening an incomplete run is safer than trusting a stale/corrupt finish state.
     if (state.submitted || state.screen === 'finish') {
       state.submitted = false;
       state.screen = 'directions';
