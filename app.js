@@ -1,7 +1,7 @@
 (()=>{"use strict";
 const C={storageKey:"azaman-sat-practice-v3",accessCodes:["SAT26","PRACTICE","AZM-SAT"],roomCode:"AZM24",startCode:"492776",testDate:"Sat, Sep 12, 2026",arrival:"7:45 a.m. GMT",doors:"8:00 a.m. GMT",loc:"International Community School, Kumasi, GH",regNum:"4106920164",breakSec:600,warnSec:300,mods:[
 {id:"rw1",section:"Reading and Writing",label:"Module 1",minutes:32,count:27,bank:"rw1"},{id:"rw2",section:"Reading and Writing",label:"Module 2",minutes:32,count:27,bank:"rw2"},{id:"math1",section:"Math",label:"Module 1",minutes:35,count:22,bank:"math1"},{id:"math2",section:"Math",label:"Module 2",minutes:35,count:22,bank:"math2"}],letters:["A","B","C","D"]};
-const A=document.getElementById("app"),B=window.SAT_QUESTIONS||{};let s=load()||fresh(),tick=null;
+try{const _tab="azm-tab-live";if(!sessionStorage.getItem(_tab)&&!location.search.includes("browser-smoke")){sessionStorage.setItem(_tab,"1");localStorage.removeItem(C.storageKey)}}catch(_){}const A=document.getElementById("app"),B=window.SAT_QUESTIONS||{};let s=load()||fresh(),tick=null;
 function fresh(){return{v:3,screen:"access",student:"",email:"",password:"",accessCode:"",roomCode:"",startCode:"",step:1,setupStep:1,setupDone:false,infoCorrect:"",deviceOk:"",rulesOk:false,checkinRules:false,harness:false,infoOk:false,aids:{},pledge:"",roomOk:false,mi:0,qi:0,endAt:null,breakEndAt:null,answers:{},marked:{},eliminated:{},notes:{},highlights:{},completed:{},submitted:false,adaptive:{rw:"easy",math:"easy"},timerHidden:false,lineReader:false,rules:false,desk:false,warning:{}}}
 function load(){try{const x=JSON.parse(localStorage.getItem(C.storageKey));return x?.v===3?x:null}catch(_){return null}}
 function save(){try{localStorage.setItem(C.storageKey,JSON.stringify(s))}catch(_){} }
