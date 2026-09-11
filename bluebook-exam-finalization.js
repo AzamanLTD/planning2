@@ -2,6 +2,7 @@
   'use strict';
 
   let recoveryCountdown = null;
+  const SUBMISSION_WINDOW_MS = 36 * 60 * 60 * 1000;
 
   const getState = () => window.AZAMAN_APP?.getState?.();
   const save = () => window.AZAMAN_APP?.save?.();
@@ -13,6 +14,10 @@
 
   function recoveryIsValid(recovery) {
     return Number.isFinite(recovery?.remainingMs) && recovery.remainingMs > 0 && Number.isFinite(recovery?.expiresAt) && Date.now() < recovery.expiresAt;
+  }
+
+  function submissionRetryIsValid(state) {
+    return Number.isFinite(state?.submissionRetryExpiresAt) && Date.now() < state.submissionRetryExpiresAt;
   }
 
   function clearRecoveryCountdown() {
@@ -92,7 +97,17 @@
   }
 
   function submissionPending(state) {
-    return state.submissionPending === true;
+    return state.submissionPending === true && submissionRetryIsValid(state);
+  }
+
+  function expireSubmissionRetry() {
+    const state = getState();
+    if (!state?.submissionPending || submissionRetryIsValid(state)) return false;
+    state.submissionPending = false;
+    state.submitted = false;
+    state.submissionRetryExpired = true;
+    save();
+    return true;
   }
 
   function retrySubmission() {
@@ -100,6 +115,8 @@
     if (!state || !isActualRuntime() || state.screen !== 'finish' || !submissionPending(state)) return;
     if (navigator.onLine === false) return;
     state.submissionPending = false;
+    state.submissionRetryExpired = false;
+    state.submissionRetryExpiresAt = null;
     state.submissionAttemptedAt = Date.now();
     state.submitted = true;
     save();
@@ -126,6 +143,10 @@
   function maintain() {
     if (!isActualRuntime()) { clearRecoveryCountdown(); return; }
     if (getState()?.recovery) { mountRecoveryNotice(); return; }
+    const state = getState();
+    if (state?.submissionPending && !submissionRetryIsValid(state)) {
+      expireSubmissionRetry();
+    }
     clearRecoveryCountdown();
     mountSubmissionScreen();
   }
