@@ -17,6 +17,7 @@ const breakCss = read('bluebook-break-fidelity.css');
 const breakJs = read('bluebook-break-fidelity.js');
 const mvpJs = read('bluebook-mvp-runtime.js');
 const transitionJs = read('bluebook-module-transition.js');
+const lineReaderJs = read('line-reader-enhancement.js');
 const sw = read('sw.js');
 
 for (const asset of ['bluebook-fidelity-overrides.css','bluebook-fidelity-refinements.css','bluebook-exam-mode.css','bluebook-break-fidelity.css','bluebook-pixel-fidelity.css','bluebook-fidelity-enhancement.js','bluebook-fidelity-refinements.js','bluebook-exam-mode.js','bluebook-module-transition.js','bluebook-break-fidelity.js','bluebook-mvp-runtime.js']) {
@@ -32,10 +33,11 @@ if (!pixelCss.includes('.test-top:after') || !pixelCss.includes('content:"100%"'
 if (!examCss.includes('body:not(.azm-harness) .preview-banner')) throw new Error('actual exam model must suppress preview-only chrome outside QA harness');
 if (!examJs.includes('actualModeAdvanceGuard') || !examJs.includes('Review module')) throw new Error('actual exam model must gate early module advance');
 if (!finalizationJs.includes('isActualRuntime') || !finalizationJs.includes('mountRecoveryNotice')) throw new Error('actual runtime recovery/finalization layer is missing');
+if (!lineReaderJs.includes('state.cleanup') || !lineReaderJs.includes('removeEventListener')) throw new Error('Line Reader enhancement must clean up listeners across rerenders');
 if (!sw.includes('bluebook-fidelity-refinements.css') || !sw.includes('bluebook-exam-mode.js')) throw new Error('offline cache is missing fidelity assets');
-for (const asset of ['bluebook-break-fidelity.css','bluebook-break-fidelity.js','bluebook-module-transition.js','bluebook-mvp-runtime.js','bluebook-pixel-fidelity.css']) if (!sw.includes(asset)) throw new Error(`offline cache is missing MVP asset: ${asset}`);
-if (!sw.includes("const CACHE_NAME='azaman-bluebook-v13'")) throw new Error('offline cache version does not match current precache generation');
+for (const asset of ['bluebook-break-fidelity.css','bluebook-break-fidelity.js','bluebook-module-transition.js','bluebook-mvp-runtime.js','bluebook-pixel-fidelity.css','line-reader-enhancement.js']) if (!sw.includes(asset)) throw new Error(`offline cache is missing MVP asset: ${asset}`);
+if (!sw.includes("const CACHE_NAME='azaman-bluebook-v14'")) throw new Error('offline cache version does not match current precache generation');
 if (!sw.includes('caches.match(r).then(c=>')) throw new Error('service worker is not cache-first');
 if (sw.includes('fetch(request)')) throw new Error('exam service worker must not depend on a runtime network fallback');
-new Function(js);new Function(examJs);new Function(finalizationJs);new Function(breakJs);new Function(mvpJs);new Function(transitionJs);
+new Function(js);new Function(examJs);new Function(finalizationJs);new Function(breakJs);new Function(mvpJs);new Function(transitionJs);new Function(lineReaderJs);
 console.log('FIDELITY REFINEMENT CONTRACT PASS');
