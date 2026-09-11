@@ -11,6 +11,7 @@ const css = read('bluebook-fidelity-refinements.css');
 const js = read('bluebook-fidelity-refinements.js');
 const examCss = read('bluebook-exam-mode.css');
 const examJs = read('bluebook-exam-mode.js');
+const finalizationJs = read('bluebook-exam-finalization.js');
 const breakCss = read('bluebook-break-fidelity.css');
 const breakJs = read('bluebook-break-fidelity.js');
 const mvpJs = read('bluebook-mvp-runtime.js');
@@ -25,6 +26,7 @@ for (const asset of [
   'bluebook-fidelity-enhancement.js',
   'bluebook-fidelity-refinements.js',
   'bluebook-exam-mode.js',
+  'bluebook-exam-finalization.js',
   'bluebook-module-transition.js',
   'bluebook-break-fidelity.js',
   'bluebook-mvp-runtime.js',
@@ -63,6 +65,8 @@ for (const [text, source] of [
   ['Resume Testing Now', breakCss + breakJs],
   ['This Module Is Over', transitionJs],
   ['moduleSec', mvpJs],
+  ['Congratulations!', finalizationJs],
+  ['Return to Homepage', finalizationJs],
 ]) {
   if (!source.includes(text)) throw new Error(`missing MVP runtime behavior: ${text}`);
 }
@@ -72,6 +76,9 @@ if (!examCss.includes('body:not(.azm-harness) .preview-banner')) {
 }
 if (!examJs.includes('actualModeAdvanceGuard') || !examJs.includes('Review module')) {
   throw new Error('actual exam model must gate early module advance');
+}
+if (!finalizationJs.includes('isActualRuntime') || !finalizationJs.includes('mountRecoveryNotice')) {
+  throw new Error('actual runtime recovery/finalization layer is missing');
 }
 if (!sw.includes('bluebook-fidelity-refinements.css') || !sw.includes('bluebook-exam-mode.js')) {
   throw new Error('offline cache is missing fidelity assets');
@@ -91,6 +98,7 @@ if (sw.includes('fetch(request)')) {
 
 new Function(js);
 new Function(examJs);
+new Function(finalizationJs);
 new Function(breakJs);
 new Function(mvpJs);
 new Function(transitionJs);
