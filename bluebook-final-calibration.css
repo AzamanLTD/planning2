@@ -23,3 +23,9 @@
 .bb-final-at-card .modal-actions{padding:8px 16px 12px;justify-content:center;border-top:1px solid #e5e7e9}
 .bb-final-at-card #atFinalDone{min-width:54px;min-height:28px;height:28px;border-radius:15px;border:1.5px solid #252525;background:#ffd400;font-size:9px}
 @media(max-width:760px){.bb-final-device-card{padding:24px 20px 20px}.bb-final-device-title{font-size:22px}.bb-final-at-card{max-height:calc(100vh - 24px)}.bb-final-at-card .at-body{max-height:calc(100vh - 170px)}}
+
+/* Robust vertical fit: shell flexes, main takes the leftover space, so the
+   footer always sits exactly at the viewport bottom regardless of banner
+   visibility or chrome height changes. */
+.test-shell{display:flex;flex-direction:column}
+.test-main{flex:1 1 auto;min-height:0;height:auto}

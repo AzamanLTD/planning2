@@ -54,7 +54,7 @@
         check('answer click persists keyed letter', readState().answers['rw1-0'] === firstLetter);
         check('clicked answer is selected', doc.querySelector(`.choice[data-answer="${firstLetter}"]`)?.getAttribute('aria-pressed') === 'true');
 
-        doc.querySelector('.mark-btn')?.click();
+        doc.querySelector('#markBtn')?.click();
         await wait(80);
         check('mark for review persists', !!readState().marked['rw1-0']);
 
@@ -84,7 +84,7 @@
         doc.querySelector('#atTool')?.click();
         await wait(50);
         check('Assistive Technology dialog opens', !!doc.getElementById('atModal'));
-        check('Assistive Technology has Expand All', !!doc.getElementById('atRef2Expand'));
+        check('Assistive Technology has Expand All', [...(doc.getElementById('atModal')?.querySelectorAll('button') || [])].some(b => b.textContent.trim() === 'Expand All'));
         doc.getElementById('atRef2Done')?.click();
 
         const current = readState();
