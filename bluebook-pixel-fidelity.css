@@ -1,0 +1,545 @@
+/* Final screenshot-driven calibration layer.
+   This stylesheet is deliberately last in the cascade: it only tunes geometry,
+   typography, spacing, and chrome to the supplied Bluebook captures. */
+
+:root {
+  --bb-blue: #2f55cc;
+  --bb-blue-dark: #20286d;
+  --bb-exam-blue: #eaf2fb;
+  --bb-text: #191919;
+  --bb-muted: #5d636b;
+  --bb-line: #cfd3d8;
+  --bb-yellow: #ffd400;
+}
+
+/* ---------- Access / sign-in ---------- */
+.access-page {
+  min-height: 100vh;
+  overflow: hidden;
+  position: relative;
+  background: #3157cf;
+}
+
+.access-page .access-art {
+  position: absolute;
+  inset: 0;
+  opacity: .12;
+  pointer-events: none;
+}
+
+.access-page .signin-modal {
+  position: relative;
+  z-index: 2;
+  width: 322px;
+  max-width: calc(100vw - 28px);
+  margin: 112px auto 0;
+  padding: 22px 22px 20px;
+  border-radius: 8px;
+  box-shadow: 0 8px 26px rgba(0,0,0,.22);
+}
+
+.ref2-access-brand {
+  top: 27px;
+  font-size: 24px;
+}
+
+#deviceTestBtn {
+  top: 14px;
+  right: 14px;
+  min-height: 34px;
+  padding: 0 14px;
+  font-size: 11px;
+  border-radius: 18px;
+}
+
+.access-page .signin-modal h1 {
+  margin: 2px 0 17px;
+  font-size: 20px;
+}
+
+.access-page .signin-modal .field {
+  margin: 13px 0;
+}
+
+.access-page .signin-modal .field label {
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.access-page .signin-modal .text-input {
+  min-height: 36px;
+  padding: 8px 10px;
+  border-radius: 5px;
+  font-size: 13px;
+}
+
+.access-page .signin-links {
+  margin-top: 13px;
+}
+
+/* ---------- Your Tests / setup / check-in ---------- */
+.yourtests-page {
+  min-height: 100vh;
+  background: #f8f8f8;
+}
+
+.yt-wrap {
+  width: min(820px, calc(100vw - 30px));
+  max-width: none;
+  padding: 21px 0 50px;
+}
+
+.yt-head {
+  gap: 13px;
+  margin-bottom: 16px;
+}
+
+.yt-head h2 {
+  font-size: 27px;
+}
+
+.tab-toggle {
+  border-radius: 7px;
+}
+
+.tab-pill {
+  min-width: 52px;
+  padding: 7px 11px;
+  font-size: 12px;
+}
+
+.test-card {
+  width: 100%;
+  max-width: 470px;
+  padding: 22px 24px 20px;
+  border-radius: 13px;
+  box-shadow: 0 5px 17px rgba(0,0,0,.09);
+}
+
+.test-name {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.test-meta {
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.test-acc {
+  margin: 39px 0 19px;
+  font-size: 11px;
+}
+
+.test-divider {
+  margin-bottom: 13px;
+}
+
+.ready-note {
+  font-size: 11px;
+}
+
+.test-ready .cta-yellow {
+  min-width: 128px;
+  min-height: 33px;
+  padding: 0 13px;
+  font-size: 11px;
+  border-radius: 18px;
+}
+
+.wiz-head {
+  min-height: 44px;
+  padding: 0 28px;
+}
+
+.wiz-head button {
+  font-size: 11px;
+}
+
+.wiz-body {
+  padding: 27px 14px 18px;
+}
+
+.wiz-card h1 {
+  font-size: 23px;
+  margin: 7px 0 14px;
+}
+
+.wiz-card > p {
+  font-size: 14px;
+}
+
+.code-row {
+  gap: 13px;
+  margin: 20px auto 12px;
+}
+
+.code-input {
+  width: 37px;
+  height: 42px;
+  border-radius: 6px;
+  font-size: 19px;
+}
+
+.success-msg {
+  font-size: 12px;
+  margin-top: 12px;
+}
+
+.wiz-foot {
+  min-height: 72px;
+  padding: 9px 28px 12px;
+  grid-template-columns: 1fr 1.5fr 1fr;
+}
+
+.wiz-foot .pill-outline,
+.wiz-foot .cta-yellow {
+  min-width: 82px;
+  min-height: 34px;
+  font-size: 12px;
+}
+
+.wiz-progress {
+  width: min(440px, 48vw);
+}
+
+.wiz-step-label {
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.seg-bar,
+.seg {
+  height: 5px;
+}
+
+/* ---------- Exam workspace: match the compact captured Bluebook chrome ---------- */
+.test-shell {
+  height: 100vh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.test-top {
+  height: 42px;
+  min-height: 42px;
+  padding: 0 13px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  background: var(--bb-exam-blue);
+}
+
+.test-title {
+  justify-self: start;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.timer-block {
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.timer {
+  min-width: 42px;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.timer-hide {
+  font-size: 8px;
+  min-height: 14px;
+  padding: 0 5px;
+}
+
+.top-tools {
+  justify-self: end;
+  margin-left: 0;
+  gap: 10px;
+}
+
+.nav-tool {
+  min-width: 30px;
+  gap: 1px;
+  font-size: 7px;
+  padding: 0 2px;
+}
+
+.nav-tool .ico-tool,
+.ico-strike {
+  width: 15px;
+  height: 15px;
+}
+
+.test-dashrule {
+  height: 2px;
+}
+
+body:not(.azm-harness) .preview-banner {
+  display: none !important;
+}
+
+.test-main {
+  height: calc(100vh - 78px);
+  min-height: 0;
+  grid-template-columns: 50% 50%;
+}
+
+.source-panel,
+.question-panel {
+  overflow: auto;
+}
+
+.source-panel {
+  padding: 20px 23px;
+  border-right: 1px solid var(--bb-line);
+}
+
+.question-panel {
+  padding: 20px 24px;
+}
+
+.question-card {
+  max-width: 575px;
+}
+
+.q-head {
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.q-number {
+  width: 24px;
+  height: 24px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+.mark-pill {
+  font-size: 10px;
+}
+
+.elim-badge {
+  font-size: 8px;
+  padding: 4px 6px;
+}
+
+.q-prompt {
+  font-size: 13px;
+  line-height: 1.4;
+  margin-bottom: 13px;
+}
+
+.choice-wrap {
+  gap: 4px;
+  margin: 5px 0;
+}
+
+.choice {
+  min-height: 34px;
+  border-radius: 5px;
+  padding: 6px 9px;
+  gap: 8px;
+  font-size: 11px;
+}
+
+.choice-bubble,
+.choice-letter {
+  min-width: 21px;
+  width: 21px;
+  height: 21px;
+  font-size: 9px;
+}
+
+.choice-radio {
+  width: 13px;
+  height: 13px;
+}
+
+.test-footer {
+  position: relative;
+  height: 34px;
+  min-height: 34px;
+  padding: 0 10px;
+  border-top: 1px dashed #8e98a5;
+  background: var(--bb-exam-blue);
+}
+
+.footer-left,
+.footer-right {
+  gap: 7px;
+}
+
+.footer-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.footer-name,
+.question-nav {
+  font-size: 9px;
+}
+
+.question-nav {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.footer-right {
+  min-width: 112px;
+}
+
+.pill-blue {
+  min-width: 48px;
+  min-height: 24px;
+  height: 24px;
+  padding: 0 10px;
+  font-size: 9px;
+  border-radius: 14px;
+}
+
+/* ---------- Full-page module handoff ---------- */
+.azm-module-transition {
+  background: #fff;
+}
+
+.azm-module-transition-inner {
+  width: min(400px, calc(100% - 30px));
+  transform: translateY(-1vh);
+}
+
+.azm-module-transition h1 {
+  margin-bottom: 13px;
+  font-size: 23px;
+  color: #727b8a;
+}
+
+.azm-module-transition p {
+  margin: 5px 0;
+  font-size: 10px;
+  line-height: 1.35;
+  color: #4f5660;
+}
+
+.azm-loading-dots {
+  margin-top: 22px;
+  transform: scale(.75);
+}
+
+/* ---------- Check Your Work ---------- */
+.modal-backdrop.review-veil {
+  background: rgba(248,249,251,.96);
+}
+
+#reviewModal .modal {
+  width: min(520px, calc(100vw - 28px));
+  padding: 20px 22px 18px;
+  border-radius: 7px;
+}
+
+#reviewModal .modal h2 {
+  font-size: 20px;
+}
+
+#reviewModal .modal > p.small {
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+#reviewModal .review-grid {
+  grid-template-columns: repeat(8, 1fr);
+  gap: 5px;
+}
+
+#reviewModal .review-q {
+  min-height: 27px;
+  padding: 5px;
+  font-size: 10px;
+}
+
+/* ---------- Accessibility rail ---------- */
+.azm-a11y-rail {
+  right: 7px;
+  gap: 7px;
+}
+
+.azm-a11y-rail button {
+  width: 42px;
+  border-radius: 9px;
+}
+
+.azm-a11y-rail .rail-volume {
+  height: 220px;
+  padding: 8px;
+}
+
+.azm-a11y-rail .rail-level {
+  top: 13px;
+  bottom: 51px;
+  right: 14px;
+  width: 4px;
+}
+
+.azm-a11y-rail #railBell {
+  height: 48px;
+}
+
+/* ---------- Break ---------- */
+.azm-break-page {
+  grid-template-columns: minmax(260px, 38%) minmax(360px, 62%);
+  gap: 38px;
+  padding: 42px 7vw 60px;
+}
+
+.azm-break-timer {
+  width: min(300px, 100%);
+  padding: 23px 22px 25px;
+}
+
+.azm-break-label {
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.azm-break-clock {
+  font-size: clamp(42px, 5vw, 62px);
+}
+
+.azm-break-content h1 {
+  font-size: clamp(25px, 2.6vw, 34px);
+}
+
+.azm-break-content .lead,
+.azm-break-content ol {
+  font-size: 14px;
+}
+
+@media (max-width: 800px) {
+  .test-main {
+    height: calc(100vh - 78px);
+    grid-template-columns: 1fr;
+  }
+
+  .source-panel {
+    max-height: 41vh;
+    padding: 13px 15px;
+  }
+
+  .question-panel {
+    padding: 13px 15px 16px;
+  }
+
+  .test-footer {
+    height: 34px;
+    min-height: 34px;
+  }
+
+  .azm-a11y-rail {
+    right: 3px;
+  }
+}
