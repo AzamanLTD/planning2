@@ -26,3 +26,13 @@ jobs:
           node --check bluebook-fidelity-refinements.js
           node --check bluebook-exam-mode.js
           node --check bluebook-exam-finalization.js
+      - name: Run actual exam browser smoke
+        run: |
+          set -eu
+          python3 -m http.server 8087 >/tmp/azaman-actual-exam-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          sleep 1
+          chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage --virtual-time-budget=8000 --dump-dom http://127.0.0.1:8087/tests/actual-exam-smoke.html > /tmp/azaman-actual-exam-smoke.html
+          cat /tmp/azaman-actual-exam-smoke.html
+          grep -q 'ACTUAL EXAM SMOKE COMPLETE' /tmp/azaman-actual-exam-smoke.html
