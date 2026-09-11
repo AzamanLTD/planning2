@@ -1,9 +1,8 @@
 'use strict';
-// Offline support: this is a fully static, no-backend practice app — once
-// loaded once with a connection, it should keep working with none at all.
-// Strategy is network-first (so normal online use always gets the latest
-// files) with a cache fallback for when the network is unavailable.
-const CACHE_NAME = 'azaman-bluebook-v1';
+
+// Fully offline static runtime. The app must not depend on a live network once
+// the shell and question assets have been installed into the service-worker cache.
+const CACHE_NAME = 'azaman-bluebook-v2';
 const PRECACHE_URLS = [
   './',
   'index.html',
@@ -16,6 +15,8 @@ const PRECACHE_URLS = [
   'results-domain-report.css',
   'results-question-review.css',
   'results-choice-breakdown.css',
+  'bluebook-fidelity-overrides.css',
+  'bluebook-fidelity-refinements.css',
   'data/questions.js',
   'data/rw2-easy.js',
   'data/rw-source-overrides.js',
@@ -42,6 +43,8 @@ const PRECACHE_URLS = [
   'line-reader-enhancement.js',
   'reference-keyboard-enhancement.js',
   'unscheduled-break-enhancement.js',
+  'bluebook-fidelity-enhancement.js',
+  'bluebook-fidelity-refinements.js',
   'favicon.svg',
   'manifest.json'
 ];
@@ -57,19 +60,28 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
-      .then((names) => Promise.all(names.filter((n) => n !== CACHE_NAME).map((n) => caches.delete(n))))
+      .then((names) => Promise.all(names.filter((name) => name !== CACHE_NAME).map((name) => caches.delete(name))))
       .then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', (event) => {
-  const req = event.request;
-  if (req.method !== 'GET') return;
+  const request = event.request;
+  if (request.method !== 'GET') return;
+
+  // Cache-first: runtime behavior is deterministic and offline-capable. A
+  // network request is only used as a recovery path for assets that were not
+  // present in the install cache, never as the primary source for the exam UI.
   event.respondWith(
-    fetch(req).then((res) => {
-      const copy = res.clone();
-      caches.open(CACHE_NAME).then((cache) => cache.put(req, copy)).catch(() => {});
-      return res;
-    }).catch(() => caches.match(req).then((cached) => cached || caches.match('index.html')))
+    caches.match(request).then((cached) => {
+      if (cached) return cached;
+      return fetch(request).then((response) => {
+        if (response && response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy)).catch(() => {});
+        }
+        return response;
+      }).catch(() => caches.match('index.html'));
+    })
   );
 });
