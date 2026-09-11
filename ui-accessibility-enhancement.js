@@ -38,22 +38,50 @@
     if (title) {
       title.id = title.id || 'toolMenuTitle';
       popover.setAttribute('aria-labelledby', title.id);
+    } else {
+      popover.setAttribute('aria-label', 'Test tools');
     }
     popover.querySelector('#closeTools')?.setAttribute('aria-label', 'Close test tools');
     popover.querySelectorAll('.tool-item').forEach((item) => item.setAttribute('role', 'menuitem'));
   }
 
-  function enhanceNavigation() {
+  function enhanceExamRegions() {
     const top = document.querySelector('.test-top');
-    top?.setAttribute('role', 'banner');
+    if (top) {
+      top.setAttribute('role', 'banner');
+      top.setAttribute('aria-label', 'Bluebook Controls');
+    }
+
+    const timer = document.getElementById('timer');
+    if (timer) {
+      timer.setAttribute('role', 'timer');
+      timer.setAttribute('aria-label', 'Test timer');
+      // Timer ticks should not interrupt a screen reader every quarter-second.
+      timer.setAttribute('aria-live', 'off');
+      timer.setAttribute('aria-atomic', 'true');
+    }
+
     const source = document.querySelector('.source-panel');
-    source?.setAttribute('role', 'region');
-    source?.setAttribute('aria-label', 'Source');
+    if (source) {
+      source.setAttribute('role', 'region');
+      source.setAttribute('aria-label', 'Passage or Source');
+    }
+
     const question = document.querySelector('.question-panel');
-    question?.setAttribute('role', 'region');
-    question?.setAttribute('aria-label', 'Question');
+    if (question) {
+      question.setAttribute('role', 'region');
+      question.setAttribute('aria-label', 'Question and Answer');
+    }
+
     const footer = document.querySelector('.test-footer');
-    footer?.setAttribute('role', 'contentinfo');
+    if (footer) {
+      footer.setAttribute('role', 'contentinfo');
+      footer.setAttribute('aria-label', 'Question Navigation');
+    }
+  }
+
+  function enhanceNavigation() {
+    enhanceExamRegions();
 
     const mark = document.getElementById('markBtn');
     if (mark) {
@@ -66,6 +94,7 @@
     if (tools) {
       tools.setAttribute('aria-haspopup', 'menu');
       tools.setAttribute('aria-expanded', String(!!popover && popover.getClientRects().length > 0));
+      tools.setAttribute('aria-label', 'Test tools');
     }
     const review = document.getElementById('reviewBtn');
     const modal = document.getElementById('reviewModal');
@@ -100,6 +129,7 @@
     clock.setAttribute('role', 'timer');
     clock.setAttribute('aria-label', 'Break time remaining');
     clock.setAttribute('aria-atomic', 'true');
+    clock.setAttribute('aria-live', 'off');
   }
 
   function enhanceStartCode(root = document) {

@@ -60,6 +60,13 @@ assert(uiA11y.includes("setAttribute('role', 'radio')"), 'answer choices must ex
 assert(uiA11y.includes("setAttribute('aria-checked'"), 'answer choices must expose checked state');
 assert(uiA11y.includes("setAttribute('role', 'menu')"), 'test tools must expose menu semantics');
 assert(uiA11y.includes('Question ${number}, ${states.join'), 'review buttons must have descriptive labels');
+assert(uiA11y.includes("setAttribute('role', 'timer')"), 'test and break timers must expose timer semantics');
+assert(uiA11y.includes("timer.setAttribute('aria-label', 'Test timer')"), 'main test timer must expose an accessible label');
+assert(uiA11y.includes("setAttribute('aria-live', 'off')"), 'timers must not spam live-region announcements');
+assert(uiA11y.includes("top.setAttribute('aria-label', 'Bluebook Controls')"), 'test controls must expose a named banner region');
+assert(uiA11y.includes("source.setAttribute('aria-label', 'Passage or Source')"), 'source region must expose its landmark name');
+assert(uiA11y.includes("question.setAttribute('aria-label', 'Question and Answer')"), 'question region must expose its landmark name');
+assert(uiA11y.includes("footer.setAttribute('aria-label', 'Question Navigation')"), 'navigation footer must expose its landmark name');
 assert(uiA11y.includes('installReducedMotionSupport'), 'reduced-motion preference must have a dedicated accessibility path');
 assert(uiA11y.includes('prefers-reduced-motion: reduce'), 'reduced-motion preference must be honored');
 assert(uiA11y.includes('childList: true, subtree: true'), 'accessibility observer must react to rendered subtrees');
@@ -78,4 +85,4 @@ assert(html.includes('media-enhancement.js'), 'media accessibility enhancement m
 assert(html.includes('tools-move-enhancement.js'), 'keyboard tool movement enhancement must be loaded');
 assert(html.includes('media-touch-enhancement.js'), 'touch media enhancement must be loaded');
 
-console.log('Accessibility, reduced-motion, media, tool movement, touch, platform shortcuts, toggle semantics, break timer, and observer safety contract checks passed.');
+console.log('Accessibility, reduced-motion, media, tool movement, touch, platform shortcuts, toggle semantics, timer labels, landmarks, and observer safety contract checks passed.');
