@@ -25,6 +25,11 @@ for (const text of [
   'Congratulations!',
   'The test is complete, and your answers have been submitted.',
   'Return to Homepage',
+  'submissionPending',
+  'Submit Again',
+  '11:59 p.m. local time the day after your test',
+  'nextDaySubmissionDeadline',
+  'Reconnect to the internet',
 ]) {
   if (!js.includes(text) && !ref.includes(text)) throw new Error(`missing exam-mode recovery/finalization behavior: ${text}`);
 }
