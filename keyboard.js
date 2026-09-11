@@ -143,6 +143,14 @@
     clickText('Back');
   }
 
+  function toggleDialogById(id, opener) {
+    if (document.getElementById(id)) {
+      document.getElementById(id).remove();
+      return;
+    }
+    opener();
+  }
+
   function onKeydown(event) {
     const key = event.key;
     const lower = key.toLowerCase();
@@ -167,15 +175,15 @@
 
     if (navCombo && lower === 'b') { event.preventDefault(); backShortcut(); return; }
     if (navCombo && lower === 'x') { event.preventDefault(); nextShortcut(); return; }
-    if (navCombo && lower === 'g') { event.preventDefault(); document.getElementById('reviewBtn')?.click(); return; }
+    if (navCombo && lower === 'g') { event.preventDefault(); toggleDialogById('reviewModal', () => document.getElementById('reviewBtn')?.click()); return; }
     if ((isIPad && command && ctrl && lower === 'p') || (isMac && command && ctrl && lower === 'h') || (!isMac && !isIPad && ctrl && alt && lower === 'h')) { event.preventDefault(); openHelp(); return; }
     if (navCombo && event.shiftKey && lower === 'd') { event.preventDefault(); openDirections(); return; }
     if ((isMac ? command : ctrl) && !alt && lower === 'l') { event.preventDefault(); const lineTool = document.getElementById('lineTool'); if (lineTool) lineTool.click(); else { const app = window.AZAMAN_APP; const state = app?.getState?.(); if (state) { state.lineReader = !state.lineReader; app.save(); app.render(); } } return; }
     if (comboAlt && lower === 't') { event.preventDefault(); const t = document.getElementById('hideTimerBtn'); if (t) t.click(); else openToolByText('Hide timer', () => openToolByText('Show timer')); return; }
     if (isMac ? command && event.shiftKey && lower === 'v' : ctrl && alt && lower === 'v') { event.preventDefault(); clickText('Mark for review'); return; }
     if (ctrl && !alt && lower === 'h') { event.preventDefault(); if (String(window.getSelection?.() || '').trim() && typeof highlight === 'function') highlight(); else openToolByText('Highlights & Notes'); return; }
-    if (comboAlt && lower === 'c') { event.preventDefault(); openToolByText('Calculator'); return; }
-    if (comboAlt && lower === 'r') { event.preventDefault(); const r = document.getElementById('refToolBtn'); if (r) r.click(); else openToolByText('Reference sheet'); return; }
+    if (comboAlt && lower === 'c') { event.preventDefault(); toggleDialogById('calculatorPanel', () => openToolByText('Calculator')); return; }
+    if (comboAlt && lower === 'r') { event.preventDefault(); toggleDialogById('referencePanel', () => { const r = document.getElementById('refToolBtn'); if (r) r.click(); else openToolByText('Reference sheet'); }); return; }
     if (navCombo && lower === 'o') { event.preventDefault(); document.body.classList.toggle('option-eliminator-mode'); return; }
     if (comboAlt && /^[1-4]$/.test(key)) { event.preventDefault(); triggerOption(Number(key), 'eliminate'); return; }
     if (isMac ? triple && /^[1-4]$/.test(key) : ctrl && event.shiftKey && /^[1-4]$/.test(key)) { event.preventDefault(); triggerOption(Number(key), 'select'); return; }

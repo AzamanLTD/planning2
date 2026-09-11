@@ -43,6 +43,11 @@ assert(keyboard.includes('const comboAlt = isMac ? command && alt : ctrl && alt'
 assert(keyboard.includes("isChromeOS && ctrl && command && lower === 's'"), 'ChromeOS keyboard shortcut list must open with Control+Search+S');
 assert(keyboard.includes("isIPad && command && ctrl && lower === 'p'"), 'iPad Help must use Command+Control+P');
 assert(keyboard.includes("isMac ? command && event.shiftKey && lower === 'v' : ctrl && alt && lower === 'v'"), 'Mark for Review must use the platform-specific mapping');
+assert(keyboard.includes('function toggleDialogById(id, opener)'), 'toolbar shortcuts must have reusable open/close semantics');
+assert(keyboard.includes("toggleDialogById('reviewModal'"), 'Question Menu shortcut must close an already-open review dialog');
+assert(keyboard.includes("toggleDialogById('calculatorPanel'"), 'Calculator shortcut must toggle the dialog');
+assert(keyboard.includes("toggleDialogById('referencePanel'"), 'Reference Sheet shortcut must toggle the dialog');
+assert(keyboard.includes('const existing = document.getElementById(\'directionHelp\')'), 'Directions shortcut must support open/close semantics');
 assert(modal.includes('role="dialog"'), 'modal focus layer must target dialog semantics');
 assert(modal.includes('aria-modal="true"'), 'dialogs must be modal to assistive technology');
 assert(modal.includes('FOCUSABLE'), 'dialogs must define keyboard focusable controls');
@@ -73,4 +78,4 @@ assert(html.includes('media-enhancement.js'), 'media accessibility enhancement m
 assert(html.includes('tools-move-enhancement.js'), 'keyboard tool movement enhancement must be loaded');
 assert(html.includes('media-touch-enhancement.js'), 'touch media enhancement must be loaded');
 
-console.log('Accessibility, reduced-motion, media, tool movement, touch, platform shortcuts, break timer, and observer safety contract checks passed.');
+console.log('Accessibility, reduced-motion, media, tool movement, touch, platform shortcuts, toggle semantics, break timer, and observer safety contract checks passed.');
