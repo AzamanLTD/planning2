@@ -8,6 +8,7 @@ const read = (name) => fs.readFileSync(path.join(root, name), 'utf8');
 
 const index = read('index.html');
 const css = read('bluebook-fidelity-refinements.css');
+const pixelCss = read('bluebook-pixel-fidelity.css');
 const js = read('bluebook-fidelity-refinements.js');
 const examCss = read('bluebook-exam-mode.css');
 const examJs = read('bluebook-exam-mode.js');
@@ -23,10 +24,10 @@ for (const asset of [
   'bluebook-fidelity-refinements.css',
   'bluebook-exam-mode.css',
   'bluebook-break-fidelity.css',
+  'bluebook-pixel-fidelity.css',
   'bluebook-fidelity-enhancement.js',
   'bluebook-fidelity-refinements.js',
   'bluebook-exam-mode.js',
-  'bluebook-exam-finalization.js',
   'bluebook-module-transition.js',
   'bluebook-break-fidelity.js',
   'bluebook-mvp-runtime.js',
@@ -46,6 +47,18 @@ const requiredCss = [
 ];
 requiredCss.forEach((selector) => {
   if (!css.includes(selector)) throw new Error(`missing fidelity selector: ${selector}`);
+});
+
+const requiredPixelCss = [
+  '.test-top',
+  '.timer-block',
+  '.question-nav',
+  '.test-footer',
+  '.test-main',
+  '.code-input',
+];
+requiredPixelCss.forEach((selector) => {
+  if (!pixelCss.includes(selector)) throw new Error(`missing pixel calibration selector: ${selector}`);
 });
 
 const requiredJs = [
@@ -83,10 +96,10 @@ if (!finalizationJs.includes('isActualRuntime') || !finalizationJs.includes('mou
 if (!sw.includes('bluebook-fidelity-refinements.css') || !sw.includes('bluebook-exam-mode.js')) {
   throw new Error('offline cache is missing fidelity assets');
 }
-for (const asset of ['bluebook-break-fidelity.css', 'bluebook-break-fidelity.js', 'bluebook-module-transition.js', 'bluebook-mvp-runtime.js']) {
+for (const asset of ['bluebook-break-fidelity.css', 'bluebook-break-fidelity.js', 'bluebook-module-transition.js', 'bluebook-mvp-runtime.js', 'bluebook-pixel-fidelity.css']) {
   if (!sw.includes(asset)) throw new Error(`offline cache is missing MVP asset: ${asset}`);
 }
-if (!sw.includes("const CACHE_NAME = 'azaman-bluebook-v7'")) {
+if (!sw.includes("const CACHE_NAME = 'azaman-bluebook-v8'")) {
   throw new Error('offline cache version does not match current precache generation');
 }
 if (!sw.includes('caches.match(request).then((cached) =>')) {
