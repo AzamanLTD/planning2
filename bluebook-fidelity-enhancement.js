@@ -84,24 +84,35 @@
     button.type = 'button';
     button.id = 'refExitExam';
     button.className = 'tool-item';
-    button.innerHTML = '<span aria-hidden="true" class="ico-tool">⚠</span><span>Exit the exam</span>';
+    button.innerHTML = '<span aria-hidden="true" class="ico-tool">⚠</span><span>Exit Bluebook</span>';
     button.addEventListener('click', openExitExam);
     menu.appendChild(button);
   }
 
   function openExitExam() {
+    const app = state();
     document.getElementById('toolPopover')?.remove();
     closeDialog('refExitModal');
+    const remainingMs = app?.endAt ? Math.max(0, app.endAt - Date.now()) : 0;
     const dialog = document.createElement('div');
     dialog.id = 'refExitModal';
     dialog.className = 'modal-backdrop';
-    dialog.innerHTML = '<div class="modal" role="dialog" aria-modal="true" aria-labelledby="refExitTitle"><div class="modal-head"><h3 id="refExitTitle">Exit the exam?</h3><button class="icon-btn" id="refExitClose" aria-label="Cancel">×</button></div><p>Your answers are saved locally. Exiting ends this testing session.</p><div class="modal-actions"><button class="btn" id="refExitCancel">Cancel</button><button class="btn primary-action" id="refExitConfirm">Exit the exam</button></div></div>';
+    dialog.innerHTML = '<div class="modal" role="dialog" aria-modal="true" aria-labelledby="refExitTitle"><div class="modal-head"><h3 id="refExitTitle">Exit Bluebook?</h3><button class="icon-btn" id="refExitClose" aria-label="Cancel">×</button></div><p>Your answers are saved on this device. Exiting Bluebook pauses your testing timer temporarily. You will need to sign in again to continue testing.</p><p class="small">Use this only to recover from a technical problem. Keep this device with you and follow your proctor’s instructions.</p><div class="modal-actions"><button class="btn" id="refExitCancel">Cancel</button><button class="btn primary-action" id="refExitConfirm">Exit Bluebook</button></div></div>';
     document.body.appendChild(dialog);
     const close = () => dialog.remove();
     dialog.querySelector('#refExitClose').onclick = close;
     dialog.querySelector('#refExitCancel').onclick = close;
     dialog.querySelector('#refExitConfirm').onclick = () => {
-      try { localStorage.removeItem('azaman-sat-practice-v3'); } catch (_) {}
+      if (app) {
+        app.recovery = {
+          remainingMs,
+          expiresAt: Date.now() + 10 * 60 * 1000,
+        };
+        app.endAt = null;
+        app.password = '';
+        app.screen = 'signin';
+        save();
+      }
       location.reload();
     };
     dialog.querySelector('#refExitCancel').focus();
