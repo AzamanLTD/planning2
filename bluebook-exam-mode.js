@@ -4,8 +4,6 @@
   const getState = () => window.AZAMAN_APP?.getState?.();
   const save = () => window.AZAMAN_APP?.save?.();
   const render = () => window.AZAMAN_APP?.render?.();
-  let directionsTimer = null;
-  let directionsTimerElement = null;
 
   function syncModeClass() {
     const state = getState();
@@ -75,52 +73,6 @@
     render();
   }
 
-  function stopDirectionsTimer() {
-    if (directionsTimer) window.clearInterval(directionsTimer);
-    directionsTimer = null;
-    directionsTimerElement = null;
-  }
-
-  function syncDirectionsTimer() {
-    const state = getState();
-    const timer = document.querySelector('#azmDirectionsPage .azm-directions-timer');
-    if (!state || state.harness || state.screen !== 'directions' || !timer) {
-      stopDirectionsTimer();
-      return;
-    }
-
-    // A render replaces the directions DOM. Never keep an interval bound to a
-    // detached timer element, or a later module would display a stale clock.
-    if (directionsTimer && directionsTimerElement !== timer) stopDirectionsTimer();
-
-    const minutes = state.mi >= 2 ? 35 : 32;
-    const moduleId = state.mi === 0 ? 'rw1' : state.mi === 1 ? 'rw2' : state.mi === 2 ? 'math1' : 'math2';
-    if (!state.endAt && !state.completed?.[moduleId]) {
-      state.endAt = Date.now() + minutes * 60 * 1000;
-      state.qi = 0;
-      save();
-    }
-
-    const update = () => {
-      const current = getState();
-      if (!current || current.screen !== 'directions' || directionsTimerElement !== timer) {
-        stopDirectionsTimer();
-        return;
-      }
-      const seconds = current.endAt ? Math.max(0, Math.ceil((current.endAt - Date.now()) / 1000)) : minutes * 60;
-      const textNode = [...timer.childNodes].find((node) => node.nodeType === Node.TEXT_NODE);
-      if (textNode) textNode.nodeValue = `${fmt(seconds)} `;
-      if (seconds <= 0 && current.endAt) {
-        stopDirectionsTimer();
-        expireActualDirectionsModule();
-      }
-    };
-
-    directionsTimerElement = timer;
-    if (!directionsTimer) directionsTimer = window.setInterval(update, 250);
-    update();
-  }
-
   function actualModeDirections() {
     const state = getState();
     const page = document.getElementById('azmDirectionsPage');
@@ -132,7 +84,6 @@
     const name = index < 2 ? 'Reading and Writing' : 'Math';
     const heading = panel.querySelector('h2');
     if (heading) heading.textContent = `Section ${section}, Module ${module}: ${name}`;
-
     const bullets = [
       'This module is made up of multiple-choice questions.',
       'You can move back and forth between questions until time expires.',
@@ -145,7 +96,6 @@
       if (list.innerHTML !== html) list.innerHTML = html;
     }
     panel.querySelector('.azm-official-directions-copy')?.remove();
-    syncDirectionsTimer();
   }
 
   function actualModeDirectionsContinue(event) {
@@ -158,9 +108,13 @@
       expireActualDirectionsModule();
       return;
     }
-    if (!state.endAt) return;
+    // In actual exam mode the module clock starts when the student begins
+    // the module from the directions surface, not while the directions are
+    // merely being displayed.
     event.preventDefault();
     event.stopImmediatePropagation();
+    const minutes = state.mi >= 2 ? 35 : 32;
+    state.endAt = Date.now() + minutes * 60 * 1000;
     state.qi = 0;
     save();
     render();
