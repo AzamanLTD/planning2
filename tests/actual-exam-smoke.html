@@ -9,6 +9,6 @@ if(phase===3){check('preview banner hidden',getComputedStyle(d.querySelector('.p
 if(phase===4){check('break surface',!!d.getElementById('azmBreakPage'));check('break rules',/Follow these rules during the break/i.test(d.getElementById('azmBreakPage').textContent));d.getElementById('azmResumeBtn').click();setTimeout(()=>{try{const s=read();check('resume enters math directions',s.screen==='directions'&&s.mi===2&&!s.breakEndAt);phase=5;reload({...base(),screen:'finish',mi:3,completed:{rw1:true,rw2:true,math1:true,math2:true},submitted:true})}catch(e){fail(e)}},100);return}
 if(phase===5){check('submission surface',!!d.getElementById('azmSubmissionScreen'));check('congratulations',d.querySelector('.azm-congrats-card h1')?.textContent==='Congratulations!');check('completion copy',/test is complete, and your answers have been submitted/i.test(d.querySelector('.azm-congrats-sub')?.textContent||''));check('proctor instruction',/proctor/i.test(d.querySelector('.azm-congrats-copy')?.textContent||''));finalize(checks.join('\n')+'\nACTUAL EXAM SMOKE COMPLETE')}
 }catch(e){fail(e)}},160)});
-frame.src='../index.html?actual-exam-smoke='+now();
+frame.src='../index.html?browser-smoke=1';
 })()
 </script>
