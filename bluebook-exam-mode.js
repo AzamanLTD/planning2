@@ -32,11 +32,9 @@
     return good / items.length;
   }
 
-  function expireActualDirectionsModule() {
-    const state = getState();
-    if (!state || state.harness || state.screen !== 'directions') return;
+  function completeCurrentModule(state) {
     const index = Math.max(0, Math.min(3, Number(state.mi) || 0));
-    const moduleId = state.mi === 0 ? 'rw1' : state.mi === 1 ? 'rw2' : state.mi === 2 ? 'math1' : 'math2';
+    const moduleId = index === 0 ? 'rw1' : index === 1 ? 'rw2' : index === 2 ? 'math1' : 'math2';
     state.completed = state.completed || {};
     state.completed[moduleId] = true;
     state.endAt = null;
@@ -66,6 +64,42 @@
     }
     save();
     render();
+  }
+
+  function expireActualDirectionsModule() {
+    const state = getState();
+    if (!state || state.harness || state.screen !== 'directions') return;
+    completeCurrentModule(state);
+    save();
+    render();
+  }
+
+  function skipCurrentModule() {
+    const state = getState();
+    if (!state || state.harness || state.submitted) return;
+    if (state.screen !== 'test' && state.screen !== 'directions') return;
+    completeCurrentModule(state);
+    save();
+    render();
+  }
+
+  const SKIP_BTN_ID = 'azm-skip-module';
+  function syncSkipButton() {
+    const state = getState();
+    const show = state && !state.harness && !state.submitted &&
+      (state.screen === 'test' || state.screen === 'directions');
+    let btn = document.getElementById(SKIP_BTN_ID);
+    if (!show) { if (btn) btn.remove(); return; }
+    if (!btn) {
+      btn = document.createElement('button');
+      btn.id = SKIP_BTN_ID;
+      btn.type = 'button';
+      btn.className = 'azm-skip-btn';
+      btn.textContent = 'Skip module (test)';
+      btn.title = 'Testing shortcut: complete this module and advance';
+      btn.addEventListener('click', skipCurrentModule);
+      document.body.appendChild(btn);
+    }
   }
 
   function actualModeDirections() {
@@ -108,6 +142,9 @@
     const minutes = state.mi >= 2 ? 35 : 32;
     state.endAt = Date.now() + minutes * 60 * 1000;
     state.qi = 0;
+    state.timerHidden = false;
+    state.lineReader = false;
+    state.screen = 'test';
     save();
     render();
   }
@@ -148,6 +185,7 @@
     actualModeExamHeader();
     actualModeDirections();
     actualModeReviewCopy();
+    syncSkipButton();
   }
 
   function installRenderHook() {
