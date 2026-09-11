@@ -2,73 +2,22 @@
 <html lang="en"><head><meta charset="utf-8"><title>Azaman actual exam smoke</title></head>
 <body>
 <pre id="result">running</pre>
-<iframe id="app" title="Azaman simulator" style="width:100%;height:700px;border:0"></iframe>
 <script>
 (() => {
-  const KEY='azaman-sat-practice-v3'; const out=document.getElementById('result'); const frame=document.getElementById('app');
+  const KEY='azaman-sat-practice-v3'; const out=document.getElementById('result'); let frame=null;
   const checks=[]; const check=(name,ok)=>{checks.push(`${ok?'PASS':'FAIL'} ${name}`); if(!ok) throw new Error(name)};
   const wait=(ms)=>new Promise(r=>setTimeout(r,ms));
   const base={v:3,screen:'test',student:'Actual Smoke Student',email:'actual@example.com',password:'',accessCode:'SAT26',roomCode:'AZM24',startCode:'492776',step:10,setupStep:1,setupDone:true,infoCorrect:'yes',deviceOk:'yes',infoOk:true,roomOk:true,rulesOk:true,checkinRules:true,aids:{},pledge:'',mi:0,qi:0,endAt:Date.now()+600000,breakEndAt:null,answers:{},marked:{},eliminated:{},notes:{},highlights:{},completed:{},submitted:false,adaptive:{rw:'easy',math:'easy'},timerHidden:false,lineReader:false,rules:true,desk:true,warning:{},harness:false};
   const state=()=>JSON.parse(localStorage.getItem(KEY)||'null'); const write=(x)=>localStorage.setItem(KEY,JSON.stringify(x));
-  async function load(){ await wait(350); return [frame.contentWindow,frame.contentDocument]; }
-  async function phaseStartFlow(){
-    write({...base,screen:'checkin',step:8,mi:0,endAt:null});
-    frame.src='../index.html?actual-start='+Date.now(); const [win,doc]=await load();
-    check('start code surface renders',!!doc.getElementById('azmStartCodePage'));
-    check('start code shows numbers-only instruction',/numbers only/i.test(doc.getElementById('azmStartCodePage').textContent));
-    check('start code has six input boxes',doc.querySelectorAll('.azm-start-digit').length===6);
-    check('start test control renders',!!doc.getElementById('azmStartTest'));
-    check('start flow uses official continue wording',/review the instructions/i.test(doc.getElementById('azmStartCodePage').textContent));
-    doc.querySelectorAll('.azm-start-digit').forEach((b,i)=>{b.value=base.startCode[i];b.dispatchEvent(new Event('input',{bubbles:true}));});
-    doc.getElementById('azmStartTest').click(); await wait(80);
-    check('start test enters section directions',state().screen==='directions' && state().mi===0);
-    check('directions surface renders',!!doc.getElementById('azmDirectionsPage'));
-    check('directions uses continue control',!!doc.getElementById('beginModuleBtn'));
-  }
-  async function phaseRecovery(){
-    write({...base,screen:'signin',mi:2,qi:7,endAt:Date.now()+241000,recovery:{remainingMs:241000,expiresAt:Date.now()+600000},answers:{'rw1-0':'A'}});
-    frame.src='../index.html?actual-recovery='+Date.now(); const [win,doc]=await load();
-    check('recovery notice renders',!!doc.getElementById('azmRecoveryNotice'));
-    check('recovery explains sign-in',/Sign in again to continue testing/i.test(doc.getElementById('azmRecoveryNotice').textContent));
-    doc.getElementById('email').value='actual@example.com'; doc.getElementById('email').dispatchEvent(new Event('input',{bubbles:true}));
-    doc.getElementById('password').value='resume'; doc.getElementById('password').dispatchEvent(new Event('input',{bubbles:true}));
-    doc.getElementById('signinBtn').click(); await wait(80); const s=state();
-    check('recovery resumes the test surface',s.screen==='test' && s.mi===2 && s.qi===7);
-    check('recovery clears after resume',!s.recovery);
-    check('remaining time restored as a deadline',s.endAt>Date.now()+230000);
-    check('answers survive recovery',s.answers['rw1-0']==='A');
-  }
-  async function phaseGate(){
-    write({...base,screen:'test',mi:0,qi:26,endAt:Date.now()+240000});
-    frame.src='../index.html?actual-gate='+Date.now(); const [win,doc]=await load();
-    check('actual exam does not expose preview banner',getComputedStyle(doc.querySelector('.preview-banner')).display==='none');
-    check('last question shows review module',/Review module/i.test(doc.getElementById('nextBtn').textContent));
-    doc.getElementById('nextBtn').click(); await wait(40); const s=state();
-    check('early module advance is blocked',s.mi===0 && s.qi===26 && s.screen==='test');
-    check('exam gate message appears',!!doc.getElementById('azmExamGate'));
-    check('review modal does not open during blocked advance',!doc.getElementById('reviewModal'));
-  }
-  async function phaseBreak(){
-    write({...base,screen:'break',mi:2,qi:0,endAt:null,breakEndAt:Date.now()+500,completed:{rw1:true,rw2:true,math1:false,math2:false}});
-    frame.src='../index.html?actual-break='+Date.now(); const [win,doc]=await load();
-    await wait(2050);
-    check('scheduled break surface renders',!!doc.getElementById('azmBreakPage'));
-    check('scheduled break shows break rules',/Follow these rules during the break/i.test(doc.getElementById('azmBreakPage').textContent));
-    check('break waits for explicit resume control',!!doc.getElementById('azmResumeBtn'));
-    check('resume control is enabled after break time',!doc.getElementById('azmResumeBtn').disabled);
-    doc.getElementById('azmResumeBtn').click(); await wait(80); const s=state();
-    check('resume enters the next section directions',s.screen==='directions' && s.mi===2 && s.breakEndAt===null);
-  }
-  async function phaseSubmission(){
-    write({...base,screen:'finish',mi:3,qi:0,endAt:null,completed:{rw1:true,rw2:true,math1:true,math2:true},submitted:true,answers:Object.fromEntries(Array.from({length:98},(_,i)=>['q'+i,'A']))});
-    frame.src='../index.html?actual-submit='+Date.now(); const [win,doc]=await load();
-    check('submission screen renders',!!doc.getElementById('azmSubmissionScreen'));
-    check('congratulations heading is present',doc.querySelector('.azm-congrats-card h1')?.textContent==='Congratulations!');
-    check('submission copy matches exam completion',/test is complete, and your answers have been submitted/i.test(doc.querySelector('.azm-congrats-sub')?.textContent||''));
-    check('proctor instruction is present',/proctor/i.test(doc.querySelector('.azm-congrats-copy')?.textContent||''));
-    check('return-home control is present',!!doc.getElementById('azmReturnHome'));
-  }
-  (async()=>{try{await phaseStartFlow();await phaseRecovery();await phaseGate();await phaseBreak();await phaseSubmission();out.textContent=checks.join('\n')+'\nACTUAL EXAM SMOKE COMPLETE';}catch(e){out.textContent=checks.join('\n')+'\nFAIL '+e.message;}finally{try{frame.contentWindow?.stop?.();frame.src='about:blank';await wait(60);}catch(e){}frame.remove();}})();
+  function newFrame(){if(frame){try{frame.onload=null;frame.src='about:blank';frame.remove();}catch(e){}frame=null;}frame=document.createElement('iframe');frame.title='Azaman simulator';frame.style.cssText='width:100%;height:700px;border:0';document.body.appendChild(frame);return frame;}
+  function disposeFrame(){if(!frame)return;try{frame.onload=null;frame.src='about:blank';frame.remove();}catch(e){}frame=null;}
+  async function load(){await wait(350);return [frame.contentWindow,frame.contentDocument];}
+  async function phaseStartFlow(){write({...base,screen:'checkin',step:8,mi:0,endAt:null});newFrame().src='../index.html?actual-start='+Date.now();const [win,doc]=await load();check('start code surface renders',!!doc.getElementById('azmStartCodePage'));check('start code shows numbers-only instruction',/numbers only/i.test(doc.getElementById('azmStartCodePage').textContent));check('start code has six input boxes',doc.querySelectorAll('.azm-start-digit').length===6);check('start test control renders',!!doc.getElementById('azmStartTest'));check('start flow uses official continue wording',/review the instructions/i.test(doc.getElementById('azmStartCodePage').textContent));doc.querySelectorAll('.azm-start-digit').forEach((b,i)=>{b.value=base.startCode[i];b.dispatchEvent(new Event('input',{bubbles:true}));});doc.getElementById('azmStartTest').click();await wait(80);check('start test enters section directions',state().screen==='directions'&&state().mi===0);check('directions surface renders',!!doc.getElementById('azmDirectionsPage'));check('directions uses continue control',!!doc.getElementById('beginModuleBtn'));}
+  async function phaseRecovery(){write({...base,screen:'signin',mi:2,qi:7,endAt:Date.now()+241000,recovery:{remainingMs:241000,expiresAt:Date.now()+600000},answers:{'rw1-0':'A'}});newFrame().src='../index.html?actual-recovery='+Date.now();const [win,doc]=await load();check('recovery notice renders',!!doc.getElementById('azmRecoveryNotice'));check('recovery explains sign-in',/Sign in again to continue testing/i.test(doc.getElementById('azmRecoveryNotice').textContent));doc.getElementById('email').value='actual@example.com';doc.getElementById('email').dispatchEvent(new Event('input',{bubbles:true}));doc.getElementById('password').value='resume';doc.getElementById('password').dispatchEvent(new Event('input',{bubbles:true}));doc.getElementById('signinBtn').click();await wait(80);const s=state();check('recovery resumes the test surface',s.screen==='test'&&s.mi===2&&s.qi===7);check('recovery clears after resume',!s.recovery);check('remaining time restored as a deadline',s.endAt>Date.now()+230000);check('answers survive recovery',s.answers['rw1-0']==='A');}
+  async function phaseGate(){write({...base,screen:'test',mi:0,qi:26,endAt:Date.now()+240000});newFrame().src='../index.html?actual-gate='+Date.now();const [win,doc]=await load();check('actual exam does not expose preview banner',getComputedStyle(doc.querySelector('.preview-banner')).display==='none');check('last question shows review module',/Review module/i.test(doc.getElementById('nextBtn').textContent));doc.getElementById('nextBtn').click();await wait(40);const s=state();check('early module advance is blocked',s.mi===0&&s.qi===26&&s.screen==='test');check('exam gate message appears',!!doc.getElementById('azmExamGate'));check('review modal does not open during blocked advance',!doc.getElementById('reviewModal'));}
+  async function phaseBreak(){write({...base,screen:'break',mi:2,qi:0,endAt:null,breakEndAt:Date.now()+500,completed:{rw1:true,rw2:true,math1:false,math2:false}});newFrame().src='../index.html?actual-break='+Date.now();const [win,doc]=await load();await wait(2050);check('scheduled break surface renders',!!doc.getElementById('azmBreakPage'));check('scheduled break shows break rules',/Follow these rules during the break/i.test(doc.getElementById('azmBreakPage').textContent));check('break waits for explicit resume control',!!doc.getElementById('azmResumeBtn'));check('resume control is enabled after break time',!doc.getElementById('azmResumeBtn').disabled);doc.getElementById('azmResumeBtn').click();await wait(80);const s=state();check('resume enters the next section directions',s.screen==='directions'&&s.mi===2&&s.breakEndAt===null);}
+  async function phaseSubmission(){write({...base,screen:'finish',mi:3,qi:0,endAt:null,completed:{rw1:true,rw2:true,math1:true,math2:true},submitted:true,answers:Object.fromEntries(Array.from({length:98},(_,i)=>['q'+i,'A']))});newFrame().src='../index.html?actual-submit='+Date.now();const [win,doc]=await load();check('submission screen renders',!!doc.getElementById('azmSubmissionScreen'));check('congratulations heading is present',doc.querySelector('.azm-congrats-card h1')?.textContent==='Congratulations!');check('submission copy matches exam completion',/test is complete, and your answers have been submitted/i.test(doc.querySelector('.azm-congrats-sub')?.textContent||''));check('proctor instruction is present',/proctor/i.test(doc.querySelector('.azm-congrats-copy')?.textContent||''));check('return-home control is present',!!doc.getElementById('azmReturnHome'));}
+  (async()=>{try{await phaseStartFlow();await phaseRecovery();await phaseGate();await phaseBreak();await phaseSubmission();out.textContent=checks.join('\n')+'\nACTUAL EXAM SMOKE COMPLETE';}catch(e){out.textContent=checks.join('\n')+'\nFAIL '+e.message;}finally{disposeFrame();}})();
 })();
 </script>
 </body></html>
