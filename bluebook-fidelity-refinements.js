@@ -10,7 +10,7 @@
   }
 
   function logoSvg() {
-    return `<svg class="ref2-logo" viewBox="0 0 400 400" aria-hidden="true"><rect width="400" height="400" rx="88" fill="#384bbf"/><path d="M150 61 147 67 169 336 174 338 229 252 328 274 331 269 154 62Z" fill="#fff"/><path d="M315 100 244 128 278 169 317 106Z" fill="#fff"/><path d="M131 176 62 204 60 208 65 212 135 228Z" fill="#fff"/></svg>`;
+    return `<svg class="ref2-logo" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 1.5l3.1 12.4L35.5 17 23.1 20 20 32.5 16.9 20 4.5 17l12.4-3.1z" fill="currentColor"/><path d="M31 4l.9 3.1L35 8l-3.1.9L31 12l-.9-3.1L27 8l3.1-.9z" fill="currentColor"/></svg>`;
   }
 
   function speakerSvg() {
