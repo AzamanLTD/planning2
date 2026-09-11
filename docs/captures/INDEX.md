@@ -1,40 +1,39 @@
 # Reference Capture Pack
 
-This folder is intentionally kept free of College Board/Bluebook screenshots or copied proprietary assets.
+This index records the reference screenshots supplied by the project owner for the current fidelity pass. They are treated as visual evidence for internal engineering comparison. They are not copied into the repository.
 
-The repository's capture requirement remains **open** until the owner can run the official Bluebook app and capture the permitted reference states independently. Public documentation is used for behavioral verification, but it is not treated as a substitute for the required real-app visual capture pass.
+## Supplied reference states
 
-## Current evidence map
-
-| Flow | Evidence | Status |
+| State | Evidence | Fidelity use |
 |---|---|---|
-| Sign-in / check-in | College Board SAT weekend student page and proctor materials | Behavioral reference only |
-| Room/start codes | College Board / state proctor manuals | Behavioral reference only |
-| R&W modules | College Board test directions | Timing/structure verified |
-| Math modules | College Board test directions | Timing/structure verified |
-| 5-minute timer warning | College Board SAT Weekend Student Guide | Behavior verified |
-| Question menu / mark for review | College Board Bluebook practice guide | Behavior verified |
-| Highlights & Notes | College Board SAT Weekend Student Guide | Behavior verified |
-| Option eliminator | College Board SAT Weekend Student Guide | Behavior verified |
-| Calculator | College Board SAT Weekend Student Guide | Availability verified; visual/UI capture pending |
-| Reference sheet | College Board test directions | Availability verified; exact layout capture pending |
-| Break | College Board SAT weekend student page + student guide | 10-minute section break verified |
-| Submission | College Board SAT weekend student page | Automatic submission verified |
-| Recovery | College Board SAT Weekend Student Guide | Saved-work/resume behavior verified |
+| Check-in room code | `03-room-code-filled-x2-trix.png` in supplied contact sheet | Wizard chrome, room-code boxes, success state, footer and progress geometry |
+| Your Tests | `what-does-start-exam-setup-button-mean-in-the...` in supplied contact sheet | Dashboard composition, card spacing, Active/Past control, CTA |
+| Math module | `Screenshot_20260909-073411.jpg` | Exam shell, calculator, question surface, footer |
+| Math module with calculator | `Screenshot_20260909-072951.jpg` | Calculator placement and exam workspace |
+| Directions modal | `Screenshot_20260909-072948.jpg` | Modal size, overlay and directions surface |
+| Module transition | `Screenshot_20260909-072940.jpg` | `This Module Is Over` layout, copy and loader |
+| Check Your Work | `Screenshot_20260909-072937.jpg` | Review navigator and overlay treatment |
+| R&W data question | `Screenshot_20260909-072924.jpg` | R&W split pane, table stimulus and answer controls |
+| Assistive Technology | `Screenshot_20260909-072917.jpg` | AT modal, accordions, accessibility rail |
+| More menu | `Screenshot_20260909-072913.jpg` | Tool menu ordering and right-side accessibility rail |
+| Sign In | `Screenshot_20260909-072756.jpg` | App login shell, branding, Test Your Device and buttons |
+| Student Account Sign In | `Screenshot_20260909-072802.jpg` | Email/password form, focus/keyboard context |
 
-## Official public sources
+## Current interpretation
 
-- https://bluebook.collegeboard.org/students/sat-weekend
-- https://satsuite.collegeboard.org/practice/bluebook
-- https://satsuite.collegeboard.org/media/pdf/english-pn-test-directions-bb.pdf
-- https://bluebook.collegeboard.org/students/privacy-policy-use-bluebook
+The reference set establishes the visual target for the actual exam-model runtime. The practice/QA harness may retain additional instrumentation and early-review capabilities, but normal exam-model presentation should prioritize the captured application surface and should not expose QA-only affordances.
 
-## Capture procedure when available
+## Capture-derived requirements now implemented or being calibrated
 
-1. Run an official practice test in Bluebook on a permitted test device.
-2. Capture each distinct screen/state and tool open/closed state that the owner is permitted to retain for internal reference.
-3. Store files using `NN-screen-name[-state].png`.
-4. Record each capture below with the observed wording, dimensions, measured spacing, and interaction notes.
-5. Update `docs/design-tokens.md` only from observations that can actually be measured from the capture pack.
+- Check-in uses sparse page-level composition, borderless central content, large footer navigation, and a continuous visual progress bar.
+- Your Tests uses a light sparse surface and a focused test card rather than a general student portal layout.
+- Student-account sign-in uses the email/password visual surface; legacy student identity remains internal for local session state.
+- Exam panes are calibrated toward a balanced split and white working surfaces.
+- Module transitions have a dedicated full-screen state instead of reusing the scheduled break card.
+- Assistive Technology has a scrollable accordion surface with Expand All / Collapse All.
+- The exam accessibility rail is treated as a persistent overlay layer.
+- Actual exam-model mode suppresses preview-only UI and blocks early module advance while retaining QA-harness behavior for automated smoke coverage.
 
-Until that pass is completed, no implementation in this repository should be described as a pixel-perfect reproduction of Bluebook.
+## Remaining measurement work
+
+Exact per-device typography, icon paths, pixel spacing and uncommon accessibility-device interactions still require additional permitted reference captures when available. Those should update `docs/design-tokens.md` and this index rather than being inferred from memory.
