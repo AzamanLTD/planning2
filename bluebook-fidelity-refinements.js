@@ -182,6 +182,5 @@
 
   const observer = new MutationObserver(maintain);
   observer.observe(document.body, { childList: true, subtree: true });
-  window.setInterval(moduleTransitions, 250);
   maintain();
 })();

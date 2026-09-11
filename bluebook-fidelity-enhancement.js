@@ -50,8 +50,6 @@
   function normalizeStudentLogin() {
     const app = state();
     if (!app || app.screen !== 'signin') return;
-    // Keep the legacy state field populated because app.js still uses it to
-    // unlock the submit handler, while the reference UI only exposes email/password.
     if (!app.student) {
       app.student = 'Student';
       save();
@@ -65,8 +63,11 @@
     const sync = () => {
       button.disabled = !(email.value.trim() && password.value.trim());
     };
-    email.addEventListener('input', sync, { passive: true });
-    password.addEventListener('input', sync, { passive: true });
+    if (email.dataset.refLoginReady !== '1') {
+      email.dataset.refLoginReady = '1';
+      email.addEventListener('input', sync, { passive: true });
+      password.addEventListener('input', sync, { passive: true });
+    }
     sync();
   }
 
