@@ -133,8 +133,20 @@
     mountSubmissionScreen();
   }
 
+  function installRenderHook() {
+    const api = window.AZAMAN_APP;
+    if (!api?.render || api.render.__azmExamFinalizationWrapped) return;
+    const originalRender = api.render;
+    const wrappedRender = function wrappedRender(...args) {
+      const result = originalRender.apply(this, args);
+      queueMicrotask(maintain);
+      return result;
+    };
+    Object.defineProperty(wrappedRender, '__azmExamFinalizationWrapped', { value: true });
+    api.render = wrappedRender;
+  }
+
   document.addEventListener('click', resumeFromRecovery, true);
-  const observer = new MutationObserver(maintain);
-  observer.observe(document.body, { childList: true, subtree: true });
+  installRenderHook();
   maintain();
 })();
