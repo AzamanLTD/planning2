@@ -51,3 +51,34 @@ body:not(.azm-harness) #reviewModal #submitModule {
   color: #1d7b44;
   background: #e7f4ec;
 }
+
+.azm-exam-gate {
+  position: fixed;
+  left: 50%;
+  bottom: 92px;
+  transform: translateX(-50%);
+  z-index: 300;
+  width: min(440px, calc(100vw - 32px));
+  pointer-events: none;
+}
+
+.azm-exam-gate-inner {
+  display: grid;
+  gap: 5px;
+  padding: 14px 18px;
+  border: 1px solid #c9cdd2;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 9px 28px rgba(0,0,0,.14);
+  text-align: center;
+  color: #222;
+}
+
+.azm-exam-gate-inner strong {
+  font-size: 16px;
+}
+
+.azm-exam-gate-inner span {
+  font-size: 14px;
+  color: #5f6368;
+}
