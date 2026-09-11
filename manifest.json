@@ -1,7 +1,7 @@
 {
   "name": "Bluebook",
   "short_name": "Bluebook",
-  "description": "Azaman original digital SAT practice simulator",
+  "description": "Azaman digital SAT exam-model simulator",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#384bbf",

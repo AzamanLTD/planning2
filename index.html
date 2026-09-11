@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Azaman original digital SAT practice simulator">
+  <meta name="description" content="Azaman digital SAT exam-model simulator">
   <title>Bluebook</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.json">
@@ -18,6 +18,12 @@
   <link rel="stylesheet" href="results-question-review.css">
   <link rel="stylesheet" href="results-choice-breakdown.css">
   <link rel="stylesheet" href="bluebook-fidelity-overrides.css">
+  <link rel="stylesheet" href="bluebook-fidelity-refinements.css">
+  <link rel="stylesheet" href="bluebook-exam-mode.css">
+  <link rel="stylesheet" href="bluebook-exam-finalization.css">
+  <link rel="stylesheet" href="bluebook-break-fidelity.css">
+  <link rel="stylesheet" href="bluebook-pixel-fidelity.css">
+  <link rel="stylesheet" href="bluebook-final-calibration.css">
 </head>
 <body>
   <div id="app" aria-live="polite"></div>
@@ -48,8 +54,16 @@
   <script src="reference-keyboard-enhancement.js"></script>
   <script src="unscheduled-break-enhancement.js"></script>
   <script src="bluebook-fidelity-enhancement.js"></script>
+  <script src="bluebook-fidelity-refinements.js"></script>
+  <script src="bluebook-exam-mode.js"></script>
+  <script src="bluebook-exam-finalization.js"></script>
+  <script src="bluebook-module-transition.js"></script>
+  <script src="bluebook-break-fidelity.js"></script>
+  <script src="bluebook-mvp-runtime.js"></script>
+  <script src="bluebook-final-calibration.js"></script>
   <script>
-    if ('serviceWorker' in navigator) {
+    const isBrowserSmoke = new URLSearchParams(location.search).has('browser-smoke');
+    if ('serviceWorker' in navigator && !isBrowserSmoke) {
       window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
     }
   </script>

@@ -1,45 +1,50 @@
-# Azaman SAT Practice Simulator
+# Azaman Digital SAT Exam-Model Simulator
 
-A browser-based SAT practice experience for Azaman students that mirrors the Bluebook test-day workflow screen for screen — sign-in, Your Tests, the 10-step check-in wizard, exam chrome, and Check Your Work. All questions and sources are original Azaman content; the interface replicates the documented Bluebook workflow for authentic practice.
+An offline-capable, browser-delivered SAT exam-model experience for Azaman that mirrors the Bluebook-style test-day workflow as closely as permitted by the supplied references: sign-in, Your Tests, exam setup, check-in, exam chrome, question navigation, testing tools, accessibility surfaces, module transitions, interruption recovery, and completion. All question content and non-College-Board assets are Azaman-owned originals; the application is independent and is not affiliated with College Board.
 
 ## Current implementation
 
 - Reading and Writing: 2 × 32-minute modules, 27 questions each
 - Math: 2 × 35-minute modules, 22 questions each
 - Mandatory 10-minute break between Reading and Writing and Math
-- Bluebook-style flow: sign-in choice, student-account credentials, Your Tests dashboard, 10-step exam-setup check-in wizard (welcome, your info, room code, accommodations, accessibility aids, equipment check, testing rules with typed agreement, start code, directions, check-in complete), and module directions
+- Test-day flow: sign-in choice, student-account credentials, Your Tests dashboard, five-step exam setup, 10-step exam check-in, and module directions
 - Absolute-deadline timers that survive page refreshes
+- Actual exam-mode guard: normal student runs cannot advance to the next module before the active timer expires; the QA harness retains early-review behavior for automated testing
 - Locked module transitions with score-based easy/hard Module 2 routing
 - Back/Next navigation, question menu/review grid, and Mark for Review
-- Highlights, notes, line reader, option elimination, zoom, timer hide/show, and keyboard shortcuts
-- Platform-aware Help and shortcut reference for Windows/ChromeOS, macOS, and iPad
+- Highlights, notes, line reader, option elimination, zoom, timer hide/show, and platform-aware keyboard shortcuts
 - Math multiple-choice and student-produced-response input with normalization/persistence
-- Scientific calculator with safe expression evaluation, degree trig, implicit multiplication, guarded tangent singularities, and an independent lightweight graphing mode
-- Formula reference sheet and draggable/resizable tool panels
-- Pre-boot recovery guard that repairs stale/corrupt timed-session state, prevents reopening completed modules, and clears non-contiguous completion flags created by malformed state
-- Robust six-digit start-code entry with paste, arrow-key, backspace, and assistive labels
+- Scientific calculator with safe expression evaluation, degree trig, implicit multiplication, guarded tangent singularities, and independent lightweight graphing
+- Formula reference sheet with compact layout, zoom/pan, and draggable/resizable tool panel behavior
+- Calculator/reference keyboard Move mode and touch/pointer handling
+- Pre-boot recovery guard that repairs stale/corrupt timed-session state, prevents reopening completed modules, and clears malformed completion states
+- Technical interruption recovery: actual exam mode preserves answers/module/question and a bounded remaining-time window when Bluebook is exited for technical recovery; the session must be signed into again before resuming
+- Actual completion surface: finished exam runs show a submission state and never expose the QA/practice score report
+- Robust five-letter room-code and six-digit start-code entry with paste, arrow-key, backspace, and assistive labels
+- Rich Assistive Technology dialog with Expand All / Collapse All and speech-to-text guidance
+- Floating accessibility rail with volume and notification controls
+- Local Test Your Device readiness dialog
 - Student-facing UI hides internal domain/skill/difficulty metadata and neutralizes demo credential placeholders
-- Practice completion report with Reading and Writing / Math and per-module raw accuracy
-- Accessibility semantics for answer controls, test tools, review dialogs, calculator tabs, start-code fields, and reduced-motion preferences
-- Deterministic MCQ answer-position balancing so the correct choice is not predictably concentrated in one option position
-- Automated question-bank validation, authored-source content audit, source-override coverage, diversity audit, adaptive-variant integrity checks, answer-position balance, static contracts, recovery edge-case tests, SPR normalization contracts, accessibility contracts, representative Chromium smoke, complete 98-question Chromium smoke, mobile viewport smoke, dedicated Help smoke, and timer-warning recovery smoke
-- Responsive static frontend with no runtime service dependency
+- Practice completion report and detailed module accuracy reporting retained as a QA/development surface
+- Automated question-bank validation, authored-source content audit, source-override coverage, diversity audit, adaptive-variant integrity checks, answer-position balance, static contracts, recovery edge-case tests, SPR normalization contracts, accessibility contracts, representative Chromium smoke, complete 98-question Chromium smoke, mobile viewport smoke, dedicated Help smoke, timer-warning recovery smoke, actual-exam browser smoke, and dedicated fidelity contracts
 
-## Network boundary
+## Offline runtime
 
-This simulator does not fabricate a testing-center SSID lock. A browser application should not pretend to know the center's Wi-Fi identity unless a real deployment service supplies that contract. The local practice engine therefore keeps exam-state behavior independent of a guessed Wi-Fi value.
+The application is designed as a static offline exam model. All runtime HTML/CSS/JavaScript/question-bank assets are precached by the service worker and existing assets are served cache-first, so an installed exam build does not wait on network access during testing. The local state engine uses browser persistence for answers, flags, notes, highlights, timers, setup, check-in recovery, and technical interruption recovery.
 
-## Practice bank
+The simulator does not fabricate a testing-center SSID lock. Center networking, proctor administration, and secure test-session policy belong to a real deployment layer rather than the browser exam-state engine.
 
-The repository contains 147 structured original question records across the launch modules and adaptive variants. CI validates counts, unique IDs, required metadata, question-type shape, Math SPR volume, hard-module tagging, domain coverage, source length, and exact full-item uniqueness. The content audit loads the same authored R&W source overrides used at runtime and requires every R&W source to meet the 25-word minimum while the override contract protects the authored source manifest from silent drift. Diversity CI blocks exact repeated prompts, sources, and option sets. Adaptive-variant CI checks substantive easy/hard differences and hard tagging. The answer-position audit also keeps the multiple-choice key distribution within a defined balance band. Editorial review remains a release requirement; passing CI is not a substitute for human review of question quality.
+## Content bank
 
-## Demo credentials
+The repository contains 147 structured original question records across the launch modules and adaptive variants. CI validates counts, unique IDs, required metadata, question-type shape, Math SPR volume, hard-module tagging, domain coverage, source length, exact full-item uniqueness, and answer-position distribution. Diversity and adaptive-variant checks prevent silent duplication or non-substantive easy/hard routing. Editorial review remains a release requirement; passing automation is not a substitute for human review.
 
-- Sign-in accepts any full name and email (practice simulator; nothing is transmitted)
-- Room code: type `AZMPR` in the five letter boxes (letters only, like real Bluebook room codes — digits are rejected). `AZMPR` bridges to the internal fixture code `AZM24`, which the app also accepts programmatically.
+## Demo/proctor setup values
+
+- Sign-in: any non-empty student name and email can be used in the local build
+- Room code: any complete five-letter room code is accepted by the offline check-in flow
 - Start code: `492776`
 
-These values are documented only for proctor/developer setup. They are intentionally not shown in student-facing UI fields or help text.
+These values are for local/proctor development only and are not required by the normal student-facing copy.
 
 ## Source-of-truth project documents
 
@@ -49,27 +54,21 @@ These values are documented only for proctor/developer setup. They are intention
 - `docs/review-protocol.md` — branch, review, QA and launch discipline
 - `docs/content-quality.md` — automated/editorial content-quality gate
 - `docs/launch-checklist.md` — release acceptance checklist
-- `docs/platform-readiness.md` — 2026–27 platform and accessibility readiness matrix
+- `docs/platform-readiness.md` — platform and accessibility readiness matrix
 - `docs/full-run-verification.md` — complete adaptive 98-question browser gate
 - `docs/qa-matrix.md` — consolidated automated and human QA matrix
-- `docs/captures/INDEX.md` — reference-capture requirements and evidence map
+- `docs/captures/INDEX.md` — supplied-reference capture evidence and remaining verification notes
 
 ## Verification status
 
-Automated CI covers JavaScript syntax, effective question-bank shape/coverage, content integrity, authored-source override coverage, diversity, adaptive-variant integrity, answer-position balance, calculator safety, static simulator contracts, accessibility contracts, session recovery edge cases, SPR normalization and scoring, representative browser smoke, the complete 98-question adaptive run, mobile viewport layout, dedicated Help shortcut behavior, and timer-warning recovery. The real Bluebook application remains the visual reference authority. The repository intentionally uses Azaman-owned provisional design tokens until the permitted reference-capture pass is completed, so the product is not described as pixel-perfect.
-
-Known release work includes human editorial review of every item, deeper accessibility/device review, richer image/chart interactions, exact calculator parity decisions, extended interruption/recovery testing, real group/proctor-session testing, reference-capture comparison, production deployment, and owner signoff.
+Automated CI covers JavaScript syntax, effective question-bank shape/coverage, content integrity, authored-source override coverage, diversity, adaptive-variant integrity, answer-position balance, calculator safety, static simulator contracts, accessibility contracts, session recovery edge cases, SPR normalization and scoring, representative browser smoke, the complete 98-question adaptive run, mobile viewport layout, dedicated Help shortcut behavior, timer-warning recovery, offline precache coverage, reference-fidelity contracts, and actual exam-model recovery/finalization behavior. Visual comparison remains an iterative engineering task driven by the supplied reference captures and future permitted device captures.
 
 ## Run locally
 
-Serve the repository through any static HTTP server rather than opening files directly:
+Serve the repository through a local static HTTP server:
 
 ```bash
 python3 -m http.server 8080
 ```
 
-Then open `http://localhost:8080`.
-
-## Non-affiliation
-
-This is an independent Azaman practice product and is not affiliated with or endorsed by College Board. All practice questions and interface assets in this repository are original.
+Then open `http://127.0.0.1:8080` and allow the service worker to install before taking the build offline.

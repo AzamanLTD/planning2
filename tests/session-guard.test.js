@@ -25,7 +25,35 @@ function base() {
   };
 }
 
-let state = run({ ...base(), screen: 'checkin' });
+let state = run({ ...base(), screen: 'signin', mi: 2, qi: 7, endAt: null,
+  completed: { rw1: true, rw2: true, math1: false, math2: false },
+  answers: { 'math1-7': 'B' },
+  recovery: { remainingMs: 241_000, expiresAt: NOW + 600_000 }
+});
+assert.equal(state.screen, 'signin');
+assert.equal(state.mi, 2);
+assert.equal(state.qi, 7);
+assert.equal(state.endAt, null);
+assert.deepEqual(state.recovery, { remainingMs: 241_000, expiresAt: NOW + 600_000 });
+assert.equal(state.answers['math1-7'], 'B');
+
+state = run({ ...base(), screen: 'signin', mi: 2, qi: 7, endAt: null,
+  completed: { rw1: true, rw2: true, math1: false, math2: false },
+  recovery: { remainingMs: 241_000, expiresAt: NOW - 1 }
+});
+assert.equal(state.recovery, null);
+assert.equal(state.screen, 'signin');
+assert.equal(state.mi, 2);
+
+state = run({ ...base(), screen: 'signin', mi: 2, qi: 999, endAt: null,
+  completed: { rw1: true, rw2: true, math1: false, math2: false },
+  recovery: { remainingMs: 241_000, expiresAt: NOW + 600_000 }
+});
+assert.equal(state.screen, 'signin');
+assert.equal(state.mi, 2);
+assert.equal(state.qi, 21);
+
+state = run({ ...base(), screen: 'checkin' });
 assert.equal(state.screen, 'checkin');
 assert.equal(state.mi, 0);
 assert.equal(state.qi, 4);

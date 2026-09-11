@@ -1,18 +1,13 @@
 # Bluebook Exam Spec (verified facts + behavior requirements)
 
-This document is the behavioral source of truth for the replica. Facts below
-marked **[VERIFIED]** come from College Board's official published materials
-(retrieved 2026-09-09). Items marked **[VERIFY]** must be confirmed against
-the real Bluebook app during the reference-capture pass before implementation
-is considered complete. Nothing in this file may be implemented from memory
-alone when a screenshot can prove it.
+This document is the behavioral source of truth for the Azaman exam-model simulator. Facts below marked **[VERIFIED]** come from current official public materials. Items marked **[VERIFY]** must be confirmed against permitted real-app captures when available. When a supplied screenshot proves a visual behavior, the capture takes precedence over an inferred approximation.
 
 ## 1. Exam structure and timing [VERIFIED]
 
 The digital SAT is two sections, each split into two adaptive modules:
 
 | Stage | Content | Questions | Time |
-|---|---|---|---|
+|---|---|---:|---:|
 | 1 | Reading & Writing — Module 1 | 27 | 32 min |
 | 2 | Reading & Writing — Module 2 (adaptive) | 27 | 32 min |
 | — | Break | — | 10 min |
@@ -21,192 +16,85 @@ The digital SAT is two sections, each split into two adaptive modules:
 
 - Total working time: 2 h 14 m plus the break and setup screens.
 - R&W Module 2 difficulty adapts to Module 1 performance; same for Math.
-  (For the replica, adaptive selection may be simplified: two pre-built
-  difficulty variants per section, chosen by Module 1 score. Flag any
-  deviation in review.)
-- Question types: R&W — 4-option multiple choice. Math — 4-option multiple
-  choice plus student-produced response (free-response numeric entry with
-  fraction support).
+- Question types: R&W — 4-option multiple choice. Math — 4-option multiple choice plus student-produced response.
 
 ## 2. Testing tools [VERIFIED — official College Board tool list]
 
-These must all exist, with the real app's icons, placements, and interactions:
+The exam model provides the documented testing tools and interaction families:
 
-1. **Testing Timer** — shows time remaining in the module; can be hidden;
-   alerts when 5 minutes remain.
-2. **Calculator** — a Desmos-style scientific/graphing calculator, draggable
-   anywhere on screen. Available on the SAT Math modules. **Beginning Fall
-   2026, the embedded calculator can also be resized.**
-3. **Reference Sheet** — formula reference shown on all tests with math
-   questions. **Beginning Fall 2026, reference sheets can be shown in a
-   different/compressed layout and students can use zoom and pan to inspect
-   charts, graphs, and images.** [VERIFY] exact contents/layout from capture.
-4. **Highlights & Notes** — highlight text in a question/passage; attach a
-   note to a question.
-5. **Mark for Review** — bookmark icon flags a question for return.
-6. **Line Reader** — focus tool for reading test content. The simulator's
-   current implementation renders a non-interactive focus band aligned to the
-   active question content and updates it with viewport changes. [VERIFY]
-   exact band geometry, mask opacity, and placement from a real-app capture.
-7. **Option Eliminator** — strike through wrong answer choices; undoable.
-8. **Question Menu (navigator)** — grid showing answered, unanswered, and
-   marked questions; jump to any question in the section.
-9. **Zoom** — keyboard shortcuts on laptops and pinch on tablets/touch
-   devices; current Fall 2026 releases also describe enlarged image viewing
-   with a lightbox overlay and zoom/pan for charts, graphs, and images.
-10. **Keyboard-movable calculator/reference dialogs** — the official
-    accessibility guidance exposes a Move button. Activating it with Space or
-    Enter puts it into a pressed/draggable state; Arrow keys then reposition
-    the dialog. Escape exits Move mode. This behavior is implemented by the
-    simulator for both dialogs. [VERIFY] exact iconography/placement from
-    capture.
-11. **Unscheduled Break** — a quick break available from the in-test More
-    menu. **The test timer continues running while the student is away.** The
-    replica models this as an interrupting break dialog without changing the
-    active module deadline. [VERIFY] exact wording, placement, and return
-    interaction from capture.
+1. **Testing Timer** — time remaining in the module; can be hidden until the warning threshold.
+2. **Calculator** — independent local scientific/graphing calculator surface, draggable and resizable.
+3. **Reference Sheet** — math reference surface with compact layout, zoom and pan behaviors.
+4. **Highlights & Notes** — text highlighting and question notes.
+5. **Mark for Review** — bookmark state.
+6. **Line Reader** — reading focus surface.
+7. **Option Eliminator** — strike-through/undo state on answer choices.
+8. **Question Menu** — module question navigator and review state.
+9. **Zoom** — keyboard/touch zoom behavior.
+10. **Keyboard Move** — calculator/reference movement with a dedicated Move control and arrow-key repositioning.
+11. **Unscheduled Break** — interrupting break; module timer continues running.
 
-### Keyboard shortcuts [VERIFIED — operating-system-specific official pages]
+## 3. Actual exam-model flow
 
-The current official Windows and macOS pages, and the current Bluebook
-accessibility page, document operating-system-specific shortcut variants.
-Windows uses Control-based combinations; macOS uses Command/Control or
-Command/Option combinations depending on the action. ChromeOS uses a distinct
-Control + Search + S command to open the shortcut list, while retaining the
-same Control-based exam actions. iPad follows the Apple shortcut families and
-has its own Help command. The official pages also document E in interfaces
-that support a fifth response option; this SAT replica exposes only the four
-answer choices present in its current question bank.
+The default student runtime is the exam-model path. QA-only harness state is separate and is never the target presentation.
 
-For the browser simulator, the implemented verified subset is:
+1. **Sign-in** — ticket or student-account route.
+2. **Your Tests** — active test card and setup status.
+3. **Exam Setup** — five-step setup wizard with admission-ticket state.
+4. **Check-in** — ten-step proctor-guided flow including room code, accommodations, accessibility aids, equipment, rules, start code and directions.
+5. **Module Directions** — current section/module timing and tool availability.
+6. **Exam Module** — full test surface with persistent top chrome, tools, two-pane stimulus/question layout where applicable, question controls, timer and footer navigation.
+7. **Module completion** — dedicated full-screen transition stating that work is saved and the app will advance automatically.
+8. **Section break** — timed 10-minute transition between Reading and Writing and Math.
+9. **Review/transition** — question navigation and saved state; in actual exam-model mode, the student cannot advance to the next module before the current module timer expires.
+10. **Completion** — independent local completion/result surface retained for this simulator; it does not claim College Board score submission.
 
-| Function | Windows | ChromeOS | macOS | iPad |
-|---|---|---|---|---|
-| Keyboard shortcuts | F1 | Control + Search + S | F1 | F1 |
-| Exam region forward/back | F6 / Shift+F6 | F6 / Shift+F6 | F6 / Shift+F6 | F6 / Shift+F6 |
-| Zoom in/out/reset | Ctrl + + / Ctrl + - / Ctrl + 0 | Ctrl + + / Ctrl + - / Ctrl + 0 | Command + + / Command + - / Command + 0 | Command + + / Command + - / Command + 0 |
-| Back | Ctrl + Alt + B | Ctrl + Alt + B | Command + Control + B | Command + Control + B |
-| Next / review module | Ctrl + Alt + X | Ctrl + Alt + X | Command + Control + X | Command + Control + X |
-| Question menu | Ctrl + Alt + G | Ctrl + Alt + G | Command + Control + G | Command + Control + G |
-| Help | Ctrl + Alt + H | Ctrl + Alt + H | Command + Control + H | Command + Control + P |
-| Directions | Ctrl + Alt + Shift + D | Ctrl + Alt + Shift + D | Command + Control + Shift + D | Command + Control + Shift + D |
-| Line reader | Ctrl + L | Ctrl + L | Command + L | Command + L |
-| Timer | Ctrl + Alt + T | Ctrl + Alt + T | Command + Option + T | Command + Option + T |
-| Mark for Review | Ctrl + Alt + V | Ctrl + Alt + V | Command + Shift + V | Command + Shift + V |
-| Highlights & Notes | Ctrl + H | Ctrl + H | Control + H | Control + H |
-| Calculator | Ctrl + Alt + C | Ctrl + Alt + C | Command + Option + C | Command + Option + C |
-| Reference sheet | Ctrl + Alt + R | Ctrl + Alt + R | Command + Option + R | Command + Option + R |
-| Option eliminator mode | Ctrl + Alt + O | Ctrl + Alt + O | Command + Control + O | Command + Control + O |
-| Eliminate A–D | Ctrl + Alt + 1–4 | Ctrl + Alt + 1–4 | Command + Option + 1–4 | Command + Option + 1–4 |
-| Select A–D | Ctrl + Shift + 1–4 | Ctrl + Shift + 1–4 | Command + Control + 1–4 | Command + Control + 1–4 |
+## 4. Capture-derived visual requirements
 
-The exact official pages remain the authority for additional platform-specific
-shortcut differences and assistive-technology commands. Pause Timer is an
-accommodation-dependent Bluebook command and is not exposed as a normal practice
-control in this simulator.
+The supplied reference pack establishes the following non-negotiable surface characteristics:
 
-## 3. Test-day flow (screen inventory) [VERIFY each screen in capture pass]
+- Check-in uses a sparse white page, compact Help/Return Home controls, centered content and a large bottom navigation footer.
+- The check-in progress display is a long continuous rounded track, not ten visually separated pills.
+- Your Tests is a light, sparse test dashboard centered on one large rounded card.
+- Student-account sign-in is an email/password surface with disabled submission until required values are present.
+- Exam pages use a pale exam header, central timer, right-side tool labels, a dashed divider/preview strip in reference-capture states, balanced split panes and a persistent bottom footer.
+- Check Your Work is an overlay navigation state with answered/unanswered/marked visual distinctions.
+- Module completion is a dedicated white full-screen message with a small animated loader.
+- Assistive Technology is a large scrollable dialog with Expand All / Collapse All, speech-to-text guidance and an accompanying accessibility rail.
 
-The replica must reproduce this sequence. Screen names are descriptive; the
-capture pass supplies exact wording, layout, and styling. Internally, the
-simulator's setup/check-in state is represented as `checkin` so refresh recovery
-can preserve the exact active state used by the browser runtime:
+## 5. Platform and keyboard requirements
 
-1. **Sign-in / test code entry** — proctor gives a test code; student enters
-   it to start. [VERIFY] exact sign-in variants (test code vs. College Board
-   account login) and which apply to proctored test day.
-2. **Exam setup / check-in** — student confirms info, agrees to test rules,
-   and acknowledges the practice workspace/setup reminders.
-3. **Welcome / instructions screens** — per-module directions: what the
-   section covers, number of questions, time, calculator availability.
-4. **Module screens** — the exam itself: passage left / questions right
-   (R&W), question with tools bar, question counter, timer.
-5. **Break screen** — 10-minute countdown, resume when ready (proctor-paced).
-   [VERIFY] exact countdown behavior and messaging.
-6. **Review screen** — end-of-module view listing questions: answered,
-   unanswered, marked. Navigate back, then submit the module.
-7. **Finish / survey screens** — completion confirmation and the test-day
-   questionnaire flow. [VERIFY] wording and sequence.
-8. **Results placeholder** — replica shows practice score summary
-   (deviation from real app, which submits to College Board; approved by
-   owner for this project).
+- **ChromeOS** is a first-class keyboard target; the shortcut list opens with **Control + Search + S**.
+- **Windows**, **macOS**, and **iPad** have platform-specific modifier mappings for the shared exam actions.
+- **iPad** Help uses the dedicated **Command + Control + P** mapping.
+- The **Setup/check-in state** must preserve focus order and keyboard operation across all ten check-in steps.
+- The test harness also documents the alternate internal phrase **Control + Search + S (ChromeOS)** for compatibility with the automated contract vocabulary.
 
-Anything else observed during the capture pass gets added here first, then
-implemented.
+## 6. Behavior requirements
 
-## 4. Reference capture (blocking task, do first)
+- Timer counts down per module and survives page refresh using an absolute deadline.
+- At the configured warning threshold the timer must remain visible and the warning state must not be bypassed by hiding the timer.
+- Question navigation never loses an answer. Answers, review marks, eliminations, notes and highlights persist across refresh and navigation.
+- In **actual exam-model mode**, moving to the next module is unavailable until the active module timer expires. This is enforced independently of the practice/QA harness.
+- In the **QA harness**, early review/advance remains available solely so automated smoke tests can cover the complete state machine without waiting for real module durations.
+- After a module expires, its state is locked and the application displays the module-transition surface before advancing.
+- Refresh/reopen repairs stale/corrupt persisted session state and never reopens a completed module.
+- Unscheduled breaks do not pause the module deadline.
+- Keyboard shortcuts mirror the documented platform action families used by the simulator.
+- Accessibility remains keyboard navigable, semantically labeled and reduced-motion aware.
 
-Before feature code:
+## 7. Offline boundary
 
-1. Install the real Bluebook app, run a full-length official practice test.
-2. Screenshot every screen, state, and interaction (tools open/closed,
-   calculator open, review screen, break, submit warnings).
-3. Store captures in `docs/captures/` with a naming convention of
-   `NN-screen-name[-state].png` in flow order.
-4. Build `docs/captures/INDEX.md` mapping each capture to the screen inventory
-   above.
-5. Extract the visual token set from captures: exact hex values for
-   backgrounds, headers, buttons, text, tool icons, states (hover, selected,
-   eliminated, marked). Record in `docs/design-tokens.md`.
+The exam model is self-contained after installation. The service worker precaches the complete runtime and serves installed assets from cache without a runtime network fallback. The app must not fabricate test-center SSID checks, remote proctoring state or network authorization inside the local browser exam engine.
 
-The token set in `docs/design-tokens.md` is the only permitted source of colors
-and typography. No hardcoded literals in components.
+## 8. Non-goals
 
-## 5. Behavior requirements
+- Do not reproduce real College Board questions, passages or confidential answer keys.
+- Do not claim affiliation with College Board.
+- Do not invent undocumented exam controls merely to make the interface feel more sophisticated.
+- Do not make the practice/QA harness the visible default exam experience.
 
-- Timer counts down per module; auto-submits (or shows the real app's
-  behavior) when time expires — [VERIFY] exact expiry behavior in capture
-  pass and mirror it.
-- Question navigation: next/back, question menu, review screen —
-  never lose an answer on navigation.
-- Answers persist across module revisit (back from review into questions).
-- Module submission is final within a run. For this **practice simulator**,
-  match current Bluebook full-length practice behavior: students may move
-  forward before a module's timer expires. Test-day Bluebook is stricter and
-  does not generally permit early submission; that distinction is not enabled
-  as a separate mode in this project.
-- Keyboard shortcuts mirror the real app where they exist. [VERIFY] exact
-  platform-specific list; the implemented subset above is based on the current
-  official Windows/ChromeOS/macOS/iPad documentation.
-- Accessibility: keyboard navigable; color contrast as per real app.
-- Recovery: refresh during an active module or the scheduled break preserves
-  the absolute deadline; stale or impossible persisted states are repaired
-  without reopening completed modules. Setup/check-in state must also survive
-  reload instead of falling back to the access screen.
-- Current Fall 2026 tool behavior: reference-sheet zoom/pan and alternate
-  layout controls are required in the simulator's math tool surface; calculator
-  resizing remains required. The implemented simulator also supports keyboard
-  repositioning for calculator/reference dialogs, touch pinch zoom within
-  original practice media, a visual Line Reader focus band, and an
-  interrupting Unscheduled Break dialog whose module timer continues to run.
-  [VERIFY] exact affordances from the capture pass.
+## 9. Current verification references
 
-## 6. Network boundary [VERIFY / implementation boundary]
-
-The browser simulator must not invent a client-side test-center SSID check.
-Center Wi-Fi requirements, proctoring, room administration, and test-session
-network policy belong to the deployment/proctor layer rather than the local
-exam-state engine. The simulator may require a normal web connection to load
-its assets, but once the app is running, local persistence and timed-state
-behavior must not be tied to a fabricated SSID value.
-
-Any future server-backed practice mode may add explicit session/network
-controls, but those controls must be based on a real deployment contract,
-not guessed Bluebook behavior.
-
-## 7. Non-goals (explicit)
-
-- No College Board branding reproduction beyond what is necessary to
-  mirror the exam UX; label the app as a practice simulator in places the
-  real app would show College Board identity — do not claim affiliation.
-- No invented tools, screens, or "improvements" not in the real app.
-- No real College Board questions, passages, or answer keys.
-
-## 8. Official verification links
-
-- Windows shortcuts: https://bluebook.collegeboard.org/help-center/windows-keyboard-shortcuts
-- Chromebook shortcuts: https://bluebook.collegeboard.org/help-center/chromebook-keyboard-shortcuts
-- macOS shortcuts: https://bluebook.collegeboard.org/help-center/macos-keyboard-shortcuts
-- Accessibility / platform shortcuts: https://bluebook.collegeboard.org/students/accommodations-assistive-technology/accessing-bluebook-features-content
-- Fall 2026 Bluebook updates: https://bluebook.collegeboard.org/test-admin/new-updated-features
-- Current Bluebook releases: https://bluebook.collegeboard.org/technology/updates-releases/releases
+- College Board public Bluebook student/test-admin materials for timing, tools and accessibility.
+- Owner-supplied reference screenshots in the current conversation, recorded in `docs/captures/INDEX.md`.

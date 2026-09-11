@@ -1,11 +1,25 @@
 (() => {
   'use strict';
 
-  const state = { installed: false };
+  const state = { installed: false, cleanup: null, reader: null };
+
+  function reset() {
+    if (state.cleanup) state.cleanup();
+    state.cleanup = null;
+    state.reader = null;
+    state.installed = false;
+  }
 
   function enhance(reader) {
-    if (!reader || state.installed) return;
+    if (!reader) return;
+    if (state.installed && state.reader === reader) {
+      reader._azmUpdate?.();
+      return;
+    }
+    if (state.installed && state.reader !== reader) reset();
+
     state.installed = true;
+    state.reader = reader;
     reader.setAttribute('aria-hidden', 'true');
     reader.setAttribute('data-line-reader-active', 'true');
     reader.innerHTML = '';
@@ -16,6 +30,7 @@
     reader.appendChild(frame);
 
     const update = () => {
+      if (!reader.isConnected || !frame.isConnected) return;
       const prompt = document.getElementById('questionPrompt');
       if (!prompt) return;
       const rect = prompt.getBoundingClientRect();
@@ -28,6 +43,11 @@
     window.addEventListener('resize', update, { passive: true });
     window.addEventListener('scroll', update, { passive: true });
     reader._azmUpdate = update;
+    state.cleanup = () => {
+      window.removeEventListener('resize', update);
+      window.removeEventListener('scroll', update);
+      if (reader._azmUpdate === update) delete reader._azmUpdate;
+    };
   }
 
   function observe() {
@@ -38,7 +58,7 @@
     new MutationObserver(() => {
       const current = document.querySelector('.line-reader');
       if (!current) {
-        state.installed = false;
+        reset();
         return;
       }
       enhance(current);

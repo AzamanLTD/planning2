@@ -16,7 +16,7 @@
         answers: {}, marked: {}, eliminated: {}, notes: {}, highlights: {}, completed: {}, submitted: false,
         adaptive: { rw: 'hard', math: 'easy' }, timerHidden: false, lineReader: true, rules: true, desk: true, warning: {}
       }));
-      frame.src = '../index.html?line-reader-smoke=' + now;
+      frame.src = '../index.html?browser-smoke=1&line-reader-smoke=' + now;
       frame.addEventListener('load', () => setTimeout(() => {
         try {
           const doc = frame.contentDocument;
@@ -34,6 +34,8 @@
           out.textContent = `PASS Line Reader focus band initialized at ${Math.round(top)}px\nLINE READER SMOKE COMPLETE`;
         } catch (error) {
           out.textContent = `FAIL ${error.message || error}`;
+        } finally {
+          frame.remove();
         }
       }, 250));
     })();

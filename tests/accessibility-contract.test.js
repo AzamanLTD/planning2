@@ -43,6 +43,11 @@ assert(keyboard.includes('const comboAlt = isMac ? command && alt : ctrl && alt'
 assert(keyboard.includes("isChromeOS && ctrl && command && lower === 's'"), 'ChromeOS keyboard shortcut list must open with Control+Search+S');
 assert(keyboard.includes("isIPad && command && ctrl && lower === 'p'"), 'iPad Help must use Command+Control+P');
 assert(keyboard.includes("isMac ? command && event.shiftKey && lower === 'v' : ctrl && alt && lower === 'v'"), 'Mark for Review must use the platform-specific mapping');
+assert(keyboard.includes('function toggleDialogById(id, opener)'), 'toolbar shortcuts must have reusable open/close semantics');
+assert(keyboard.includes("toggleDialogById('reviewModal'"), 'Question Menu shortcut must close an already-open review dialog');
+assert(keyboard.includes("toggleDialogById('calculatorPanel'"), 'Calculator shortcut must toggle the dialog');
+assert(keyboard.includes("toggleDialogById('referencePanel'"), 'Reference Sheet shortcut must toggle the dialog');
+assert(keyboard.includes('const existing = document.getElementById(\'directionHelp\')'), 'Directions shortcut must support open/close semantics');
 assert(modal.includes('role="dialog"'), 'modal focus layer must target dialog semantics');
 assert(modal.includes('aria-modal="true"'), 'dialogs must be modal to assistive technology');
 assert(modal.includes('FOCUSABLE'), 'dialogs must define keyboard focusable controls');
@@ -55,6 +60,13 @@ assert(uiA11y.includes("setAttribute('role', 'radio')"), 'answer choices must ex
 assert(uiA11y.includes("setAttribute('aria-checked'"), 'answer choices must expose checked state');
 assert(uiA11y.includes("setAttribute('role', 'menu')"), 'test tools must expose menu semantics');
 assert(uiA11y.includes('Question ${number}, ${states.join'), 'review buttons must have descriptive labels');
+assert(uiA11y.includes("setAttribute('role', 'timer')"), 'test and break timers must expose timer semantics');
+assert(uiA11y.includes("timer.setAttribute('aria-label', 'Test timer')"), 'main test timer must expose an accessible label');
+assert(uiA11y.includes("setAttribute('aria-live', 'off')"), 'timers must not spam live-region announcements');
+assert(uiA11y.includes("top.setAttribute('aria-label', 'Bluebook Controls')"), 'test controls must expose a named banner region');
+assert(uiA11y.includes("source.setAttribute('aria-label', 'Passage or Source')"), 'source region must expose its landmark name');
+assert(uiA11y.includes("question.setAttribute('aria-label', 'Question and Answer')"), 'question region must expose its landmark name');
+assert(uiA11y.includes("footer.setAttribute('aria-label', 'Question Navigation')"), 'navigation footer must expose its landmark name');
 assert(uiA11y.includes('installReducedMotionSupport'), 'reduced-motion preference must have a dedicated accessibility path');
 assert(uiA11y.includes('prefers-reduced-motion: reduce'), 'reduced-motion preference must be honored');
 assert(uiA11y.includes('childList: true, subtree: true'), 'accessibility observer must react to rendered subtrees');
@@ -73,4 +85,4 @@ assert(html.includes('media-enhancement.js'), 'media accessibility enhancement m
 assert(html.includes('tools-move-enhancement.js'), 'keyboard tool movement enhancement must be loaded');
 assert(html.includes('media-touch-enhancement.js'), 'touch media enhancement must be loaded');
 
-console.log('Accessibility, reduced-motion, media, tool movement, touch, platform shortcuts, break timer, and observer safety contract checks passed.');
+console.log('Accessibility, reduced-motion, media, tool movement, touch, platform shortcuts, toggle semantics, timer labels, landmarks, and observer safety contract checks passed.');

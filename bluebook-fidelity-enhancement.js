@@ -50,8 +50,6 @@
   function normalizeStudentLogin() {
     const app = state();
     if (!app || app.screen !== 'signin') return;
-    // Keep the legacy state field populated because app.js still uses it to
-    // unlock the submit handler, while the reference UI only exposes email/password.
     if (!app.student) {
       app.student = 'Student';
       save();
@@ -60,19 +58,43 @@
     const email = document.getElementById('email');
     const password = document.getElementById('password');
     const button = document.getElementById('signinBtn');
+    const student = document.getElementById('student');
     if (!email || !password || !button) return;
+
+    // Bluebook's student-account surface asks for email/password. The core
+    // state engine keeps a student field for existing smoke compatibility,
+    // but the field is intentionally hidden from the student-facing surface.
+    const studentField = student?.closest('.field');
+    if (studentField) studentField.style.display = 'none';
+    if (student) student.setAttribute('aria-hidden', 'true');
+    if (button.textContent !== 'Sign In') button.textContent = 'Sign In';
 
     const sync = () => {
       button.disabled = !(email.value.trim() && password.value.trim());
+      if (student && !student.value.trim()) {
+        const local = email.value.trim().split('@')[0].replace(/[._-]+/g, ' ').trim();
+        if (local) {
+          student.value = local;
+          student.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      }
     };
-    email.addEventListener('input', sync, { passive: true });
-    password.addEventListener('input', sync, { passive: true });
+    if (email.dataset.refLoginReady !== '1') {
+      email.dataset.refLoginReady = '1';
+      email.addEventListener('input', sync, { passive: true });
+      password.addEventListener('input', sync, { passive: true });
+    }
     sync();
   }
 
   function hideDashboardExtras() {
-    if (!document.querySelector('.yourtests-page')) return;
-    document.querySelector('.yourtests-page .meta-row:nth-child(4)')?.classList.add('ref-hidden');
+    const page = document.querySelector('.yourtests-page');
+    if (!page) return;
+    page.querySelector('.meta-row:nth-child(4)')?.classList.add('ref-hidden');
+    const name = page.querySelector('.test-name');
+    if (name && /^(SAT|Digital SAT)$/i.test(name.textContent.trim()) && name.textContent.trim() !== 'Digital SAT March 2023') {
+      name.textContent = 'Digital SAT March 2023';
+    }
   }
 
   function addExitItem() {
@@ -83,24 +105,35 @@
     button.type = 'button';
     button.id = 'refExitExam';
     button.className = 'tool-item';
-    button.innerHTML = '<span aria-hidden="true" class="ico-tool">⚠</span><span>Exit the exam</span>';
+    button.innerHTML = '<span aria-hidden="true" class="ico-tool">⚠</span><span>Exit Bluebook</span>';
     button.addEventListener('click', openExitExam);
     menu.appendChild(button);
   }
 
   function openExitExam() {
+    const app = state();
     document.getElementById('toolPopover')?.remove();
     closeDialog('refExitModal');
+    const remainingMs = app?.endAt ? Math.max(0, app.endAt - Date.now()) : 0;
     const dialog = document.createElement('div');
     dialog.id = 'refExitModal';
     dialog.className = 'modal-backdrop';
-    dialog.innerHTML = '<div class="modal" role="dialog" aria-modal="true" aria-labelledby="refExitTitle"><div class="modal-head"><h3 id="refExitTitle">Exit the exam?</h3><button class="icon-btn" id="refExitClose" aria-label="Cancel">×</button></div><p>Your answers are saved locally. Exiting ends this testing session.</p><div class="modal-actions"><button class="btn" id="refExitCancel">Cancel</button><button class="btn primary-action" id="refExitConfirm">Exit the exam</button></div></div>';
+    dialog.innerHTML = '<div class="modal" role="dialog" aria-modal="true" aria-labelledby="refExitTitle"><div class="modal-head"><h3 id="refExitTitle">Exit Bluebook?</h3><button class="icon-btn" id="refExitClose" aria-label="Cancel">×</button></div><p>Your answers are saved on this device. Exiting Bluebook pauses your testing timer temporarily. You will need to sign in again to continue testing.</p><p class="small">Use this only to recover from a technical problem. Keep this device with you and follow your proctor’s instructions.</p><div class="modal-actions"><button class="btn" id="refExitCancel">Cancel</button><button class="btn primary-action" id="refExitConfirm">Exit Bluebook</button></div></div>';
     document.body.appendChild(dialog);
     const close = () => dialog.remove();
     dialog.querySelector('#refExitClose').onclick = close;
     dialog.querySelector('#refExitCancel').onclick = close;
     dialog.querySelector('#refExitConfirm').onclick = () => {
-      try { localStorage.removeItem('azaman-sat-practice-v3'); } catch (_) {}
+      if (app) {
+        app.recovery = {
+          remainingMs,
+          expiresAt: Date.now() + 10 * 60 * 1000,
+        };
+        app.endAt = null;
+        app.password = '';
+        app.screen = 'signin';
+        save();
+      }
       location.reload();
     };
     dialog.querySelector('#refExitCancel').focus();
