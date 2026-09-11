@@ -42,7 +42,7 @@
     if (!title || !/Assistive Technology/i.test(title.textContent || '')) return;
     modal.dataset.finalCalibration = '1';
     inner.classList.add('bb-final-at-card');
-    inner.innerHTML = `<div class="modal-head"><h3 id="atFinalTitle">Assistive Technology</h3><button class="icon-btn" id="atFinalClose" aria-label="Close">×</button></div><div class="at-tools-bar"><button class="btn link small" id="atFinalExpand">Expand All</button><button class="btn link small" id="atFinalCollapse">Collapse All</button></div><div class="at-body">${AT_ITEMS.map(([name, copy], index) => `<details${index === 0 ? ' open' : ''}><summary>${escapeHtml(name)}</summary><div class="at-copy"><p>${copy}</p></div></details>`).join('')}</div><div class="modal-actions"><button class="btn cta-yellow" id="atFinalDone">Close</button></div>`;
+    inner.innerHTML = `<div class="modal-head"><h3 id="atFinalTitle">Assistive Technology</h3><button class="icon-btn" id="atFinalClose" aria-label="Close">×</button></div><div class="at-tools-bar"><button class="btn link small" id="atFinalExpand">Expand All</button><button class="btn link small" id="atFinalCollapse">Collapse All</button></div><div class="at-body">${AT_ITEMS.map(([name, copy], index) => `<details${index === 0 ? ' open' : ''}><summary>${escapeHtml(name)}</summary><div class="at-copy">${copy.startsWith('<') ? copy : `<p>${copy}</p>`}</div></details>`).join('')}</div><div class="modal-actions"><button class="btn cta-yellow" id="atFinalDone">Close</button></div>`;
     const close = () => modal.remove();
     inner.querySelector('#atFinalClose').onclick = close;
     inner.querySelector('#atFinalDone').onclick = close;
@@ -57,6 +57,8 @@
   }
 
   scan();
-  const observer = new MutationObserver(scan);
-  observer.observe(document.body, { childList: true, subtree: true });
+  const observer = new MutationObserver((records) => {
+    if (records.some((record) => record.addedNodes && record.addedNodes.length)) scan();
+  });
+  observer.observe(document.body, { childList: true });
 })();
