@@ -1,0 +1,17 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Fidelity static checks</title>
+<script>
+// This page is intentionally static and can be run offline. It checks that
+// the fidelity assets remain wired into index.html and exposes a machine-readable
+// marker for external browser smoke if desired.
+fetch('index.html').then(r=>r.text()).then(html=>{
+  const required=['bluebook-fidelity-overrides.css','bluebook-fidelity-enhancement.js'];
+  const missing=required.filter(x=>!html.includes(x));
+  document.body.textContent=missing.length?'FAIL '+missing.join(','):'PASS';
+  if(missing.length) document.body.dataset.status='fail';
+  else document.body.dataset.status='pass';
+}).catch(()=>{
+  document.body.textContent='OFFLINE STATIC CHECK: serve this repository over HTTP to inspect index.html';
+});
+</script>
