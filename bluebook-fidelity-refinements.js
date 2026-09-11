@@ -47,20 +47,22 @@
 
   function openDeviceDialog() {
     document.getElementById('ref2DeviceDialog')?.remove();
-    const memory = Number.isFinite(navigator.deviceMemory) ? `${navigator.deviceMemory} GB reported` : 'Not exposed by this browser';
+    const memory = Number.isFinite(navigator.deviceMemory) ? `${navigator.deviceMemory} GB` : 'Not exposed';
+    const storageReady = !!navigator.storage?.estimate;
+    const osReady = !!detectPlatform();
+    const viewportReady = window.innerWidth >= 800 && window.innerHeight >= 500;
+    const localReady = !!window.localStorage;
     const items = [
-      ['Operating system', detectPlatform(), true],
-      ['Device viewport', `${window.innerWidth} × ${window.innerHeight}`, window.innerWidth >= 800 && window.innerHeight >= 500],
-      ['JavaScript', 'Enabled', true],
-      ['Local storage', 'Available', !!window.localStorage],
-      ['Device memory', memory, true],
-      ['Free storage', 'Checking…', true],
-      ['Touch input', navigator.maxTouchPoints > 0 ? 'Detected' : 'Not detected', true],
+      ['Memory', memory, Number.isFinite(navigator.deviceMemory)],
+      ['Operating system', detectPlatform(), osReady],
+      ['Disk space', storageReady ? 'Checking…' : 'Unavailable', storageReady],
+      ['Device lock', 'Not verified in browser', null],
+      ['Verified mode', 'Not verified in browser', null],
     ];
     const dialog = document.createElement('div');
     dialog.id = 'ref2DeviceDialog';
     dialog.className = 'modal-backdrop';
-    dialog.innerHTML = `<div class="modal ref2-device-dialog" role="dialog" aria-modal="true" aria-labelledby="ref2DeviceTitle"><div class="modal-head"><h3 id="ref2DeviceTitle">Test Your Device</h3><button class="icon-btn" id="ref2DeviceClose" aria-label="Close">×</button></div><p>Check the device capabilities visible to this local simulator before starting your exam.</p><div class="ref2-device-list">${items.map(([name,value,ok], i) => `<div class="ref2-device-row" data-device-row="${i}"><span>${escapeHtml(name)}</span><span class="ref2-device-value">${escapeHtml(value)}</span><strong aria-label="${ok ? 'Ready' : 'Check'}">${ok ? '✓' : '!'}</strong></div>`).join('')}</div><p class="small">All checks run locally. No network connection is required for this simulator. Some operating-system settings, security policies, and managed-device restrictions cannot be verified from a browser.</p><div class="modal-actions"><button class="btn cta-yellow" id="ref2DeviceDone">Done</button></div></div>`;
+    dialog.innerHTML = `<div class="modal ref2-device-dialog" role="dialog" aria-modal="true" aria-labelledby="ref2DeviceTitle"><div class="modal-head"><h3 id="ref2DeviceTitle">Test Your Device</h3><button class="icon-btn" id="ref2DeviceClose" aria-label="Close">×</button></div><h4 class="ref2-device-result">${viewportReady && localReady ? 'This Device Meets the Requirements' : 'Check Your Device'}</h4><p class="ref2-device-lead">Bluebook checks the device settings that are visible to the testing application before test day.</p><div class="ref2-device-list">${items.map(([name,value,ok], i) => `<div class="ref2-device-row" data-device-row="${i}"><span>${escapeHtml(name)}</span><span class="ref2-device-value">${escapeHtml(value)}</span><strong class="ref2-device-state ${ok === null ? 'info' : ok ? 'ok' : 'warn'}" aria-label="${ok === null ? 'Not verified' : ok ? 'Ready' : 'Check'}">${ok === null ? 'i' : ok ? '✓' : '!'}</strong></div>`).join('')}</div><p class="small">This simulator runs these checks locally. Browser code cannot reliably verify secure device lock or managed verified-mode settings; use your testing-device guidance for those checks.</p><div class="modal-actions"><button class="btn cta-yellow" id="ref2DeviceDone">Done</button></div></div>`;
     document.body.appendChild(dialog);
     const close = () => dialog.remove();
     dialog.querySelector('#ref2DeviceClose').onclick = close;
@@ -68,7 +70,7 @@
     if (navigator.storage?.estimate) {
       navigator.storage.estimate().then(({ quota, usage }) => {
         const value = Number.isFinite(quota) && Number.isFinite(usage) ? `${Math.max(0, (quota - usage) / 1073741824).toFixed(2)} GB estimated free` : 'Unavailable';
-        const row = dialog.querySelector('[data-device-row="5"] .ref2-device-value');
+        const row = dialog.querySelector('[data-device-row="2"] .ref2-device-value');
         if (row && dialog.isConnected) row.textContent = value;
       }).catch(() => {});
     }
