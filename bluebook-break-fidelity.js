@@ -22,6 +22,7 @@
     const remaining = state.breakEndAt ? Math.max(0, Math.ceil((state.breakEndAt - Date.now()) / 1000)) : 0;
     readyShown = !state.breakEndAt || remaining <= 0;
     app.innerHTML = `<main id="azmBreakPage" class="azm-break-page" aria-labelledby="azmBreakTitle">
+      <div class="azm-break-device-status" aria-hidden="true"><span class="azm-break-wifi">●</span><span class="azm-break-battery">85% ▰</span></div>
       <section class="azm-break-timer" aria-label="Remaining Break Time">
         <div class="azm-break-label">Remaining Break Time:</div>
         <div id="breakClock" class="azm-break-clock">${fmt(remaining)}</div>
