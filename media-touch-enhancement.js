@@ -16,12 +16,12 @@
 
     viewport.addEventListener('pointerdown', (event) => {
       pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
-      viewport.setPointerCapture?.(event.pointerId);
       if (pointers.size === 2) {
         const [a, b] = [...pointers.values()];
         const distance = Math.hypot(a.x - b.x, a.y - b.y);
         pinch = distance > 0 ? { distance } : null;
       }
+      try { viewport.setPointerCapture?.(event.pointerId); } catch (_) {}
     }, { passive: true });
 
     viewport.addEventListener('pointermove', (event) => {

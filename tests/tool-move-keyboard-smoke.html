@@ -1,12 +1,14 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><title>Tool move keyboard smoke</title></head>
+<head><meta charset="utf-8"><title>Tool move keyboard smoke</title><link rel="stylesheet" href="../styles.css"></head>
 <body>
-  <main><p>Tool move keyboard smoke</p></main>
+  <main id="app"><p>Tool move keyboard smoke</p></main>
   <script>
     localStorage.setItem('azaman-sat-practice-v3', JSON.stringify({
-      v: 3, mi: 0, qi: 0, answers: {}, marked: {}, eliminated: {},
-      startedAt: Date.now(), moduleStartedAt: Date.now(), completed: false,
+      v: 3, screen: 'test', student: 'Move Smoke', accessCode: 'SAT26', roomCode: 'AZM24', startCode: '492776',
+      mi: 2, qi: 0, answers: {}, marked: {}, eliminated: {}, notes: {}, highlights: {},
+      endAt: Date.now() + 600000, breakEndAt: null, completed: { rw1: true, rw2: true }, submitted: false,
+      timerHidden: false, lineReader: false, rules: true, desk: true, rulesOk: true, harness: true, setupDone: true, warning: {},
       adaptive: { rw: 'easy', math: 'easy' }
     }));
   </script>

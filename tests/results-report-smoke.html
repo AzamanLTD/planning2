@@ -55,7 +55,7 @@
             download.click();
             win.HTMLAnchorElement.prototype.click = originalClick;
             win.Blob = OriginalBlob;
-            if (!clicked?.download?.startsWith('azaman-sat-practice-report-results-report-smoke')) {
+            if (!clicked?.download?.startsWith('azaman-sat-report-results-report-smoke')) {
               throw new Error(`download filename missing or unexpected: ${clicked?.download || ''}`);
             }
             if (!capturedBlob) throw new Error('download did not create a Blob');

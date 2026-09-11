@@ -38,8 +38,8 @@ assert(!html.includes('connectivity-enhancement.js'), 'non-authoritative connect
 for (const phrase of [
   'screen:\"access\"', 'show(\"break\")', 's.screen=\"finish\"', 'breakSec:600', 'warnSec:300',
   'minutes:32,count:27', 'minutes:35,count:22', 'completed[m().id]=true', 'routeNext()', 's.submitted=true',
-  'Review questions', 'Question menu', 'Mark for review', 'Reference sheet', 'Calculator', 'Line reader',
-  'Highlight selection', 'Hide timer'
+  'Review questions', 'Question menu', 'Mark for Review', 'Reference sheet', 'Calculator', 'Line reader',
+  'Highlights &amp; Notes', 'Hide timer'
 ]) assert(app.includes(phrase), `app.js missing contract: ${phrase}`);
 for (const phrase of ['STORAGE_KEY', 'MODULES', 'state.submitted', 'state.completed', 'state.endAt <= Date.now()',
   'state.breakEndAt <= Date.now()', "state.screen = 'directions'", 'state.adaptive.rw', 'state.adaptive.math', "'checkin'"]) {

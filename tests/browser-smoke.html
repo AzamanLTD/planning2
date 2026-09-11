@@ -158,7 +158,23 @@
           check('mark persisted', !!readState().marked['rw1-0']);
           check('note persisted', readState().notes['rw1-0'] === 'smoke note');
           check('saved highlight rendered', !!doc.querySelector('.azm-saved-highlight'));
-          phase = 2; const state = readState(); state.qi = 26; writeState(state); frame.contentWindow.location.reload(); return;
+          check('exam preview banner renders', doc.querySelector('.preview-banner')?.textContent.trim() === 'THIS IS A TEST PREVIEW');
+          check('nav dash rule renders', !!doc.querySelector('.test-dashrule'));
+          doc.querySelector('#notesToolBtn')?.click();
+          setTimeout(() => {
+            const note = frame.contentDocument.getElementById('azmNoteEditor');
+            check('notes editor opens', !!note);
+            check('notes editor has dialog semantics', note?.querySelector('[role="dialog"]')?.getAttribute('aria-labelledby') === 'noteEditorTitle');
+            const noteField = note?.querySelector('#noteEditorText');
+            check('notes editor field is editable', !!noteField && !noteField.readOnly);
+            noteField.value = 'UI note smoke'; noteField.dispatchEvent(new Event('input', { bubbles:true }));
+            note.querySelector('#noteEditorSave')?.click();
+            setTimeout(() => {
+              check('notes editor saves through UI', readState().notes['rw1-0'] === 'UI note smoke');
+              phase = 2; const state = readState(); state.qi = 26; writeState(state); frame.contentWindow.location.reload(); return;
+            }, 50);
+          }, 50);
+          return;
         }
         if (phase === 2) {
           check('last question reachable', /Question 27 of 27/.test(doc.querySelector('.question-nav')?.textContent || ''));
@@ -213,21 +229,13 @@
                   doc.querySelector('#toolsBtn')?.click();
                   setTimeout(() => {
                     check('test tools expose menu semantics', doc.querySelector('#toolPopover')?.getAttribute('role') === 'menu');
-                    doc.querySelector('#noteTool')?.click();
+                    const popoverStyle = frame.contentWindow.getComputedStyle(frame.contentDocument.getElementById('toolPopover')); check('more menu is anchored to the top-right like the real app', popoverStyle.position === 'fixed' && parseInt(popoverStyle.right, 10) < 120 && parseInt(popoverStyle.top, 10) < 120);
+                    check('more menu lists the five real exam tools', ['helpTool','shortcutsTool','atTool','lineTool','unscheduledBreakTool'].every(id => doc.querySelector('#' + id)));
+                    doc.querySelector('#toolsBtn')?.click();
                     setTimeout(() => {
-                      const note = frame.contentDocument.getElementById('azmNoteEditor');
-                      check('notes editor opens', !!note);
-                      check('notes editor has dialog semantics', note?.querySelector('[role="dialog"]')?.getAttribute('aria-labelledby') === 'noteEditorTitle');
-                      const noteField = note?.querySelector('#noteEditorText');
-                      check('notes editor field is editable', !!noteField && !noteField.readOnly);
-                      noteField.value = 'UI note smoke'; noteField.dispatchEvent(new Event('input', { bubbles:true }));
-                      note.querySelector('#noteEditorSave')?.click();
+                      check('more menu toggles closed', !doc.querySelector('#toolPopover'));
+                      doc.querySelector('#calcToolBtn')?.click();
                       setTimeout(() => {
-                        check('notes editor saves through UI', readState().notes['math1-' + readState().qi] === 'UI note smoke');
-                        doc.querySelector('#toolsBtn')?.click();
-                        setTimeout(() => {
-                          doc.querySelector('#calcTool')?.click();
-                          setTimeout(() => {
                             const calc = frame.contentDocument.getElementById('calculatorPanel');
                             check('calculator opens', !!calc);
                             check('scientific controls render', !!calc?.querySelector('[data-insert="sin("]') && !!calc?.querySelector('[data-insert="sqrt("]'));
@@ -255,8 +263,6 @@
                           }, 100);
                         }, 50);
                       }, 50);
-                    }, 50);
-                  }, 50);
                 }, 50); return;
               }, 50);
             }, 50);

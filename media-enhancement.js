@@ -63,10 +63,10 @@
     if (prompt?.parentNode === card) prompt.insertAdjacentElement('afterend', wrap);
     else if (choices) card.insertBefore(wrap, choices);
     else card.appendChild(wrap);
-    wrap.querySelector('.azm-media-trigger').addEventListener('click', () => openLightbox(media));
+    wrap.querySelector('.azm-media-trigger').addEventListener('click', (event) => openLightbox(media, event.currentTarget));
   }
 
-  function openLightbox(media) {
+  function openLightbox(media, trigger) {
     document.getElementById('azmMediaLightbox')?.remove();
     const overlay = document.createElement('div');
     overlay.id = 'azmMediaLightbox';
@@ -111,14 +111,15 @@
       if (action === 'zoom-in') applyZoom(.25);
       else if (action === 'zoom-out') applyZoom(-.25);
       else if (action === 'reset') reset();
-      else if (action === 'close') overlay.remove();
+      else if (action === 'close') { overlay.remove(); if (trigger && trigger.isConnected) trigger.focus(); }
     }));
 
     let pan = null;
     viewport.addEventListener('pointerdown', (event) => {
-      if (viewState.scale <= 1 || event.target !== image) return;
+      if (viewState.scale <= 1) return;
+      if (!viewport.contains(event.target) || event.target.closest('button,[data-media-action]')) return;
       pan = { x: event.clientX, y: event.clientY, ox: viewState.x, oy: viewState.y };
-      viewport.setPointerCapture?.(event.pointerId);
+      try { viewport.setPointerCapture?.(event.pointerId); } catch (_) {}
       event.preventDefault();
     });
     viewport.addEventListener('pointermove', (event) => {

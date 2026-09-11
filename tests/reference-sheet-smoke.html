@@ -27,8 +27,11 @@
           try {
             check('Math module loads', /Math/i.test(doc.querySelector('.test-title')?.textContent || ''));
             key('r', { ctrlKey: true, altKey: true });
+            check('Reference sheet opens', !!doc.getElementById('referencePanel'));
+            // The reference enhancement rebuilds the panel via a MutationObserver, so run the rest in a later task.
+            setTimeout(() => {
+            try {
             const panel = doc.getElementById('referencePanel');
-            check('Reference sheet opens', !!panel);
             check('Reference sheet viewport exists', !!panel?.querySelector('.reference-viewport'));
             check('Zoom control exists', !!panel?.querySelector('[data-reference-action="zoom-in"]'));
             check('Compact layout control exists', !!panel?.querySelector('[data-reference-action="compact"]'));
@@ -58,10 +61,11 @@
             const leftBefore = panel.getBoundingClientRect().left;
             move.click();
             check('Move enters pressed state', move.getAttribute('aria-pressed') === 'true');
-            key('ArrowRight');
+            const press = (k) => move.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }));
+            press('ArrowRight');
             const leftAfter = panel.getBoundingClientRect().left;
             check('Reference sheet moves with ArrowRight', leftAfter > leftBefore);
-            key('Escape');
+            press('Escape');
             check('Escape exits Move mode', move.getAttribute('aria-pressed') === 'false');
 
             panel.querySelector('[data-reference-action="reset"]').click();
@@ -69,6 +73,10 @@
             panel.querySelector('#closeRef')?.click();
 
             out.textContent = checks.join('\n') + '\nREFERENCE SHEET SMOKE COMPLETE';
+            } catch (error) {
+              out.textContent = checks.join('\n') + `\nFAIL ${error.message}`;
+            }
+            }, 150);
           } catch (error) {
             out.textContent = checks.join('\n') + `\nFAIL ${error.message}`;
           }

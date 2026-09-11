@@ -77,7 +77,7 @@
   }
 
   document.addEventListener('click', (event) => {
-    const button = event.target.closest('#noteTool');
+    const button = event.target.closest('#notesToolBtn, #noteTool');
     if (!button) return;
     event.preventDefault();
     event.stopPropagation();

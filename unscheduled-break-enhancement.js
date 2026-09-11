@@ -34,6 +34,7 @@
     button.id = 'unscheduledBreakTool';
     button.className = 'tool-item';
     button.textContent = 'Unscheduled break';
+    button.insertAdjacentHTML('afterbegin', (window.AZAMAN_BREAK_ICON ? window.AZAMAN_BREAK_ICON() : ''));
     button.setAttribute('aria-describedby', 'unscheduledBreakHint');
     const hint = document.createElement('span');
     hint.id = 'unscheduledBreakHint';

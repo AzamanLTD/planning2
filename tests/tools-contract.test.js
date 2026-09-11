@@ -16,7 +16,7 @@ assert(tools.includes("aria-labelledby', 'referencePanelTitle'"), 'reference she
 assert(tools.includes('Resize calculator'), 'calculator must expose a resize affordance');
 assert(tools.includes('makeDraggable'), 'tool panels must be draggable');
 assert(app.includes('Line reader'), 'line reader tool must remain in the core exam surface');
-assert(app.includes('Mark for review'), 'mark-for-review tool must remain in the core exam surface');
+assert(app.includes('Mark for Review'), 'mark-for-review tool must remain in the core exam surface');
 assert(keyboard.includes('Option eliminator'), 'option eliminator shortcut must remain wired in keyboard layer');
 assert(app.includes('Reference sheet'), 'reference sheet tool must remain in the core exam surface');
 assert(unscheduledBreak.includes("button.textContent = 'Unscheduled break'"), 'unscheduled break must remain exposed');

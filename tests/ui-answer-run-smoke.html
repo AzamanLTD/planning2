@@ -30,7 +30,8 @@
             const target = choices.find((x) => x.dataset.answer === bank[0].answer) || choices[0];
             target.click();
             check('clicked answer persists', read().answers['rw1-0'] === target.dataset.answer);
-            check('clicked answer is selected', target.getAttribute('aria-pressed') === 'true');
+            const selectedNow = doc.querySelector('.choice[data-answer="' + target.dataset.answer + '"]');
+            check('clicked answer is selected', selectedNow?.getAttribute('aria-pressed') === 'true');
             const eliminate = doc.querySelector('.eliminate-btn'); check('option eliminator renders', !!eliminate);
             eliminate.click();
             const idx = Number(eliminate.dataset.eliminate);

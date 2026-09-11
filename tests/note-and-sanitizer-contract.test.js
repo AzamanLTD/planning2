@@ -9,7 +9,7 @@ assert(note.includes('maxlength="1000"'), 'notes must have a bounded persisted l
 assert(note.includes('escapeHtml'), 'saved notes must be escaped before template insertion');
 assert(note.includes('role="dialog"'), 'note editor must expose dialog semantics');
 assert(note.includes('aria-labelledby="noteEditorTitle"'), 'note editor must have an accessible name');
-assert(note.includes("button = event.target.closest('#noteTool')"), 'note tool must be intercepted consistently');
+assert(note.includes("button = event.target.closest('#notesToolBtn, #noteTool')"), 'note tool must be intercepted consistently');
 
 assert(sanitizer.includes("meta.hidden = true"), 'question metadata must be hidden from students');
 assert(sanitizer.includes("aria-hidden") && sanitizer.includes("'true'"), 'hidden metadata must be marked aria-hidden');
