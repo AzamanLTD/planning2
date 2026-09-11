@@ -68,7 +68,7 @@
     check('proctor instruction is present',/proctor/i.test(doc.querySelector('.azm-congrats-copy')?.textContent||''));
     check('return-home control is present',!!doc.getElementById('azmReturnHome'));
   }
-  (async()=>{try{await phaseStartFlow();await phaseRecovery();await phaseGate();await phaseBreak();await phaseSubmission();out.textContent=checks.join('\n')+'\nACTUAL EXAM SMOKE COMPLETE';}catch(e){out.textContent=checks.join('\n')+'\nFAIL '+e.message;}finally{frame.remove();}})();
+  (async()=>{try{await phaseStartFlow();await phaseRecovery();await phaseGate();await phaseBreak();await phaseSubmission();out.textContent=checks.join('\n')+'\nACTUAL EXAM SMOKE COMPLETE';}catch(e){out.textContent=checks.join('\n')+'\nFAIL '+e.message;}finally{try{frame.contentWindow?.stop?.();frame.src='about:blank';await wait(60);}catch(e){}frame.remove();}})();
 })();
 </script>
 </body></html>
