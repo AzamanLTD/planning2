@@ -22,13 +22,14 @@ for (const text of [
   'Sign in again to continue testing.',
   'Exit Bluebook',
   'pauses your testing timer temporarily',
-  'Answers submitted',
-  'Submitting your answers',
+  'Congratulations!',
+  'The test is complete, and your answers have been submitted.',
+  'Return to Homepage',
 ]) {
   if (!js.includes(text) && !ref.includes(text)) throw new Error(`missing exam-mode recovery/finalization behavior: ${text}`);
 }
 
-for (const selector of ['.azm-recovery-notice', '.azm-submission-page', '.azm-submission-spinner']) {
+for (const selector of ['.azm-recovery-notice', '.azm-congrats-page', '.azm-congrats-card']) {
   if (!css.includes(selector)) throw new Error(`missing exam finalization selector: ${selector}`);
 }
 
