@@ -106,6 +106,16 @@
     return state.submissionPending === true && submissionRetryIsValid(state);
   }
 
+  function markOfflineSubmissionPending(state) {
+    if (!state || state.screen !== 'finish' || state.submissionPending === true || state.submissionRetryExpired === true || navigator.onLine !== false) return false;
+    state.submissionPending = true;
+    state.submissionRetryExpiresAt = nextDaySubmissionDeadline();
+    state.submissionAttemptedAt = Date.now();
+    state.submitted = false;
+    save();
+    return true;
+  }
+
   function expireSubmissionRetry() {
     const state = getState();
     if (!state?.submissionPending || submissionRetryIsValid(state)) return false;
@@ -154,6 +164,9 @@
     if (!isActualRuntime()) { clearRecoveryCountdown(); return; }
     if (getState()?.recovery) { mountRecoveryNotice(); return; }
     const state = getState();
+    if (state?.screen === 'finish' && !state.submissionPending && !state.submissionAttemptedAt && navigator.onLine === false) {
+      markOfflineSubmissionPending(state);
+    }
     if (state?.submissionPending && !submissionRetryIsValid(state)) {
       expireSubmissionRetry();
     }
