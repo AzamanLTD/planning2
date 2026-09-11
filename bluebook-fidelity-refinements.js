@@ -31,22 +31,51 @@
     document.body.appendChild(button);
   }
 
+  function detectPlatform() {
+    const ua = navigator.userAgent || '';
+    const platform = navigator.platform || '';
+    if (/CrOS/i.test(ua)) return 'ChromeOS';
+    if (/iPad/i.test(ua) || (platform === 'MacIntel' && navigator.maxTouchPoints > 1)) return 'iPadOS';
+    if (/iPhone|iPod/i.test(ua)) return 'iOS';
+    if (/Mac/i.test(platform)) return 'macOS';
+    if (/Win/i.test(platform)) return 'Windows';
+    if (/Linux/i.test(platform)) return 'Linux';
+    return 'Other';
+  }
+
   function openDeviceDialog() {
     document.getElementById('ref2DeviceDialog')?.remove();
+    const memory = Number.isFinite(navigator.deviceMemory) ? `${navigator.deviceMemory} GB reported` : 'Not exposed by this browser';
     const items = [
+      ['Operating system', detectPlatform(), true],
       ['Device viewport', `${window.innerWidth} × ${window.innerHeight}`, window.innerWidth >= 800 && window.innerHeight >= 500],
       ['JavaScript', 'Enabled', true],
       ['Local storage', 'Available', !!window.localStorage],
+      ['Device memory', memory, true],
+      ['Free storage', 'Checking…', true],
       ['Touch input', navigator.maxTouchPoints > 0 ? 'Detected' : 'Not detected', true],
     ];
     const dialog = document.createElement('div');
     dialog.id = 'ref2DeviceDialog';
     dialog.className = 'modal-backdrop';
-    dialog.innerHTML = `<div class="modal ref2-device-dialog" role="dialog" aria-modal="true" aria-labelledby="ref2DeviceTitle"><div class="modal-head"><h3 id="ref2DeviceTitle">Test Your Device</h3><button class="icon-btn" id="ref2DeviceClose" aria-label="Close">×</button></div><p>Check that this device is ready to run the exam interface.</p><div class="ref2-device-list">${items.map(([name,value,ok]) => `<div class="ref2-device-row"><span>${escapeHtml(name)}</span><span>${escapeHtml(value)}</span><strong>${ok ? '✓' : '!'}</strong></div>`).join('')}</div><p class="small">All checks run locally. No network connection is required for this simulator.</p><div class="modal-actions"><button class="btn cta-yellow" id="ref2DeviceDone">Done</button></div></div>`;
+    dialog.innerHTML = `<div class="modal ref2-device-dialog" role="dialog" aria-modal="true" aria-labelledby="ref2DeviceTitle"><div class="modal-head"><h3 id="ref2DeviceTitle">Test Your Device</h3><button class="icon-btn" id="ref2DeviceClose" aria-label="Close">×</button></div><p>Check the device capabilities visible to this local simulator before starting your exam.</p><div class="ref2-device-list">${items.map(([name,value,ok], i) => `<div class="ref2-device-row" data-device-row="${i}"><span>${escapeHtml(name)}</span><span class="ref2-device-value">${escapeHtml(value)}</span><strong aria-label="${ok ? 'Ready' : 'Check'}">${ok ? '✓' : '!'}</strong></div>`).join('')}</div><p class="small">All checks run locally. No network connection is required for this simulator. Some operating-system settings, security policies, and managed-device restrictions cannot be verified from a browser.</p><div class="modal-actions"><button class="btn cta-yellow" id="ref2DeviceDone">Done</button></div></div>`;
     document.body.appendChild(dialog);
     const close = () => dialog.remove();
     dialog.querySelector('#ref2DeviceClose').onclick = close;
     dialog.querySelector('#ref2DeviceDone').onclick = close;
+
+    if (navigator.storage?.estimate) {
+      navigator.storage.estimate().then(({ quota, usage }) => {
+        const value = Number.isFinite(quota) && Number.isFinite(usage)
+          ? `${Math.max(0, (quota - usage) / 1073741824).toFixed(2)} GB estimated free`
+          : 'Unavailable';
+        const row = dialog.querySelector('[data-device-row="5"] .ref2-device-value');
+        if (row && dialog.isConnected) row.textContent = value;
+      }).catch(() => {
+        const row = dialog.querySelector('[data-device-row="5"] .ref2-device-value');
+        if (row && dialog.isConnected) row.textContent = 'Unavailable';
+      });
+    }
     dialog.querySelector('#ref2DeviceDone').focus();
   }
 

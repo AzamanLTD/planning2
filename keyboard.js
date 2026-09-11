@@ -96,7 +96,11 @@
   }
 
   function openDirections() {
-    document.getElementById('directionHelp')?.remove();
+    const existing = document.getElementById('directionHelp');
+    if (existing) {
+      existing.querySelector('#directionDone, #directionClose')?.click();
+      return;
+    }
     const title = document.querySelector('.test-title')?.textContent?.trim() || 'Current module';
     const n = document.createElement('div');
     n.id = 'directionHelp'; n.className = 'modal-backdrop';
