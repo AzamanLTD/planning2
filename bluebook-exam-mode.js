@@ -8,6 +8,44 @@
     document.body.classList.toggle('azm-harness', !!state?.harness);
   }
 
+  function actualModeExamHeader() {
+    const state = getState();
+    const title = document.querySelector('.test-top .test-title');
+    if (!state || state.harness || state.screen !== 'test' || !title) return;
+    const index = Math.max(0, Math.min(3, Number(state.mi) || 0));
+    const section = index < 2 ? 'I' : 'II';
+    const module = (index % 2) + 1;
+    const name = index < 2 ? 'Reading and Writing' : 'Math';
+    const text = `Section ${section}, Module ${module}: ${name}`;
+    if (title.textContent.trim() !== text) title.textContent = text;
+  }
+
+  function actualModeDirections() {
+    const state = getState();
+    const page = document.getElementById('azmDirectionsPage');
+    const panel = page?.querySelector('.azm-directions-panel');
+    if (!state || state.harness || state.screen !== 'directions' || !page || !panel) return;
+    const index = Math.max(0, Math.min(3, Number(state.mi) || 0));
+    const section = index < 2 ? 'I' : 'II';
+    const module = (index % 2) + 1;
+    const name = index < 2 ? 'Reading and Writing' : 'Math';
+    const heading = panel.querySelector('h2');
+    if (heading) heading.textContent = `Section ${section}, Module ${module}: ${name}`;
+
+    const prose = index < 2
+      ? '<p>The questions in this section address a number of important reading and writing skills. Each question includes one or more passages, which may include a table or graph. Read each passage and question carefully, and then choose the best answer to the question based on the passage(s).</p><p>All questions in this section are multiple-choice with four answer choices. Each question has a single best answer.</p>'
+      : '<p>The questions in this section address a number of important math skills. Use of a calculator is permitted for all questions. A reference sheet, calculator, and these directions can be accessed throughout the test.</p><p>Some questions ask you to enter your answer. For these questions, solve the problem and enter your answer in the response field.</p>';
+    let content = panel.querySelector('.azm-official-directions-copy');
+    if (!content) {
+      content = document.createElement('div');
+      content.className = 'azm-official-directions-copy';
+      const button = panel.querySelector('#beginModuleBtn');
+      panel.insertBefore(content, button || null);
+    }
+    if (content.innerHTML !== prose) content.innerHTML = prose;
+    panel.querySelector('ul')?.remove();
+  }
+
   function actualModeReviewCopy() {
     const state = getState();
     if (!state || state.harness) return;
@@ -43,8 +81,12 @@
 
   const observer = new MutationObserver(() => {
     syncModeClass();
+    actualModeExamHeader();
+    actualModeDirections();
     actualModeReviewCopy();
   });
   observer.observe(document.body, { childList: true, subtree: true });
   syncModeClass();
+  actualModeExamHeader();
+  actualModeDirections();
 })();
