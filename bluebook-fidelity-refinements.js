@@ -12,7 +12,7 @@
   }
 
   function logoSvg() {
-    return `<svg class="ref2-logo" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 1.5l3.1 12.4L35.5 17 23.1 20 20 32.5 16.9 20 4.5 17l12.4-3.1z" fill="currentColor"/><path d="M31 4l.9 3.1L35 8l-3.1.9L31 12l-.9-3.1L27 8l3.1-.9z" fill="currentColor"/></svg>`;
+    return `<img class="ref2-logo" src="assets/bluebook-logo.jpg?v=22" alt="" aria-hidden="true">`;
   }
 
   function deviceButton() {

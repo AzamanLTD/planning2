@@ -19,7 +19,7 @@
 body { font-family: Arial, Helvetica, sans-serif; color: var(--ref2-text); }
 
 .ref2-access-brand { position:absolute; top:28px; left:50%; transform:translateX(-50%); z-index:25; display:inline-flex; align-items:center; gap:9px; color:#fff; font-weight:800; font-size:27px; letter-spacing:.005em; pointer-events:none; }
-.ref2-access-brand .ref2-logo { width:31px; height:31px; flex:none; }
+.ref2-access-brand .ref2-logo { width:31px; height:31px; flex:none; border-radius:22%; object-fit:cover; display:block; }
 .access-page .signin-brand { display:none!important; }
 .access-page .signin-modal { width:min(430px,calc(100vw - 32px)); max-width:430px; margin-top:34px; padding:28px 36px 30px; border-radius:12px; }
 .access-page .signin-modal h1 { margin-bottom:22px; font-size:25px; line-height:1.2; }

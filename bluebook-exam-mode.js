@@ -74,33 +74,6 @@
     render();
   }
 
-  function skipCurrentModule() {
-    const state = getState();
-    if (!state || state.harness || state.submitted) return;
-    if (state.screen !== 'test' && state.screen !== 'directions') return;
-    completeCurrentModule(state);
-    save();
-    render();
-  }
-
-  const SKIP_BTN_ID = 'azm-skip-module';
-  function syncSkipButton() {
-    const state = getState();
-    const show = state && !state.harness && !state.submitted &&
-      (state.screen === 'test' || state.screen === 'directions');
-    let btn = document.getElementById(SKIP_BTN_ID);
-    if (!show) { if (btn) btn.remove(); return; }
-    if (!btn) {
-      btn = document.createElement('button');
-      btn.id = SKIP_BTN_ID;
-      btn.type = 'button';
-      btn.className = 'azm-skip-btn';
-      btn.textContent = 'Skip module (test)';
-      btn.title = 'Testing shortcut: complete this module and advance';
-      btn.addEventListener('click', skipCurrentModule);
-      document.body.appendChild(btn);
-    }
-  }
 
   function actualModeDirections() {
     const state = getState();
@@ -185,7 +158,6 @@
     actualModeExamHeader();
     actualModeDirections();
     actualModeReviewCopy();
-    syncSkipButton();
   }
 
   function installRenderHook() {
